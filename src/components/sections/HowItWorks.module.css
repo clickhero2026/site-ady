@@ -1,0 +1,31 @@
+.steps {
+  margin: clamp(2.5rem, 2rem + 2vw, 4rem) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 48rem) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.number {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+}
+
+.stepTitle {
+  font-size: var(--fs-h3);
+}

@@ -1,0 +1,22 @@
+.section {
+  border-top: 1px solid rgba(236, 237, 239, 0.08);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: 40rem;
+}
+
+.title {
+  font-size: var(--fs-h1);
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-light);
+  color: color-mix(in srgb, var(--on-surface) 85%, transparent);
+}

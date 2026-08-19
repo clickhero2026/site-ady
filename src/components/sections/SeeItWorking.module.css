@@ -1,0 +1,8 @@
+.subtitle {
+  margin-top: 0.75rem;
+}
+
+.videoWrap {
+  margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+  max-width: 56rem;
+}

@@ -1,0 +1,36 @@
+.intro {
+  margin-top: 0.75rem;
+}
+
+.items {
+  margin: clamp(2rem, 1.5rem + 2vw, 3rem) 0 2rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (min-width: 48rem) {
+  .items {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.itemLabel {
+  font-size: 1.0625rem;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--accent);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

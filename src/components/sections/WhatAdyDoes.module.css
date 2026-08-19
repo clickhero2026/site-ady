@@ -1,0 +1,28 @@
+.blocks {
+  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 2.5rem + 2vw, 5rem);
+}
+
+.block {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 56rem) {
+  .block {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 3rem;
+  }
+
+  .block[data-reverse] > *:first-child {
+    order: 2;
+  }
+}
+
+.blockTitle {
+  font-size: var(--fs-h3);
+  margin-bottom: 0.6rem;
+}

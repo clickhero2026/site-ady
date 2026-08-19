@@ -1,0 +1,134 @@
+.dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  max-width: min(28rem, calc(100vw - 2rem));
+  width: 100%;
+  border-radius: var(--radius-lg);
+  margin: auto;
+}
+
+.dialog::backdrop {
+  background: rgba(6, 7, 5, 0.7);
+  backdrop-filter: blur(2px);
+}
+
+.panel {
+  position: relative;
+  background: var(--ady-bg);
+  border: 1px solid rgba(236, 237, 239, 0.12);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem 1.75rem;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: color-mix(in srgb, var(--on-surface) 70%, transparent);
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  background: rgba(236, 237, 239, 0.08);
+  color: var(--on-surface);
+}
+
+.title {
+  font-size: var(--fs-h3);
+  padding-right: 2rem;
+}
+
+.lead {
+  margin-top: 0.5rem;
+  font-size: var(--fs-small);
+  color: color-mix(in srgb, var(--on-surface) 75%, transparent);
+}
+
+.form {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fieldLabel {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+}
+
+.field input,
+.field select {
+  min-height: 2.9rem;
+  padding: 0 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(236, 237, 239, 0.18);
+  background: rgba(236, 237, 239, 0.04);
+  color: var(--on-surface);
+}
+
+.field input::placeholder {
+  color: color-mix(in srgb, var(--on-surface) 45%, transparent);
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  border-color: var(--accent);
+}
+
+.field input[aria-invalid="true"],
+.field select[aria-invalid="true"] {
+  border-color: var(--ady-spark);
+}
+
+.fieldError {
+  font-size: 0.8125rem;
+  color: var(--ady-spark);
+}
+
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.formError {
+  font-size: var(--fs-small);
+  color: var(--ady-spark);
+}
+
+.submit {
+  min-height: 3.25rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: var(--fw-medium);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  opacity: 0.7;
+  cursor: default;
+}

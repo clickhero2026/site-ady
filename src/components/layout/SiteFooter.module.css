@@ -1,0 +1,39 @@
+.footer {
+  border-top: 1px solid rgba(236, 237, 239, 0.08);
+  padding-block: 2.5rem;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: var(--fs-small);
+  color: color-mix(in srgb, var(--on-surface) 70%, transparent);
+}
+
+.tagline {
+  font-weight: var(--fw-medium);
+  color: var(--on-surface);
+}
+
+.links {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+
+.links a {
+  text-decoration: none;
+  color: color-mix(in srgb, var(--on-surface) 70%, transparent);
+}
+
+.links a:hover {
+  color: var(--accent);
+}
+
+/* Sem opacity extra aqui: já herda o color-mix 70% de .inner. Empilhar os
+   dois derrubava o contraste pra ~3.6:1 (reprova AA) — achado pela
+   auditoria automatizada (axe-core). */

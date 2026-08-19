@@ -1,0 +1,25 @@
+.body {
+  margin-top: 1.5rem;
+}
+
+.fecho {
+  margin-top: 2rem;
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-medium);
+  max-width: 40rem;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--accent);
+}
+
+.compare {
+  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .compare {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}

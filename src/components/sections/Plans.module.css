@@ -1,0 +1,66 @@
+.cards {
+  margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 48rem) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.75rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(236, 237, 239, 0.12);
+  background: color-mix(in srgb, var(--ady-neutral) 3%, transparent);
+}
+
+.featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.planName {
+  font-size: var(--fs-h3);
+}
+
+.price {
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+}
+
+.forWhom {
+  margin-top: 0.5rem;
+  color: color-mix(in srgb, var(--on-surface) 80%, transparent);
+}
+
+.features {
+  margin: 1.25rem 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: var(--fs-small);
+  color: color-mix(in srgb, var(--on-surface) 88%, transparent);
+}
+
+.cta {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.note {
+  margin-top: 1.75rem;
+  font-size: var(--fs-small);
+  color: color-mix(in srgb, var(--on-surface) 62%, transparent);
+  max-width: 42rem;
+}

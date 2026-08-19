@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!--
+    Placeholder até a chegada de ady-favicon.ico (guia de marca, seção 2).
+    Forma abstrata apenas para não deixar o ícone padrão do Vercel/Next em
+    produção — trocar por asset real no passo de substituição de mídia.
+  -->
+  <rect width="64" height="64" rx="14" fill="#0C0D0A" />
+  <circle cx="32" cy="36" r="14" fill="#1E88A8" />
+  <circle cx="32" cy="14" r="4" fill="#CF6F03" />
+</svg>

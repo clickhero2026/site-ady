@@ -1,0 +1,212 @@
+/* ==========================================================================
+   ady — tokens de marca (Guia de Marca ady v1.0, seção 2 do briefing)
+   Direto do guia. Sem interpretação: valores de cor não são "arredondados"
+   nem trocados por aproximações de bibliotecas de UI.
+   ========================================================================== */
+
+:root {
+  /* --- Cor bruta do guia de marca --- */
+  --ady-bg: #0c0d0a; /* fundo escuro — padrão do site inteiro */
+  --ady-neutral: #ecedef; /* texto sobre escuro / superfície quando o fundo é claro */
+  --ady-accent-on-dark: #1e88a8; /* petróleo — SOMENTE sobre fundo escuro */
+  --ady-accent-on-light: #17708a; /* petróleo — SOMENTE sobre fundo claro */
+  --ady-spark: #cf6f03; /* faísca — símbolo apenas, nunca UI */
+
+  /* --- Papéis semânticos (escopo padrão = fundo escuro) ---
+     Trocar de contexto (ex.: um cartão claro) deve redefinir --surface,
+     --on-surface e --accent dentro daquele escopo — nunca usar
+     --ady-accent-on-dark/light diretamente fora deste arquivo. Isso torna
+     estruturalmente impossível inverter a regra de contraste da seção 2. */
+  --surface: var(--ady-bg);
+  --on-surface: var(--ady-neutral);
+  --accent: var(--ady-accent-on-dark);
+  /* Texto/ícone sobre um preenchimento --accent (ex.: botão sólido). As duas
+     variantes de petróleo têm luminâncias diferentes, então o texto que
+     garante AA (4.5:1) muda de lado: escuro sobre #1E88A8, claro sobre
+     #17708A. Nunca hardcode essa cor fora daqui. */
+  --on-accent: var(--ady-bg);
+  --spark: var(--ady-spark);
+
+  --focus-ring: var(--accent);
+
+  /* --- Tipografia --- */
+  --font-sans: var(--font-gantari), system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  /* Escala fluida — cresce entre a viewport mínima suportada (360px) e o
+     desktop, sem depender de breakpoints fixos. */
+  --fs-display: clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem);
+  --fs-h1: clamp(1.875rem, 1.5rem + 1.6vw, 2.75rem);
+  --fs-h2: clamp(1.5rem, 1.3rem + 0.9vw, 2.125rem);
+  --fs-h3: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
+  --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --lh-tight: 1.15;
+  --lh-heading: 1.25;
+  --lh-body: 1.6;
+
+  /* --- Layout --- */
+  --container-max: 72rem;
+  --container-pad: 1.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+  --space-section: clamp(4rem, 3rem + 4vw, 8rem);
+
+  color-scheme: dark;
+}
+
+/* Escopo para blocos sobre superfície clara (cartões, inputs, modal).
+   Qualquer coisa dentro de `.on-light` herda o petróleo claro automaticamente
+   — nunca `--ady-accent-on-dark` sobre fundo claro. */
+.on-light {
+  --surface: var(--ady-neutral);
+  --on-surface: var(--ady-bg);
+  --accent: var(--ady-accent-on-light);
+  --on-accent: var(--ady-neutral);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-heading);
+}
+
+p {
+  margin: 0;
+}
+
+img,
+picture,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+/* Anel de foco visível em petróleo — obrigatório pela seção 5 (acessibilidade).
+   Usa --accent do escopo atual, então nunca inverte a regra de contraste. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   Utilitários de layout compartilhados entre seções
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.section {
+  padding-block: var(--space-section);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  background: var(--accent);
+  color: var(--ady-bg);
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-medium);
+  z-index: 100;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.section-title {
+  font-size: var(--fs-h2);
+  max-width: 36rem;
+}
+
+.section-lead {
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-light);
+  color: color-mix(in srgb, var(--on-surface) 82%, transparent);
+  max-width: 38rem;
+}
+
+.body-text {
+  color: color-mix(in srgb, var(--on-surface) 85%, transparent);
+  max-width: 42rem;
+}
+
+.body-text + .body-text {
+  margin-top: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

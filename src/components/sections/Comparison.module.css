@@ -1,0 +1,87 @@
+.hint {
+  margin-top: 0.75rem;
+  font-size: var(--fs-small);
+  color: color-mix(in srgb, var(--on-surface) 55%, transparent);
+}
+
+@media (min-width: 45rem) {
+  /* A partir daqui a tabela cabe inteira (min-width 42rem) sem precisar
+     arrastar — some com a dica. */
+  .hint {
+    display: none;
+  }
+}
+
+.tableWrap {
+  position: relative;
+  margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(236, 237, 239, 0.1);
+}
+
+.tableWrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2.5rem;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--ady-bg) 85%, transparent)
+  );
+}
+
+@media (min-width: 45rem) {
+  .tableWrap::after {
+    display: none;
+  }
+}
+
+.table {
+  width: 100%;
+  min-width: 42rem;
+  border-collapse: collapse;
+  font-size: var(--fs-small);
+}
+
+.table th,
+.table td {
+  padding: 0.9rem 1.1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(236, 237, 239, 0.08);
+}
+
+.table thead th {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: color-mix(in srgb, var(--on-surface) 70%, transparent);
+  border-bottom: 1px solid rgba(236, 237, 239, 0.16);
+}
+
+.table tbody th {
+  font-weight: var(--fw-medium);
+  color: var(--on-surface);
+  white-space: nowrap;
+}
+
+.table tbody td {
+  color: color-mix(in srgb, var(--on-surface) 80%, transparent);
+}
+
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.adyCol {
+  color: var(--on-surface);
+  font-weight: var(--fw-medium);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-left: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+}

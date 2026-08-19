@@ -1,0 +1,51 @@
+.section {
+  min-height: calc(100dvh - 4.25rem - 12rem);
+  display: flex;
+  align-items: center;
+}
+
+.inner {
+  max-width: 32rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.eyebrow {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  color: var(--accent);
+}
+
+.title {
+  font-size: var(--fs-h1);
+  letter-spacing: -0.01em;
+}
+
+.body {
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-light);
+  color: color-mix(in srgb, var(--on-surface) 85%, transparent);
+}
+
+.whatsapp {
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0.9rem 1.75rem;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+}
+
+.back {
+  margin-top: 0.75rem;
+  font-size: var(--fs-small);
+  color: color-mix(in srgb, var(--on-surface) 65%, transparent);
+  text-decoration: underline;
+}

@@ -1,0 +1,88 @@
+.frame {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: flex-end;
+  isolation: isolate;
+}
+
+.pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+}
+
+.label {
+  position: relative;
+  margin: 0.75rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: rgba(12, 13, 10, 0.55);
+  color: var(--ady-neutral);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  backdrop-filter: blur(2px);
+}
+
+.dims {
+  font-weight: var(--fw-regular);
+  opacity: 0.6;
+  font-size: 0.75em;
+}
+
+/* product — capturas do ady, escuro + petróleo */
+.product {
+  background: #14161a;
+  border: 1px solid rgba(30, 136, 168, 0.35);
+}
+
+.product .pattern {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(30, 136, 168, 0.16) 0,
+    rgba(30, 136, 168, 0.16) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+}
+
+/* cold — cena do problema, cinza e frio, sem identidade ady */
+.cold {
+  background: #2b2c2e;
+  border: 1px solid rgba(236, 237, 239, 0.14);
+}
+
+.cold .pattern {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(236, 237, 239, 0.08) 0,
+    rgba(236, 237, 239, 0.08) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+}
+
+.cold .label {
+  background: rgba(30, 30, 32, 0.6);
+}
+
+/* portrait — foto real de pessoa */
+.portrait {
+  background: linear-gradient(180deg, #1a1c1f 0%, #101113 100%);
+  border: 1px solid rgba(236, 237, 239, 0.12);
+}
+
+.portrait .pattern {
+  background-image: radial-gradient(
+    circle at 50% 38%,
+    rgba(236, 237, 239, 0.1),
+    transparent 60%
+  );
+}
