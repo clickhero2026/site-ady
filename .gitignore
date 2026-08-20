@@ -40,6 +40,9 @@ yarn-error.log*
 # Claude Code — estado local de permissões da sessão, não é do projeto
 .claude/
 
+# editor — arquivo de workspace pessoal, não é do projeto
+*.code-workspace
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

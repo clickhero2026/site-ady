@@ -44,3 +44,10 @@
   color: color-mix(in srgb, var(--on-surface) 65%, transparent);
 }
 
+/* Só o CTA do hero fica em caixa alta — via CSS, não hardcoded na string,
+   pra não atrapalhar leitor de tela e pra dar pra trocar o texto sem medo
+   de esquecer de subir tudo em maiúsculo de novo. */
+.ctaUppercase {
+  text-transform: uppercase;
+}
+
