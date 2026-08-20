@@ -51,3 +51,14 @@
   text-transform: uppercase;
 }
 
+.media {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.mediaImg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+

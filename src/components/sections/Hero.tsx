@@ -1,5 +1,5 @@
+import Image from "next/image";
 import { CtaButton } from "@/components/cta/CtaButton";
-import { MediaPlaceholder } from "@/components/media/MediaPlaceholder";
 import styles from "./Hero.module.css";
 
 export function Hero() {
@@ -28,13 +28,17 @@ export function Hero() {
           </div>
         </div>
 
-        <MediaPlaceholder
-          id="IMG-01"
-          width={1600}
-          height={1000}
-          description="Celular com notificação do WhatsApp de um cliente novo chamando depois de ver um post no Instagram, fundo escuro, leve perspectiva"
-          className={styles.media}
-        />
+        <div className={styles.media}>
+          <Image
+            src="/images/hero/img-01-hero.webp"
+            alt="Dono de negócio recebendo, no WhatsApp, a mensagem de uma cliente nova depois de ver uma publicação feita pelo ady no Instagram"
+            width={1600}
+            height={996}
+            priority
+            sizes="(min-width: 64rem) 50vw, 100vw"
+            className={styles.mediaImg}
+          />
+        </div>
       </div>
     </section>
   );
