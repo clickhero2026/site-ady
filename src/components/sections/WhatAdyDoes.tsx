@@ -44,7 +44,9 @@ export function WhatAdyDoes() {
   return (
     <section id="o-que-o-ady-faz" className="section">
       <div className="container">
-        <h2 className="section-title">O que ele faz enquanto você atende.</h2>
+        <h2 className="section-title">
+          O que ele faz enquanto você atende seu cliente.
+        </h2>
 
         <div className={styles.blocks}>
           {blocks.map((block, i) => (

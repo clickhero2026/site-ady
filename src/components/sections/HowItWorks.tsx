@@ -23,7 +23,7 @@ const steps = [
   {
     n: "3",
     title: "O ady assume",
-    body: "Ele monta o mês inteiro de conteúdo, cria os posts, publica na hora certa e coloca seus anúncios no ar. Você não precisa abrir nada.",
+    body: "Ele monta o mês inteiro de conteúdo, cria os posts, publica na hora certa e coloca seus anúncios no ar. Você não precisa fazer mais nada.",
     img: {
       id: "IMG-06",
       description: "Calendário de conteúdo montado, mês cheio",

@@ -2,20 +2,17 @@
   margin-top: 1.5rem;
 }
 
-.fecho {
-  margin-top: 2rem;
-  font-size: var(--fs-lead);
-  font-weight: var(--fw-medium);
-  max-width: 40rem;
-  padding-left: 1.25rem;
-  border-left: 2px solid var(--accent);
+.body p + p {
+  margin-top: 0.75rem;
 }
 
-/* Provisório: só a IMG-02 por enquanto (IMG-03, a comparação lado a lado,
-   saiu — layout desta seção com uma imagem só será revisado depois). */
+/* Mesma largura do bloco de texto (.body-text é 42rem, seção global) —
+   a imagem fica "dentro" da coluna de leitura, não numa faixa larga à
+   parte. Provisório: só a IMG-02 por enquanto (a IMG-03, que fazia
+   comparação lado a lado, saiu — layout revisado numa próxima etapa). */
 .media {
-  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
-  max-width: 34rem;
+  margin-top: 2rem;
+  max-width: 42rem;
   border-radius: var(--radius-md);
   overflow: hidden;
 }
@@ -24,4 +21,13 @@
   width: 100%;
   height: auto;
   display: block;
+}
+
+.fecho {
+  margin-top: 2rem;
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-medium);
+  max-width: 40rem;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--accent);
 }
