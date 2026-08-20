@@ -30,7 +30,7 @@ export function Hero() {
 
         <div className={styles.media}>
           <Image
-            src="/images/hero/img-01-hero.webp"
+            src="/images/img-01-hero.webp"
             alt="Dono de negócio recebendo, no WhatsApp, a mensagem de uma cliente nova depois de ver uma publicação feita pelo ady no Instagram"
             width={1600}
             height={996}
