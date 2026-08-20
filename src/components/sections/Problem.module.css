@@ -11,15 +11,17 @@
   border-left: 2px solid var(--accent);
 }
 
-.compare {
+/* Provisório: só a IMG-02 por enquanto (IMG-03, a comparação lado a lado,
+   saiu — layout desta seção com uma imagem só será revisado depois). */
+.media {
   margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
-  display: grid;
-  gap: 1rem;
+  max-width: 34rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
-@media (min-width: 40rem) {
-  .compare {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
+.mediaImg {
+  width: 100%;
+  height: auto;
+  display: block;
 }

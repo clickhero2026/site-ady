@@ -1,4 +1,4 @@
-import { MediaPlaceholder } from "@/components/media/MediaPlaceholder";
+import Image from "next/image";
 import styles from "./Problem.module.css";
 
 export function Problem() {
@@ -30,19 +30,17 @@ export function Problem() {
           aconteceu em português.
         </p>
 
-        <div className={styles.compare}>
-          <MediaPlaceholder
-            id="IMG-02"
+        {/*
+          IMG-03 (contraste lado a lado) removida por enquanto — o layout
+          desta seção com uma imagem só vai ser revisado numa próxima etapa.
+        */}
+        <div className={styles.media}>
+          <Image
+            src="/images/img-02-vilao.webp"
+            alt="Recepção de academia vazia, sem clientes, com a atendente sozinha esperando"
             width={800}
-            height={600}
-            description="Cena do problema: mensagem de WhatsApp sem resposta / fatura, tom cinza e frio"
-            tone="cold"
-          />
-          <MediaPlaceholder
-            id="IMG-03"
-            width={800}
-            height={600}
-            description="Mesmo enquadramento com a tela do ady — escura e limpa, contraste com a imagem anterior"
+            height={537}
+            className={styles.mediaImg}
           />
         </div>
       </div>
