@@ -16,7 +16,7 @@ const blocks = [
     },
   },
   {
-    title: "Monta o mês inteiro",
+    title: "Monta Todos os Posts do Mês no Instagram pra Você",
     body: "Ele planeja o calendário completo de conteúdo. Você abre e já está tudo lá, pronto.",
     img: { id: "IMG-09", description: "Planejador mensal" },
   },
