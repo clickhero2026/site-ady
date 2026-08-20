@@ -2,8 +2,8 @@ import Link from "next/link";
 import styles from "./SiteFooter.module.css";
 
 /**
- * Copy literal da seção 11 (Rodapé) do briefing. O link do Instagram e o
- * CNPJ/razão social ainda não foram informados — ver aviso separado.
+ * Copy literal da seção 11 (Rodapé) do briefing. Instagram e CNPJ/razão
+ * social vieram de `paginas-legais-ady.md`.
  */
 export function SiteFooter() {
   return (
@@ -23,17 +23,18 @@ export function SiteFooter() {
               <Link href="/termos">Termos</Link>
             </li>
             <li>
-              {/* TODO: URL real do Instagram do ady — pendente */}
-              <a href="#" aria-disabled="true">
+              <a
+                href="https://instagram.com/useadyapp"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Instagram
               </a>
             </li>
           </ul>
         </nav>
 
-        <p>
-          CNPJ e razão social conforme dados legais.
-        </p>
+        <p>CloserX Ltda — CNPJ 52.243.325/0001-07</p>
       </div>
     </footer>
   );

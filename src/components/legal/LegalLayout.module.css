@@ -30,7 +30,7 @@
   margin-bottom: 0.75rem;
 }
 
-.prose p + p {
+.prose section > * + * {
   margin-top: 0.75rem;
 }
 
@@ -49,6 +49,14 @@
 
 .prose a {
   color: var(--accent);
+}
+
+.prose strong {
+  /* Sem font-weight: bold (700): a Gantari só está declarada de 300 a 600
+     (seção 2 do guia de marca). SemiBold já dá contraste suficiente pra
+     destacar um termo em texto corrido. */
+  font-weight: var(--fw-semibold);
+  color: var(--on-surface);
 }
 
 .ctaBlock {

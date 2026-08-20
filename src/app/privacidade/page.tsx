@@ -3,142 +3,182 @@ import { LegalLayout } from "@/components/legal/LegalLayout";
 
 export const metadata: Metadata = {
   title: "Privacidade — ady",
-  description: "Como o ady, produto da Click Hero, trata os seus dados.",
+  description: "Como a CloserX Ltda, responsável pelo ady, trata os seus dados.",
 };
 
 /**
- * Rascunho jurídico informado pela LGPD, escrito com os processadores de
- * dados que este projeto realmente usa (Bitrix24, Google Tag Manager,
- * WhatsApp). NÃO é aconselhamento jurídico — precisa de revisão de um
- * advogado antes de ir ao ar. Faltam: razão social/CNPJ/endereço completos
- * da Click Hero (mesmo pendente do rodapé) e confirmação do e-mail de
- * contato pra pedidos de titular de dados — usei `contato@useady.com.br`
- * como placeholder plausível.
+ * Conteúdo final — não é rascunho. Copiado exatamente de
+ * `paginas-legais-ady.md` (raiz do projeto), que documenta as fontes dos
+ * dados (CNPJ, e-mail, Instagram) e traz o aviso de que precisa de revisão
+ * de um advogado antes de publicar, especialmente quando o ady passar a
+ * conectar Instagram/conta de anúncio de verdade na ativação.
  */
 export default function PrivacidadePage() {
   return (
-    <LegalLayout title="Política de Privacidade" updatedAt="19 de agosto de 2026">
+    <LegalLayout
+      title="Política de Privacidade"
+      updatedAt="20 de agosto de 2026"
+      showCta={false}
+    >
+      <p>
+        Esta Política de Privacidade descreve como a CloserX Ltda
+        (&ldquo;Click Hero&rdquo;, &ldquo;ady&rdquo;, &ldquo;nós&rdquo;),
+        inscrita no CNPJ 52.243.325/0001-07, trata os dados pessoais de quem
+        visita este site (useady.com.br) ou preenche nosso formulário de
+        contato, em conformidade com a Lei Geral de Proteção de Dados (Lei nº
+        13.709/2018 — LGPD).
+      </p>
+
       <section>
-        <h2>1. Quem trata os seus dados</h2>
+        <h2>1. Quem é o responsável pelos seus dados</h2>
         <p>
-          O ady é um produto da Click Hero, responsável pelo tratamento dos
-          dados pessoais coletados através do site useady.com.br e dos
-          canais de atendimento ligados a ele (como o WhatsApp).
-        </p>
-        <p>
-          Dúvidas sobre esta política ou pedidos relacionados aos seus dados
-          podem ser enviados para{" "}
-          <a href="mailto:contato@useady.com.br">contato@useady.com.br</a>.
+          CloserX Ltda, CNPJ 52.243.325/0001-07, responsável pelo produto
+          ady.
+          <br />
+          Contato: <a href="mailto:rafael@clickhero.com.br">rafael@clickhero.com.br</a>
         </p>
       </section>
 
       <section>
         <h2>2. Quais dados coletamos</h2>
-        <p>Quando você preenche o formulário do site, coletamos:</p>
+        <p>
+          <strong>Dados que você nos fornece diretamente</strong>, ao
+          preencher o formulário deste site:
+        </p>
         <ul>
           <li>Nome</li>
           <li>Número de WhatsApp</li>
           <li>Nome do seu negócio</li>
-          <li>Segmento do seu negócio</li>
+          <li>Segmento do seu negócio (ex.: barbearia, clínica odontológica, academia)</li>
           <li>Plano de interesse</li>
         </ul>
         <p>
-          Também coletamos, automaticamente, dados de navegação — como
-          páginas visitadas e origem do acesso — através de ferramentas
-          conectadas ao Google Tag Manager, que usamos pra entender como o
-          site é usado e medir o resultado dos nossos anúncios.
+          <strong>Dados coletados automaticamente</strong>, durante a
+          navegação no site:
+        </p>
+        <ul>
+          <li>Páginas visitadas e tempo de navegação</li>
+          <li>Origem do acesso (ex.: se você veio de um anúncio ou de uma busca)</li>
+          <li>Interações com botões e seções da página</li>
+        </ul>
+        <p>
+          Esses dados automáticos são coletados via Google Tag Manager e
+          Meta Pixel, ferramentas de terceiros descritas na seção 5.
+        </p>
+        <p>
+          Não coletamos dados sensíveis (saúde, origem racial, opinião
+          política, etc.) neste site.
         </p>
       </section>
 
       <section>
-        <h2>3. Para que usamos esses dados</h2>
+        <h2>3. Para que usamos seus dados</h2>
         <ul>
-          <li>Entrar em contato com você pelo WhatsApp pra conectar o ady ao seu negócio;</li>
-          <li>Organizar seus dados de contato num sistema de gestão de relacionamento (CRM);</li>
-          <li>Entender como as pessoas usam o site e melhorar o que mostramos nele;</li>
-          <li>Medir o resultado dos nossos próprios anúncios, pra saber se estão trazendo gente de verdade.</li>
+          <li>
+            Entrar em contato com você por WhatsApp para apresentar o ady e
+            dar continuidade ao seu interesse
+          </li>
+          <li>
+            Entender de onde vêm nossos visitantes e melhorar o site e
+            nossos anúncios
+          </li>
+          <li>Cumprir obrigações legais, quando aplicável</li>
         </ul>
+        <p>Não vendemos seus dados pessoais a terceiros.</p>
       </section>
 
       <section>
-        <h2>4. Com quem compartilhamos</h2>
-        <p>Seus dados podem ser compartilhados com:</p>
+        <h2>4. Com quem compartilhamos seus dados</h2>
         <ul>
           <li>
-            <strong>Bitrix24</strong> — sistema de CRM onde armazenamos os
-            dados de contato de quem preenche o formulário do site;
+            <strong>Bitrix24</strong>: o formulário de contato envia seus
+            dados para nosso sistema de gestão de relacionamento (CRM),
+            usado internamente para organizar e responder aos contatos
+            recebidos
           </li>
           <li>
-            <strong>Google Tag Manager</strong> e ferramentas conectadas a
-            ele — usados pra medir navegação e anúncios do site;
+            <strong>Meta (Facebook/Instagram)</strong>: através do Meta
+            Pixel, para medir a eficiência de nossos anúncios e mostrar
+            anúncios relevantes a pessoas com perfil semelhante ao de quem
+            visita nosso site
           </li>
           <li>
-            <strong>Vercel</strong> — provedor que hospeda o site.
+            <strong>Google</strong>: através do Google Tag Manager, para
+            gerenciar as ferramentas de medição do site
           </li>
         </ul>
         <p>
-          Não vendemos seus dados pra ninguém. Alguns desses fornecedores
-          processam dados em servidores fora do Brasil — nesses casos, só
-          trabalhamos com empresas que seguem padrões internacionais de
-          proteção de dados equivalentes aos exigidos pela LGPD.
+          Cada um desses serviços tem sua própria política de privacidade,
+          que recomendamos consultar.
         </p>
       </section>
 
       <section>
-        <h2>5. Cookies e tecnologias de rastreamento</h2>
+        <h2>5. Cookies e ferramentas de medição</h2>
         <p>
-          O site usa cookies e tecnologias parecidas, carregadas através do
-          Google Tag Manager, pra entender como as páginas são usadas e
-          medir a origem de quem chega até nós. Você pode bloquear cookies
-          nas configurações do seu navegador — algumas partes do site podem
-          funcionar de forma limitada nesse caso.
+          Este site usa cookies e tecnologias semelhantes para funcionar
+          corretamente e para medir o desempenho de nossas páginas e
+          anúncios, através do Google Tag Manager e do Meta Pixel. Você pode
+          desativar cookies nas configurações do seu navegador, mas isso
+          pode afetar o funcionamento de algumas partes do site.
         </p>
       </section>
 
       <section>
         <h2>6. Por quanto tempo guardamos seus dados</h2>
         <p>
-          Guardamos seus dados de contato enquanto durar o relacionamento
-          com a gente e pelo tempo necessário pra cumprir obrigações legais
-          ou resolver eventuais disputas. Depois disso, eliminamos ou
-          anonimizamos os dados.
+          Guardamos os dados do formulário de contato enquanto durar nosso
+          relacionamento com você ou até que você solicite a exclusão, o que
+          ocorrer primeiro. Dados de navegação coletados por cookies seguem
+          o prazo padrão de cada ferramenta (Google e Meta).
         </p>
       </section>
 
       <section>
         <h2>7. Seus direitos</h2>
-        <p>De acordo com a Lei Geral de Proteção de Dados (LGPD), você pode pedir, a qualquer momento:</p>
+        <p>Conforme a LGPD, você pode a qualquer momento:</p>
         <ul>
-          <li>Confirmação de que tratamos seus dados;</li>
-          <li>Acesso aos dados que temos sobre você;</li>
-          <li>Correção de dados incompletos, desatualizados ou errados;</li>
-          <li>Anonimização, bloqueio ou eliminação de dados desnecessários;</li>
-          <li>Portabilidade dos seus dados pra outro fornecedor;</li>
-          <li>Eliminação dos dados tratados com o seu consentimento;</li>
-          <li>Informação sobre com quem compartilhamos seus dados;</li>
-          <li>Revogação do seu consentimento, a qualquer momento.</li>
+          <li>Confirmar se tratamos dados seus</li>
+          <li>Pedir uma cópia dos seus dados</li>
+          <li>Pedir a correção de dados incompletos ou desatualizados</li>
+          <li>Pedir a exclusão dos seus dados</li>
+          <li>Retirar seu consentimento</li>
         </ul>
         <p>
-          Pra exercer qualquer um desses direitos, é só chamar a gente em{" "}
-          <a href="mailto:contato@useady.com.br">contato@useady.com.br</a>.
+          Para exercer qualquer um desses direitos, escreva para{" "}
+          <a href="mailto:rafael@clickhero.com.br">rafael@clickhero.com.br</a>.
         </p>
       </section>
 
       <section>
         <h2>8. Segurança</h2>
         <p>
-          Usamos medidas técnicas e administrativas razoáveis pra proteger
-          seus dados contra acesso não autorizado, perda ou uso indevido.
-          Nenhum sistema é 100% livre de risco, mas levamos isso a sério.
+          Adotamos medidas técnicas e organizacionais razoáveis para
+          proteger seus dados contra acesso não autorizado, perda ou uso
+          indevido.
         </p>
       </section>
 
       <section>
-        <h2>9. Alterações nesta política</h2>
+        <h2>9. Alterações desta política</h2>
         <p>
-          Podemos atualizar esta política de vez em quando. Se mudarmos
-          alguma coisa relevante, avisamos por aqui, com a data de
-          atualização no topo da página.
+          Podemos atualizar esta política periodicamente. A data no topo da
+          página indica a versão mais recente. Mudanças relevantes serão
+          comunicadas neste site.
+        </p>
+      </section>
+
+      <section>
+        <h2>10. Contato</h2>
+        <p>
+          CloserX Ltda — CNPJ 52.243.325/0001-07
+          <br />
+          E-mail: <a href="mailto:rafael@clickhero.com.br">rafael@clickhero.com.br</a>
+          <br />
+          Instagram:{" "}
+          <a href="https://instagram.com/useadyapp" target="_blank" rel="noopener noreferrer">
+            @useadyapp
+          </a>
         </p>
       </section>
     </LegalLayout>
