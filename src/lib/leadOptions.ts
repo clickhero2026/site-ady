@@ -23,7 +23,9 @@ export type Segmento = (typeof SEGMENTOS)[number];
  */
 export const PLANOS = {
   social: "ady Social",
-  completo: "ady Completo",
+  // Chave interna continua "completo" (usada em data-plan, Bitrix, GTM) —
+  // só o nome exibido virou "ady Anúncios".
+  completo: "ady Anúncios",
   indeciso: "Ainda não sei",
 } as const;
 

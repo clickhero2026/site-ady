@@ -56,7 +56,7 @@ export default function TermosPage() {
         <h2>4. Planos e preços</h2>
         <p>
           Os planos e valores exibidos neste site (ady Social e ady
-          Completo) são válidos na data de publicação e podem ser alterados
+          Anúncios) são válidos na data de publicação e podem ser alterados
           sem aviso prévio. O valor investido em anúncios, quando aplicável
           ao plano contratado, é pago diretamente à Meta na conta de
           anúncios do cliente e não está incluído na mensalidade do ady.

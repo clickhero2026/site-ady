@@ -146,7 +146,7 @@ conhecer o produto ady.
 
 ## 4. Planos e preços
 
-Os planos e valores exibidos neste site (ady Social e ady Completo) são válidos na data de
+Os planos e valores exibidos neste site (ady Social e ady Anúncios) são válidos na data de
 publicação e podem ser alterados sem aviso prévio. O valor investido em anúncios, quando
 aplicável ao plano contratado, é pago diretamente à Meta na conta de anúncios do cliente e
 não está incluído na mensalidade do ady.

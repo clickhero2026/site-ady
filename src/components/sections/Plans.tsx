@@ -1,9 +1,26 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Check } from "lucide-react";
 import { CtaButton } from "@/components/cta/CtaButton";
 import { trackViewPlans } from "@/lib/analytics";
 import styles from "./Plans.module.css";
+
+const SOCIAL_FEATURES = [
+  "Planejamento do seu mês de conteúdo",
+  "Posts criados e publicados no Instagram",
+  "Até 8 posts por mês",
+  "Suporte no WhatsApp",
+];
+
+const ANUNCIOS_FEATURES = [
+  "Tudo do plano Social",
+  "Seus anúncios criados e no ar",
+  "Até 30 imagens por mês",
+  "Até 2 anúncios rodando ao mesmo tempo",
+  "Acompanhamento do que cada cliente novo custou",
+  "Suporte no WhatsApp",
+];
 
 export function Plans() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -44,10 +61,12 @@ export function Plans() {
             </p>
 
             <ul className={styles.features}>
-              <li>➜ Planejamento do seu mês de conteúdo</li>
-              <li>➜ Posts criados e publicados no Instagram</li>
-              <li>➜ Até 8 posts por mês</li>
-              <li>➜ Suporte no WhatsApp</li>
+              {SOCIAL_FEATURES.map((feature) => (
+                <li key={feature}>
+                  <Check aria-hidden="true" size={18} className={styles.checkIcon} />
+                  {feature}
+                </li>
+              ))}
             </ul>
 
             <CtaButton plan="social" variant="outline" className={styles.cta}>
@@ -56,23 +75,23 @@ export function Plans() {
           </article>
 
           <article className={`${styles.card} ${styles.featured}`}>
-            <h3 className={styles.planName}>ady Completo</h3>
+            <h3 className={styles.planName}>ady Anúncios</h3>
             <p className={styles.price}>R$ 297 por mês</p>
             <p className={styles.forWhom}>
               Pra quem quer aparecer e trazer cliente novo:
             </p>
 
             <ul className={styles.features}>
-              <li>➜ Tudo do plano Social</li>
-              <li>➜ Seus anúncios criados e no ar</li>
-              <li>➜ Até 30 imagens por mês</li>
-              <li>➜ Até 2 anúncios rodando ao mesmo tempo</li>
-              <li>➜ Acompanhamento do que cada cliente novo custou</li>
-              <li>➜ Suporte no WhatsApp</li>
+              {ANUNCIOS_FEATURES.map((feature) => (
+                <li key={feature}>
+                  <Check aria-hidden="true" size={18} className={styles.checkIcon} />
+                  {feature}
+                </li>
+              ))}
             </ul>
 
             <CtaButton plan="completo" className={styles.cta}>
-              Quero o Completo
+              Quero o ady Anúncios
             </CtaButton>
           </article>
         </div>

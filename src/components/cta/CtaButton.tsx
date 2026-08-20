@@ -27,7 +27,7 @@ export function CtaButton({
       type="button"
       data-plan={plan}
       onClick={() => {
-        // select_plan só nos botões de plano de verdade (Social/Completo)
+        // select_plan só nos botões de plano de verdade (Social/Anúncios)
         // — o CTA genérico do hero/CTA final não conta como isso.
         if (plan) trackSelectPlan(plan);
         open(plan);

@@ -22,7 +22,7 @@ export function trackViewPlans() {
   sendGTMEvent({ event: "view_item_list", item_list_name: "planos" });
 }
 
-/** `select_plan` — clique em qualquer botão de plano (Social/Completo). */
+/** `select_plan` — clique em qualquer botão de plano (Social/Anúncios). */
 export function trackSelectPlan(plan: PlanoKey) {
   sendGTMEvent({ event: "select_plan", plan });
 }
