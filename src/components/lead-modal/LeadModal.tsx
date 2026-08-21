@@ -4,6 +4,7 @@ import { cloneElement, useEffect, useId, useRef, useState } from "react";
 import { useLeadModal } from "./LeadModalContext";
 import { SEGMENTOS, PLANOS, type PlanoKey } from "@/lib/leadOptions";
 import { formatPhone, isValidPhone } from "@/lib/phoneMask";
+import { saveLastLead } from "@/lib/lastLeadStorage";
 import styles from "./LeadModal.module.css";
 
 interface FormState {
@@ -105,6 +106,17 @@ export function LeadModal() {
         );
         return;
       }
+
+      // Bitrix está fora do ar (webhook exige plano pago) — o WhatsApp é
+      // o canal efetivo de contato agora, não um extra. Guarda os dados
+      // que a pessoa acabou de digitar pra /obrigado montar a mensagem
+      // personalizada (ver src/lib/lastLeadStorage.ts).
+      saveLastLead({
+        nome: form.nome,
+        negocio: form.negocio,
+        segmento: form.segmento,
+        planoLabel: PLANOS[form.plano],
+      });
 
       // Navegação completa (não client-side router.push) de propósito:
       // garante que /obrigado carrega do zero, pra base do Meta Pixel e do

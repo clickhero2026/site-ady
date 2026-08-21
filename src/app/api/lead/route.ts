@@ -3,8 +3,17 @@ import { leadSchema } from "@/lib/leadSchema";
 import { sendLeadToBitrix } from "@/lib/bitrix";
 
 /**
- * Único ponto de entrada do formulário de lead. Roda no servidor de
- * propósito: a chave do Bitrix nunca aparece no bundle do cliente.
+ * Único ponto de entrada do formulário de lead da home. Roda no servidor
+ * de propósito: a chave do Bitrix nunca aparece no bundle do cliente.
+ *
+ * O Bitrix é só melhor esforço em paralelo — não bloqueia a resposta nem
+ * vira erro pro usuário se falhar (hoje ele falha sempre: o webhook está
+ * bloqueado até upgrade de plano). Mesmo padrão já usado em
+ * `/api/workshop-lead`. O canal efetivo de contato agora é o
+ * redirecionamento automático pro WhatsApp em /obrigado (ver
+ * `WhatsappCta.tsx`) — diferente do workshop, a home ainda não tem banco
+ * de dados próprio; se isso precisar existir, é o mesmo padrão do
+ * `workshopDb.ts`.
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -33,18 +42,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const result = await sendLeadToBitrix(parsed.data);
-
-  if (!result.ok) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "Não deu pra enviar agora. Tenta de novo em instantes ou chama no WhatsApp.",
-      },
-      { status: 502 },
-    );
-  }
+  sendLeadToBitrix(parsed.data).catch((err) => {
+    console.error("[lead] Erro inesperado tentando o Bitrix:", err);
+  });
 
   return NextResponse.json({ ok: true });
 }
