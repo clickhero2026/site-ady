@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { workshopLeadSchema } from "@/lib/workshopLeadSchema";
 import { sendWorkshopLeadToBitrix } from "@/lib/bitrix";
+import { saveWorkshopLead } from "@/lib/workshopDb";
 
 /**
- * Ponto de entrada da inscrição do workshop. Mesma lógica do `/api/lead`
- * da home (validação no servidor, honeypot, Bitrix24), campos adaptados
- * conforme a seção 6 do briefing-workshop-ady.md.
+ * Ponto de entrada da inscrição do workshop.
+ *
+ * O Postgres (Neon) é a gravação que decide sucesso/erro pra quem
+ * preencheu o formulário — é a fonte de verdade pro follow-up depois. O
+ * Bitrix é só um melhor esforço em paralelo: se falhar (hoje ele falha
+ * sempre, o webhook está bloqueado até upgrade de plano), não trava o
+ * cadastro nem aparece como erro pro usuário — só fica no log do
+ * servidor.
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -34,9 +40,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const result = await sendWorkshopLeadToBitrix(parsed.data);
+  const dbResult = await saveWorkshopLead(parsed.data);
 
-  if (!result.ok) {
+  // Bitrix não bloqueia a resposta — só loga se der errado (ver bitrix.ts).
+  sendWorkshopLeadToBitrix(parsed.data).catch((err) => {
+    console.error("[workshop-lead] Erro inesperado tentando o Bitrix:", err);
+  });
+
+  if (!dbResult.ok) {
     return NextResponse.json(
       {
         ok: false,
