@@ -1,0 +1,32 @@
+.blocks {
+  margin: clamp(2.5rem, 2rem + 2vw, 4rem) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 48rem) {
+  .blocks {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem 2.5rem;
+  }
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.number {
+  font-size: 2rem;
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+  line-height: 1;
+}
+
+.blockTitle {
+  font-size: var(--fs-h3);
+  margin-top: 0.25rem;
+}

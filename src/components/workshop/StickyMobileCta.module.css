@@ -1,0 +1,33 @@
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--ady-bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(236, 237, 239, 0.1);
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.bar[data-visible="true"] {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Só em mobile — no desktop o Hero fica visível o tempo todo praticamente,
+   e a página já tem o CTA no lugar certo o resto da rolagem. */
+@media (min-width: 48rem) {
+  .bar {
+    display: none;
+  }
+}
+
+.link {
+  width: 100%;
+}

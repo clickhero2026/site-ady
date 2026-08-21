@@ -1,0 +1,93 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(3rem, 2.5rem + 3vw, 6rem);
+}
+
+/* IMG-W01 — fundo abstrato, sem foto de pessoa (seção 4 do briefing).
+   Enquanto não existe, um tint escuro com o mesmo padrão diagonal em
+   petróleo usado nos outros placeholders do site, bem sutil, atrás do
+   texto. */
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ady-bg);
+}
+
+.bgPattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(30, 136, 168, 0.14) 0,
+    rgba(30, 136, 168, 0.14) 1px,
+    transparent 1px,
+    transparent 18px
+  );
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+.bgLabel {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: rgba(12, 13, 10, 0.6);
+  color: color-mix(in srgb, var(--on-surface) 55%, transparent);
+  font-size: 0.75rem;
+}
+
+.inner {
+  max-width: 42rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.eyebrow {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.title {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-regular);
+  color: color-mix(in srgb, var(--on-surface) 85%, transparent);
+}
+
+.facts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 1rem;
+  font-weight: var(--fw-medium);
+}
+
+@media (min-width: 40rem) {
+  .facts {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+  }
+}
+
+.support {
+  font-size: var(--fs-small);
+  color: #8a8b85;
+}
