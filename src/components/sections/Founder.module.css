@@ -14,6 +14,8 @@
 .media {
   max-width: 22rem;
   margin-inline: auto;
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
 @media (min-width: 56rem) {
@@ -21,6 +23,12 @@
     margin-inline: 0;
     max-width: none;
   }
+}
+
+.mediaImg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .body {

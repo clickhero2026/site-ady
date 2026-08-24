@@ -93,6 +93,15 @@
   --accent: var(--ady-accent-on-light);
   --on-accent: var(--ady-neutral);
   --text-muted: #5a5b57;
+  /* `color` é propriedade herdada, mas o valor que desce pra filhos sem
+     `color` próprio é o já COMPUTADO no ancestral mais próximo que
+     declarou `color` — não é recalculado a cada var(--on-surface). Sem
+     essa linha, um elemento aqui dentro sem `color` explícito (ex.: um
+     <h1> só com font-size) pula esse escopo e herda direto do `body`,
+     que resolve pelo tema global da página — texto invisível quando os
+     dois temas divergem (achado real: título da Hero de /workshop
+     sumindo no tema claro). */
+  color: var(--on-surface);
   color-scheme: light;
 }
 
@@ -107,6 +116,8 @@
   --accent: var(--ady-accent-on-dark);
   --on-accent: var(--ady-bg);
   --text-muted: #8a8b85;
+  /* ver comentário equivalente em .on-light — mesmo motivo. */
+  color: var(--on-surface);
   color-scheme: dark;
 }
 

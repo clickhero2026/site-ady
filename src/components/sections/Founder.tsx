@@ -1,18 +1,19 @@
-import { MediaPlaceholder } from "@/components/media/MediaPlaceholder";
+import Image from "next/image";
 import styles from "./Founder.module.css";
 
 export function Founder() {
   return (
     <section id="quem-esta-por-tras" className="section">
       <div className={`container ${styles.grid}`}>
-        <MediaPlaceholder
-          id="IMG-13"
-          width={900}
-          height={1100}
-          description="Foto real do Rafael, ambiente escuro, olhando pra câmera"
-          tone="portrait"
-          className={styles.media}
-        />
+        <div className={styles.media}>
+          <Image
+            src="/images/img-13-rafael.webp"
+            alt="Foto do Rafael, fundador da Click Hero, sorrindo pra câmera"
+            width={900}
+            height={1100}
+            className={styles.mediaImg}
+          />
+        </div>
 
         <div className={styles.copy}>
           <h2 className="section-title">Eu passei anos do outro lado.</h2>
