@@ -22,11 +22,3 @@
   color: var(--accent);
   font-weight: var(--fw-medium);
 }
-
-.fecho {
-  margin-top: 2rem;
-  max-width: 40rem;
-  padding-left: 1.25rem;
-  border-left: 2px solid var(--accent);
-  color: color-mix(in srgb, var(--on-surface) 80%, transparent);
-}

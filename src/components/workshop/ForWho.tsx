@@ -24,11 +24,6 @@ export function ForWho() {
             </li>
           ))}
         </ul>
-
-        <p className={styles.fecho}>
-          Se você é agência, social media ou gestor de marketing, esse
-          workshop não vai te servir. Ele foi feito pra quem tem o negócio.
-        </p>
       </div>
     </section>
   );

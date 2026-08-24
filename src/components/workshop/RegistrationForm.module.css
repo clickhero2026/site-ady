@@ -82,6 +82,9 @@
   color: var(--on-accent);
   font-weight: var(--fw-medium);
   font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 20px -6px color-mix(in srgb, var(--accent) 65%, transparent);
   cursor: pointer;
 }
 

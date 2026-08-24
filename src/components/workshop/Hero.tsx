@@ -18,16 +18,15 @@ export function Hero() {
         <h1 className={styles.title}>{WORKSHOP.nome}</h1>
 
         <p className={styles.subtitle}>
-          Uma hora ao vivo mostrando como atrair mais clientes todo dia
-          pro seu negócio através da internet — com uma ferramenta que
-          custa muito menos do que contratar uma agência, e sem precisar
-          aprender nada técnico.
+          Ao vivo, mostrando como atrair mais clientes todo dia pro seu
+          negócio através da internet — com uma ferramenta que custa muito
+          menos do que contratar uma agência, e sem precisar aprender nada
+          técnico.
         </p>
 
         <ul className={styles.facts}>
           <li>➜ {workshopDataHorario}</li>
-          <li>➜ {WORKSHOP.duracaoLabel}</li>
-          <li>➜ Ao vivo, pelo Zoom</li>
+          <li>➜ Ao vivo, pelo Google Meet</li>
           <li>➜ Grátis, exclusivo para membros BNI</li>
         </ul>
 

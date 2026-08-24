@@ -1,4 +1,3 @@
-import { WORKSHOP } from "@/config/workshop";
 import styles from "./WhatYoullSee.module.css";
 
 const BLOCKS = [
@@ -28,9 +27,7 @@ export function WhatYoullSee() {
   return (
     <section className="section">
       <div className="container">
-        <h2 className="section-title">
-          O que a gente vai fazer nesses {WORKSHOP.duracaoLabel}
-        </h2>
+        <h2 className="section-title">O que a gente vai fazer no workshop</h2>
 
         <ol className={styles.blocks}>
           {BLOCKS.map((block) => (

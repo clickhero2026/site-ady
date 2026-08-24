@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { WORKSHOP, WORKSHOP_WHATSAPP } from "@/config/workshop";
 import { buildWhatsappLink } from "@/lib/whatsapp";
 import { AdySymbol } from "@/components/workshop/AdySymbol";
+import { WorkshopFooter } from "@/components/workshop/WorkshopFooter";
 import { FireLeadEvent } from "@/components/analytics/FireLeadEvent";
 import styles from "./page.module.css";
 
@@ -9,20 +10,17 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Vaga garantida — Workshop ady",
   description:
-    "Você garantiu sua vaga no workshop ao vivo. A gente manda o link do Zoom pelo WhatsApp.",
+    "Você garantiu sua vaga no workshop ao vivo. A gente manda o link do Google Meet pelo WhatsApp.",
   robots: { index: false, follow: false },
 };
 
 const JEAN_MESSAGE = "Oi Jean, acabei de me inscrever no workshop";
 
-// Texto literal do briefing ("dura 1 hora") — se a duração de uma turma
-// futura mudar de verdade, ajustar esta frase junto com
-// WORKSHOP.duracaoMinutos.
 const SHARE_MESSAGE =
   `Achei que isso ia te interessar. É um workshop ao vivo pra dono de ` +
   `negócio local, sobre como fazer o Instagram trazer cliente sem ter que ` +
-  `contratar alguém pra cuidar disso. É dia ${WORKSHOP.data} às ${WORKSHOP.horario}, ` +
-  `dura 1 hora e não fica gravado. Tem vaga limitada: useady.com.br/workshop`;
+  `contratar alguém pra cuidar disso. É dia ${WORKSHOP.data} às ${WORKSHOP.horario} ` +
+  `e não fica gravado. Tem vaga limitada: useady.com.br/workshop`;
 
 /**
  * Evento `Lead` (briefing seção 5: "no carregamento da página, não no
@@ -52,13 +50,13 @@ export default function WorkshopObrigadoPage() {
 
         <h1 className={styles.title}>Vaga garantida.</h1>
         <p className={styles.body}>
-          A gente vai te mandar o link do Zoom no WhatsApp, e um lembrete
-          no dia.
+          A gente vai te mandar o link do Google Meet no WhatsApp, e um
+          lembrete no dia.
         </p>
 
         <div className={styles.commitBox}>
           <p className={styles.commitDate}>
-            {WORKSHOP.data}, às {WORKSHOP.horario} · {WORKSHOP.duracaoLabel}
+            {WORKSHOP.data}, às {WORKSHOP.horario}
           </p>
           <p className={styles.commitBody}>
             Coloca na agenda agora, antes de fechar essa página. O
@@ -108,7 +106,7 @@ export default function WorkshopObrigadoPage() {
           Enviar convite pelo WhatsApp
         </a>
 
-        <p className={styles.footer}>ady · um produto Click Hero</p>
+        <WorkshopFooter />
       </div>
     </div>
   );

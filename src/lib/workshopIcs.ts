@@ -1,10 +1,10 @@
-import { WORKSHOP, WORKSHOP_ZOOM_LINK } from "@/config/workshop";
+import { WORKSHOP, WORKSHOP_MEET_LINK } from "@/config/workshop";
 
 /**
  * Gera o conteúdo de um arquivo .ics estático pro workshop (briefing,
  * seção 3: "gerar estático, não precisa de integração com Google
- * Calendar"). Título, data, hora, duração de 1h e o link do Zoom na
- * descrição.
+ * Calendar"). Título, data, hora, duração de 1h e o link do Google Meet
+ * na descrição.
  *
  * Retorna `null` se `WORKSHOP.dataISO` ainda não estiver configurado —
  * gerar um .ics com uma data inventada seria pior do que não oferecer o
@@ -30,9 +30,9 @@ export function buildWorkshopIcs(): string | null {
 
   const descricao = [
     "Workshop ao vivo — vagas limitadas, sem gravação.",
-    WORKSHOP_ZOOM_LINK
-      ? `Link do Zoom: ${WORKSHOP_ZOOM_LINK}`
-      : "Link do Zoom: você vai receber pelo WhatsApp antes do evento.",
+    WORKSHOP_MEET_LINK
+      ? `Link do Google Meet: ${WORKSHOP_MEET_LINK}`
+      : "Link do Google Meet: você vai receber pelo WhatsApp antes do evento.",
   ].join("\n");
 
   const lines = [
@@ -48,7 +48,7 @@ export function buildWorkshopIcs(): string | null {
     `DTEND:${toIcsUtcStamp(endUtc)}`,
     `SUMMARY:${escapeIcsText(`${nome} — workshop ao vivo`)}`,
     `DESCRIPTION:${escapeIcsText(descricao)}`,
-    "LOCATION:Zoom",
+    "LOCATION:Google Meet",
     "END:VEVENT",
     "END:VCALENDAR",
   ];
