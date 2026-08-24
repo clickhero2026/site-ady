@@ -110,8 +110,8 @@ export function RegistrationForm() {
       <div className="container">
         <h2 className="section-title">Garanta sua vaga</h2>
         <p className={`section-lead ${styles.lead}`}>
-          {WORKSHOP.data}, {WORKSHOP.horario}. São {WORKSHOP.vagas} vagas e
-          não tem gravação.
+          {WORKSHOP.data}, {WORKSHOP.horario}. Gratuito, exclusivo membros
+          BNI. São {WORKSHOP.vagas} vagas e não tem gravação.
         </p>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>

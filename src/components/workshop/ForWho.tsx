@@ -1,6 +1,7 @@
 import styles from "./ForWho.module.css";
 
 const ITEMS = [
+  "Você é membro do BNI ou foi convidado por alguém que é",
   "Você tem um negócio que atende gente da sua cidade — loja, clínica, salão, academia, revenda",
   "Seu Instagram fica semanas parado porque você não tem tempo de pensar no que postar",
   "Você já pagou alguém pra cuidar disso e não entendeu direito o que recebeu em troca",

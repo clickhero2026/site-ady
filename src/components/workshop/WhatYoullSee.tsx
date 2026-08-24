@@ -10,7 +10,7 @@ const BLOCKS = [
   {
     n: "02",
     title: "A conta real de ter alguém cuidando disso",
-    body: "O que uma pessoa contratada de fato faz por mês, quanto isso custa e por que essa conta raramente fecha pra um negócio local.",
+    body: "O que uma pessoa ou uma agência de verdade cobra pra cuidar disso — muitas vezes mais de R$ 2.000 por mês — e por que existe hoje uma forma de fazer o mesmo trabalho por uma fração desse valor.",
   },
   {
     n: "03",

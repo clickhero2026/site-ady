@@ -4,25 +4,19 @@
  * ficam só aqui — trocar de turma é trocar este arquivo, não procurar
  * texto espalhado pelas 7 seções da página.
  *
- * `data` é um placeholder PENDENTE (seção 6, item 1 do briefing — trava a
- * página inteira, aparece em ~7 lugares). Enquanto não vier a data real de
- * Rafael, a página inteira mostra literalmente "[DATA]" em todo canto que
- * deveria ter a data — de propósito, pra ficar impossível publicar sem
- * notar.
+ * Turma 1: 25 de agosto de 2026, 20h — confirmada por Rafael.
  */
 export const WORKSHOP = {
   nome: "O Instagram que vende sozinho",
   subtitulo: "Workshop ao vivo para donos de negócio local",
 
-  /** PENDENTE — Rafael. Formato livre (ex. "12 de março"), já que vai
-   * direto pro texto da página. */
-  data: "[DATA]",
+  /** Formato livre (ex. "25 de agosto"), já que vai direto pro texto da
+   * página. */
+  data: "25 de agosto",
 
-  /** Mesma data de cima, mas em formato ISO (`"2026-03-12"`) — precisa
-   * disso pra calcular o DTSTART do .ics. `null` enquanto `data` for só o
-   * placeholder de texto; o gerador do .ics recusa gerar arquivo sem isso
-   * em vez de produzir um evento de calendário com data errada. */
-  dataISO: null as string | null,
+  /** Mesma data de cima, em formato ISO — usada pro cálculo do DTSTART
+   * do .ics (ver workshopIcs.ts). */
+  dataISO: "2026-08-25" as string | null,
 
   horario: "20h",
   /** Mesmo horário de cima, em 24h, pro cálculo do .ics. */
