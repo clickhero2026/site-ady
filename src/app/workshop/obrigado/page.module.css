@@ -74,6 +74,11 @@
   text-transform: uppercase;
   letter-spacing: 0.02em;
   box-shadow: 0 6px 20px -6px color-mix(in srgb, var(--accent) 65%, transparent);
+  transition: opacity 0.15s ease;
+}
+
+.primary:hover {
+  opacity: 0.9;
 }
 
 .secondary {
@@ -90,18 +95,23 @@
   text-transform: uppercase;
   letter-spacing: 0.02em;
   background: transparent;
+  transition: background 0.15s ease;
+}
+
+.secondary:hover {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .pendingNote {
   font-size: var(--fs-small);
-  color: #8a8b85;
+  color: var(--text-muted);
 }
 
 .divider {
   width: 100%;
   margin: 1rem 0;
   border: none;
-  border-top: 1px solid rgba(236, 237, 239, 0.12);
+  border-top: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
 }
 
 .subtitle {
@@ -111,5 +121,5 @@
 .footer {
   margin-top: 1.5rem;
   font-size: var(--fs-small);
-  color: #8a8b85;
+  color: var(--text-muted);
 }

@@ -29,6 +29,11 @@
 
   --focus-ring: var(--accent);
 
+  /* Texto secundário/muted — não vem do guia de marca (que não cobre UI
+     de produto), inventado por analogia mantendo a mesma relação de
+     contraste que já existe hoje entre --on-surface e superfície. */
+  --text-muted: #8a8b85;
+
   /* --- Tipografia --- */
   --font-sans: var(--font-gantari), system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -61,6 +66,24 @@
   color-scheme: dark;
 }
 
+/* ==========================================================================
+   Toggle de tema (claro/escuro) — todo o site.
+   Escuro continua sendo o default (ver briefing do toggle, seção 5): o
+   `:root` acima já define os valores escuros, e este bloco só é aplicado
+   quando `<html data-theme="light">` — setado pelo script inline no
+   layout raiz (evita flash) ou pelo componente `ThemeToggle` depois da
+   primeira interação. `prefers-color-scheme` NÃO é usada como fonte de
+   verdade: o padrão do produto é escuro independente do SO do visitante.
+   ========================================================================== */
+:root[data-theme="light"] {
+  --surface: var(--ady-neutral);
+  --on-surface: var(--ady-bg);
+  --accent: var(--ady-accent-on-light);
+  --on-accent: var(--ady-neutral);
+  --text-muted: #5a5b57;
+  color-scheme: light;
+}
+
 /* Escopo para blocos sobre superfície clara (cartões, inputs, modal).
    Qualquer coisa dentro de `.on-light` herda o petróleo claro automaticamente
    — nunca `--ady-accent-on-dark` sobre fundo claro. */
@@ -69,7 +92,22 @@
   --on-surface: var(--ady-bg);
   --accent: var(--ady-accent-on-light);
   --on-accent: var(--ady-neutral);
+  --text-muted: #5a5b57;
   color-scheme: light;
+}
+
+/* Escopo inverso: força superfície escura independente do tema da página.
+   Existe só pra seções com asset construído exclusivamente pro escuro
+   (briefing do toggle, seção 3) — hoje, o hero de `/workshop`
+   (`img-w01-hero.webp`, traço de luz que não funciona em fundo claro).
+   Print de produto/dashboard futuro usa o mesmo escopo pelo mesmo motivo. */
+.on-dark {
+  --surface: var(--ady-bg);
+  --on-surface: var(--ady-neutral);
+  --accent: var(--ady-accent-on-dark);
+  --on-accent: var(--ady-bg);
+  --text-muted: #8a8b85;
+  color-scheme: dark;
 }
 
 *,
@@ -167,7 +205,7 @@ a {
   left: 1rem;
   top: -3rem;
   background: var(--accent);
-  color: var(--ady-bg);
+  color: var(--on-accent);
   padding: 0.65rem 1.1rem;
   border-radius: var(--radius-sm);
   font-weight: var(--fw-medium);

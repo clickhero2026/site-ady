@@ -1,0 +1,13 @@
+.wrap {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 40;
+}
+
+@media (min-width: 40rem) {
+  .wrap {
+    top: 1.25rem;
+    right: 1.25rem;
+  }
+}

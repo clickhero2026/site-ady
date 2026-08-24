@@ -1,0 +1,44 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--on-surface) 14%, transparent);
+  background: color-mix(in srgb, var(--on-surface) 6%, transparent);
+  color: var(--on-surface);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.toggle:hover {
+  background: color-mix(in srgb, var(--on-surface) 12%, transparent);
+}
+
+.toggle:active {
+  transform: scale(0.94);
+}
+
+/* Variante usada onde o botão não tem uma barra de header por baixo pra
+   dar contraste — `position: fixed` em `/workshop` (ver
+   `WorkshopThemeToggle`), então continua na tela depois que o visitante
+   rola pra além da Hero escura e o que fica atrás vira a própria
+   `--surface` da página. Nesse caso um fundo translúcido baseado em
+   `--surface` fica idêntico ao que está atrás (transparência de uma cor
+   sobre a cor igual não gera contraste nenhum) — quem segura a
+   legibilidade aqui é a borda mais forte + a sombra de profundidade, não
+   o blur. Sobre a foto do hero (fundo variado) o blur ainda ajuda. */
+.floating {
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  border-color: color-mix(in srgb, var(--on-surface) 26%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 2px 10px -2px color-mix(in srgb, var(--ady-bg) 45%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--ady-bg) 18%, transparent);
+}
+
+.floating:hover {
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}

@@ -6,9 +6,9 @@
 }
 
 /* IMG-W01 — fundo abstrato, sem foto de pessoa (seção 4 do briefing).
-   Enquanto não existe, um tint escuro com o mesmo padrão diagonal em
-   petróleo usado nos outros placeholders do site, bem sutil, atrás do
-   texto. */
+   A imagem cobre a seção inteira (object-fit: cover); um scrim escuro em
+   cima garante contraste AA do título/subtítulo por cima dela em
+   qualquer ponto da foto. */
 .bg {
   position: absolute;
   inset: 0;
@@ -16,29 +16,19 @@
   background: var(--ady-bg);
 }
 
-.bgPattern {
-  position: absolute;
-  inset: 0;
-  opacity: 0.35;
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(30, 136, 168, 0.14) 0,
-    rgba(30, 136, 168, 0.14) 1px,
-    transparent 1px,
-    transparent 18px
-  );
-  mask-image: linear-gradient(to bottom, black, transparent);
+.bgImage {
+  object-fit: cover;
 }
 
-.bgLabel {
+.bgScrim {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.3rem 0.6rem;
-  border-radius: var(--radius-sm);
-  background: rgba(12, 13, 10, 0.6);
-  color: color-mix(in srgb, var(--on-surface) 55%, transparent);
-  font-size: 0.75rem;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(12, 13, 10, 0.78) 0%,
+    rgba(12, 13, 10, 0.62) 45%,
+    rgba(12, 13, 10, 0.85) 100%
+  );
 }
 
 .inner {
@@ -89,5 +79,5 @@
 
 .support {
   font-size: var(--fs-small);
-  color: #8a8b85;
+  color: var(--text-muted);
 }

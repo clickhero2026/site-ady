@@ -12,7 +12,7 @@ export function AdySymbol({ size = 40 }: { size?: number }) {
       aria-hidden="true"
       role="img"
     >
-      <circle cx="32" cy="38" r="16" fill="#1E88A8" />
+      <circle cx="32" cy="38" r="16" fill="var(--accent)" />
       <circle cx="32" cy="12" r="5" fill="#CF6F03" />
     </svg>
   );

@@ -19,6 +19,11 @@
 
 .photo {
   max-width: 14rem;
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
 }
 
 .name {

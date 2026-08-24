@@ -1,13 +1,24 @@
+import Image from "next/image";
 import { WORKSHOP, workshopDataHorario } from "@/config/workshop";
 import { CtaLink } from "./CtaLink";
 import styles from "./Hero.module.css";
 
 export function Hero() {
   return (
-    <section id="hero-workshop" className={styles.hero}>
+    // on-dark: IMG-W01 (traço de luz sobre preto) só funciona em fundo
+    // escuro — a seção mantém fundo escuro fixo mesmo com o tema claro
+    // ativo (briefing do toggle, seção 3, opção 1).
+    <section id="hero-workshop" className={`${styles.hero} on-dark`}>
       <div className={styles.bg} aria-hidden="true">
-        <span className={styles.bgPattern} />
-        <span className={styles.bgLabel}>IMG-W01 2400×1200</span>
+        <Image
+          src="/images/img-w01-hero.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className={styles.bgImage}
+        />
+        <span className={styles.bgScrim} />
       </div>
 
       <div className={`container ${styles.inner}`}>

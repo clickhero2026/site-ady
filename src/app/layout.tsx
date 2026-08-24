@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { gantari } from "@/fonts";
 import { AnalyticsRouteTracker } from "@/components/analytics/AnalyticsRouteTracker";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,6 +27,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={gantari.variable}>
       <body>
+        {/* beforeInteractive: injetado no <head> e roda antes da
+            hidratação (ver docs/Script component) — evita o flash do
+            tema errado. Precisa ficar aqui, no layout raiz (regra do
+            componente Script), não num componente importado. */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
         <a href="#conteudo" className="skip-link">
           Pular para o conteúdo
         </a>

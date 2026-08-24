@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import styles from "./SiteHeader.module.css";
 
 /**
@@ -14,6 +15,7 @@ export function SiteHeader() {
         <Link href="/" className={styles.logo} aria-label="ady — página inicial">
           ady
         </Link>
+        <ThemeToggle />
       </div>
     </header>
   );

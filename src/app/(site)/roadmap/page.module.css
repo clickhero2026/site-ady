@@ -32,5 +32,5 @@
 .cta {
   margin-top: clamp(3rem, 2.5rem + 2vw, 5rem);
   padding-top: clamp(2rem, 1.5rem + 2vw, 3rem);
-  border-top: 1px solid rgba(236, 237, 239, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--on-surface) 10%, transparent);
 }

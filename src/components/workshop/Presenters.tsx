@@ -1,5 +1,5 @@
+import Image from "next/image";
 import { WORKSHOP } from "@/config/workshop";
-import { MediaPlaceholder } from "@/components/media/MediaPlaceholder";
 import styles from "./Presenters.module.css";
 
 export function Presenters() {
@@ -10,12 +10,11 @@ export function Presenters() {
 
         <div className={styles.cards}>
           <article className={styles.card}>
-            <MediaPlaceholder
-              id="IMG-W02"
+            <Image
+              src="/images/img-w02-jean.webp"
+              alt="Foto de Jean Dentz, sócio da Click Hero"
               width={800}
-              height={800}
-              description="Foto do Jean, enquadramento peito acima, fundo neutro escuro"
-              tone="portrait"
+              height={795}
               className={styles.photo}
             />
             <h3 className={styles.name}>
@@ -30,12 +29,11 @@ export function Presenters() {
           </article>
 
           <article className={styles.card}>
-            <MediaPlaceholder
-              id="IMG-W03"
+            <Image
+              src="/images/img-w03-rafael.webp"
+              alt="Foto de Rafael Cruz, fundador da Click Hero"
               width={800}
-              height={800}
-              description="Foto do Rafael, mesmo tratamento do IMG-W02"
-              tone="portrait"
+              height={781}
               className={styles.photo}
             />
             <h3 className={styles.name}>

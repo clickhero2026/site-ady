@@ -17,9 +17,9 @@
   gap: 0.4rem;
   padding: 1.75rem;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(236, 237, 239, 0.12);
-  border-top: 3px solid rgba(236, 237, 239, 0.12);
-  background: color-mix(in srgb, var(--ady-neutral) 3%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
+  border-top: 3px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
+  background: color-mix(in srgb, var(--on-surface) 3%, transparent);
 }
 
 /* Card do plano em destaque: tint de petróleo em baixa opacidade, borda

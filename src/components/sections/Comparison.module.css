@@ -37,14 +37,14 @@
   padding: 1.15rem 1rem;
   text-align: left;
   vertical-align: top;
-  border-bottom: 1px solid rgba(236, 237, 239, 0.08);
+  border-bottom: 1px solid color-mix(in srgb, var(--on-surface) 8%, transparent);
 }
 
 .table thead th {
   font-size: var(--fs-small);
   font-weight: var(--fw-semibold);
   color: color-mix(in srgb, var(--on-surface) 70%, transparent);
-  border-bottom: 1px solid rgba(236, 237, 239, 0.16);
+  border-bottom: 1px solid color-mix(in srgb, var(--on-surface) 16%, transparent);
 }
 
 .table tbody th {
@@ -108,7 +108,7 @@
 .card {
   padding: 1.25rem;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(236, 237, 239, 0.1);
+  border: 1px solid color-mix(in srgb, var(--on-surface) 10%, transparent);
 }
 
 .cardLabel {
@@ -130,7 +130,7 @@
 .cardRow + .cardRow {
   margin-top: 0.6rem;
   padding-top: 0.6rem;
-  border-top: 1px solid rgba(236, 237, 239, 0.08);
+  border-top: 1px solid color-mix(in srgb, var(--on-surface) 8%, transparent);
 }
 
 .cardRowLabel {

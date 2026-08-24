@@ -16,8 +16,8 @@
 
 .panel {
   position: relative;
-  background: var(--ady-bg);
-  border: 1px solid rgba(236, 237, 239, 0.12);
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
   border-radius: var(--radius-lg);
   padding: 2rem 1.5rem 1.75rem;
   max-height: calc(100dvh - 2rem);
@@ -41,7 +41,7 @@
 }
 
 .closeButton:hover {
-  background: rgba(236, 237, 239, 0.08);
+  background: color-mix(in srgb, var(--on-surface) 8%, transparent);
   color: var(--on-surface);
 }
 
@@ -79,8 +79,8 @@
   min-height: 2.9rem;
   padding: 0 0.9rem;
   border-radius: var(--radius-sm);
-  border: 1.5px solid rgba(236, 237, 239, 0.18);
-  background: rgba(236, 237, 239, 0.04);
+  border: 1.5px solid color-mix(in srgb, var(--on-surface) 18%, transparent);
+  background: color-mix(in srgb, var(--on-surface) 4%, transparent);
   color: var(--on-surface);
 }
 

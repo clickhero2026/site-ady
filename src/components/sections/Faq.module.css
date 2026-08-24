@@ -6,7 +6,7 @@
 }
 
 .item {
-  border-bottom: 1px solid rgba(236, 237, 239, 0.12);
+  border-bottom: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
 }
 
 .item[open] .question::after {

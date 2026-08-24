@@ -2,14 +2,15 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background: color-mix(in srgb, var(--ady-bg) 88%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(236, 237, 239, 0.08);
+  border-bottom: 1px solid color-mix(in srgb, var(--on-surface) 8%, transparent);
 }
 
 .inner {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   min-height: 4.25rem;
 }
 
