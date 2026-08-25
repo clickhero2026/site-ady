@@ -8,15 +8,15 @@ export type Theme = "dark" | "light";
  * então evita o flash do tema errado (FOUC) — lê a escolha salva e já
  * aplica `data-theme` no `<html>` antes do primeiro paint.
  *
- * Escuro é o default (briefing do toggle, seção 5: "isso não muda neste
- * momento") — só troca pra claro se o visitante já escolheu antes.
- * De propósito NÃO lê `prefers-color-scheme`: o padrão do produto é
- * escuro independente do SO do visitante, a escolha explícita do
- * localStorage é a única fonte de verdade além do default.
+ * Claro é o default (adendo ago/2026 ao Guia de Marca, seção 10 — troca
+ * a decisão anterior de "escuro é o default") — só troca pra escuro se o
+ * visitante já escolheu antes. De propósito NÃO lê `prefers-color-scheme`:
+ * o default do produto é fixo, independente do SO do visitante — a
+ * escolha explícita do localStorage é a única fonte de verdade além dele.
  */
 export const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem(${JSON.stringify(
   THEME_STORAGE_KEY,
-)});if(t!=="light")t="dark";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();`;
+)});if(t!=="dark")t="light";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();`;
 
 type ThemeListener = () => void;
 
@@ -25,7 +25,7 @@ type ThemeListener = () => void;
  * `<html>` — via `useSyncExternalStore` (não `useEffect` + `setState`):
  * é a API que o React recomenda pra ler estado que vive fora da árvore
  * React (o atributo no DOM, setado pelo script inline acima) sem
- * mismatch de hidratação. `getServerSnapshot` fixa "dark" pra bater com
+ * mismatch de hidratação. `getServerSnapshot` fixa "light" pra bater com
  * o que o SSR e o `:root` de `globals.css` já assumem antes do script
  * inline rodar.
  */
@@ -37,11 +37,11 @@ export function subscribeTheme(listener: ThemeListener) {
 }
 
 export function getThemeSnapshot(): Theme {
-  return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
 }
 
 export function getServerThemeSnapshot(): Theme {
-  return "dark";
+  return "light";
 }
 
 /** Aplica o tema no DOM, persiste em localStorage e avisa os toggles montados. */
