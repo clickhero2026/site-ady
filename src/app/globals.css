@@ -5,32 +5,26 @@
    ========================================================================== */
 
 :root {
-  /* --- Cor bruta do guia de marca ---
-     Adendo ao Guia de Marca (ago/2026): o tema claro passa a ser o
-     default de carregamento do produto — o escuro continua fazendo
-     parte do sistema (herdado da Click Hero, seção 4 do guia), só deixa
-     de ser a primeira impressão. A regra de contraste da seção 2 não
-     muda: #1E88A8 continua exclusivo de fundo escuro, #17708A de fundo
-     claro — só troca qual dos dois é o default. */
-  --ady-bg: #0c0d0a; /* fundo escuro do sistema — usado quando data-theme="dark" */
-  --ady-neutral: #ecedef; /* fundo claro do sistema — default de carregamento (adendo ago/2026) */
+  /* --- Cor bruta do guia de marca --- */
+  --ady-bg: #0c0d0a; /* fundo escuro — valor base de :root; default de carregamento do produto é claro (ver bloco do toggle abaixo) */
+  --ady-neutral: #ecedef; /* texto sobre escuro / superfície quando o fundo é claro */
   --ady-accent-on-dark: #1e88a8; /* petróleo — SOMENTE sobre fundo escuro */
   --ady-accent-on-light: #17708a; /* petróleo — SOMENTE sobre fundo claro */
   --ady-spark: #cf6f03; /* faísca — símbolo apenas, nunca UI */
 
-  /* --- Papéis semânticos (escopo padrão = fundo claro, adendo ago/2026) ---
-     Trocar de contexto (ex.: um cartão escuro) deve redefinir --surface,
+  /* --- Papéis semânticos (escopo padrão = fundo escuro) ---
+     Trocar de contexto (ex.: um cartão claro) deve redefinir --surface,
      --on-surface e --accent dentro daquele escopo — nunca usar
      --ady-accent-on-dark/light diretamente fora deste arquivo. Isso torna
      estruturalmente impossível inverter a regra de contraste da seção 2. */
-  --surface: var(--ady-neutral);
-  --on-surface: var(--ady-bg);
-  --accent: var(--ady-accent-on-light);
+  --surface: var(--ady-bg);
+  --on-surface: var(--ady-neutral);
+  --accent: var(--ady-accent-on-dark);
   /* Texto/ícone sobre um preenchimento --accent (ex.: botão sólido). As duas
      variantes de petróleo têm luminâncias diferentes, então o texto que
      garante AA (4.5:1) muda de lado: escuro sobre #1E88A8, claro sobre
      #17708A. Nunca hardcode essa cor fora daqui. */
-  --on-accent: var(--ady-neutral);
+  --on-accent: var(--ady-bg);
   --spark: var(--ady-spark);
 
   --focus-ring: var(--accent);
@@ -38,7 +32,7 @@
   /* Texto secundário/muted — não vem do guia de marca (que não cobre UI
      de produto), inventado por analogia mantendo a mesma relação de
      contraste que já existe hoje entre --on-surface e superfície. */
-  --text-muted: #5a5b57;
+  --text-muted: #8a8b85;
 
   /* --- Tipografia --- */
   --font-sans: var(--font-gantari), system-ui, -apple-system, "Segoe UI",
@@ -69,25 +63,29 @@
   --radius-lg: 1.5rem;
   --space-section: clamp(4rem, 3rem + 4vw, 8rem);
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 /* ==========================================================================
    Toggle de tema (claro/escuro) — todo o site.
-   Claro é o default de carregamento (adendo ago/2026 ao Guia de Marca): o
-   `:root` acima já define os valores claros, e este bloco só é aplicado
-   quando `<html data-theme="dark">` — setado pelo script inline no
-   layout raiz (evita flash) ou pelo componente `ThemeToggle` depois da
-   primeira interação. `prefers-color-scheme` NÃO é usada como fonte de
-   verdade: o default do produto é fixo, independente do SO do visitante.
+   O `:root` acima carrega os valores escuros (estrutura original deste
+   arquivo — não invertida) e este bloco só é aplicado quando
+   `<html data-theme="light">`. O default de CARREGAMENTO, porém, não é
+   decidido aqui: é o script inline `beforeInteractive` no layout raiz
+   (`THEME_INIT_SCRIPT`, em `src/lib/theme.ts`) que aplica
+   `data-theme="light"` sempre que não há escolha salva em localStorage —
+   adendo ao Guia de Marca, ago/2026: claro passa a ser o default do
+   produto, escuro só quando o visitante escolhe explicitamente pelo
+   `ThemeToggle`. `prefers-color-scheme` NÃO é usada como fonte de
+   verdade: o default é fixo, independente do SO do visitante.
    ========================================================================== */
-:root[data-theme="dark"] {
-  --surface: var(--ady-bg);
-  --on-surface: var(--ady-neutral);
-  --accent: var(--ady-accent-on-dark);
-  --on-accent: var(--ady-bg);
-  --text-muted: #8a8b85;
-  color-scheme: dark;
+:root[data-theme="light"] {
+  --surface: var(--ady-neutral);
+  --on-surface: var(--ady-bg);
+  --accent: var(--ady-accent-on-light);
+  --on-accent: var(--ady-neutral);
+  --text-muted: #5a5b57;
+  color-scheme: light;
 }
 
 /* Escopo para blocos sobre superfície clara (cartões, inputs, modal).

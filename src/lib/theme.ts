@@ -26,8 +26,10 @@ type ThemeListener = () => void;
  * é a API que o React recomenda pra ler estado que vive fora da árvore
  * React (o atributo no DOM, setado pelo script inline acima) sem
  * mismatch de hidratação. `getServerSnapshot` fixa "light" pra bater com
- * o que o SSR e o `:root` de `globals.css` já assumem antes do script
- * inline rodar.
+ * o `data-theme` que o `THEME_INIT_SCRIPT` acima aplica por padrão — não
+ * com o `:root` (bare) de `globals.css`, que continua com os valores
+ * escuros por estrutura do arquivo (ver comentário lá) e só é o que
+ * renderiza se o script inline falhar/não rodar.
  */
 const listeners = new Set<ThemeListener>();
 
