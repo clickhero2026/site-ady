@@ -3,10 +3,10 @@ import styles from "./PlatformPreview.module.css";
 
 /**
  * Reforço de credibilidade logo depois de "O que a gente vai fazer no
- * workshop": a mesma screenshot real do produto usada na home
- * (WhatAdyDoes, img-09 — calendário do mês inteiro de conteúdo já
- * planejado), pra deixar claro que a demonstração ao vivo é sobre uma
- * tela que já existe, não uma promessa.
+ * workshop": screenshot real do produto (img-w04 — tela "Seu anúncio" do
+ * Estúdio Criativo, com um anúncio já gerado pelo ady e os botões de
+ * salvar/publicar), pra deixar claro que a demonstração ao vivo é sobre
+ * uma tela que já existe, não uma promessa.
  */
 export function PlatformPreview() {
   return (
@@ -20,10 +20,10 @@ export function PlatformPreview() {
 
         <div className={styles.frame}>
           <Image
-            src="/images/img-09.webp"
-            alt="Tela do calendário do ady mostrando o mês inteiro de conteúdo já planejado, com os posts organizados por dia"
-            width={1301}
-            height={569}
+            src="/images/img-w04-estudio.webp"
+            alt="Tela 'Seu anúncio' do Estúdio Criativo do ady mostrando um anúncio de hambúrguer gerado pela IA, com os botões Salvar na Biblioteca e Publicar no Meta"
+            width={1296}
+            height={646}
             className={styles.img}
           />
         </div>
