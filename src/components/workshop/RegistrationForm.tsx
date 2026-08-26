@@ -111,11 +111,13 @@ export function RegistrationForm() {
   return (
     <section id="inscricao" className="section">
       <div className="container">
-        <h2 className="section-title">Garanta sua vaga</h2>
-        <p className={`section-lead ${styles.lead}`}>
-          {WORKSHOP.data}, {WORKSHOP.horario}. Gratuito, exclusivo membros
-          BNI. São {WORKSHOP.vagas} vagas e não tem gravação.
-        </p>
+        <div className={styles.intro}>
+          <h2 className={styles.title}>Garanta sua vaga</h2>
+          <p className={styles.lead}>
+            {WORKSHOP.data}, {WORKSHOP.horario}. Gratuito, exclusivo
+            membros BNI. São {WORKSHOP.vagas} vagas e não tem gravação.
+          </p>
+        </div>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           <Field label="Nome completo" error={errors.nome}>
