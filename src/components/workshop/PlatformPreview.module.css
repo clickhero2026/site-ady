@@ -1,3 +1,20 @@
+.intro {
+  max-width: 48rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.title {
+  font-size: var(--fs-h2);
+}
+
+.lead {
+  margin-top: 0.75rem;
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-light);
+  color: color-mix(in srgb, var(--on-surface) 82%, transparent);
+}
+
 .frame {
   margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
   max-width: 48rem;
