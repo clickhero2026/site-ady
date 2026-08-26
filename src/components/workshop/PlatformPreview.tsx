@@ -12,10 +12,14 @@ export function PlatformPreview() {
   return (
     <section className="section">
       <div className="container">
-        <h2 className="section-title">É essa a tela, de verdade</h2>
+        <h2 className="section-title">
+          Você vai conhecer o ady. É essa a tela do ady que o Rafael vai
+          usar ao vivo pra montar o mês inteiro de conteúdo na sua frente.
+        </h2>
         <p className="section-lead">
-          Nada de mockup. É essa a tela do ady que o Rafael vai usar ao
-          vivo pra montar o mês inteiro de conteúdo na sua frente.
+          Pela primeira vez vamos apresentar a ferramenta que vai fazer
+          seu marketing operar no piloto automático na criação de uma
+          máquina de atração de novos clientes todos os dias.
         </p>
 
         <div className={styles.frame}>
