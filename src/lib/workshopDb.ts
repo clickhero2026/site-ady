@@ -33,10 +33,10 @@ export async function saveWorkshopLead(
 
     await sql`
       INSERT INTO workshop_leads
-        (nome, whatsapp, email, negocio, segmento, indicado_por, origem)
+        (nome, whatsapp, email, negocio, segmento, negocio_outro, origem)
       VALUES
         (${lead.nome}, ${lead.whatsapp}, ${lead.email}, ${lead.negocio},
-         ${lead.segmento}, ${lead.indicadoPor || null}, ${workshopOrigem})
+         ${lead.segmento}, ${lead.negocioOutro || null}, ${workshopOrigem})
     `;
 
     return { ok: true };

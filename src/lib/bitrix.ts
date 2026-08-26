@@ -90,7 +90,7 @@ export async function sendLeadToBitrix(lead: LeadData): Promise<BitrixResult> {
 }
 
 /**
- * `BITRIX_FIELD_SEGMENTO_WORKSHOP` e `BITRIX_FIELD_INDICADO_POR` são
+ * `BITRIX_FIELD_SEGMENTO_WORKSHOP` e `BITRIX_FIELD_NEGOCIO_OUTRO` são
  * opcionais, mesmo padrão do lead da home — campo customizado se existir,
  * senão vai em COMMENTS. A origem (`workshop-[DATA]`, briefing seção 6)
  * sempre vai em COMMENTS, é o que mede a performance de cada convite do
@@ -100,11 +100,11 @@ export async function sendWorkshopLeadToBitrix(
   lead: WorkshopLeadData,
 ): Promise<BitrixResult> {
   const fieldSegmento = process.env.BITRIX_FIELD_SEGMENTO_WORKSHOP;
-  const fieldIndicadoPor = process.env.BITRIX_FIELD_INDICADO_POR;
+  const fieldNegocioOutro = process.env.BITRIX_FIELD_NEGOCIO_OUTRO;
 
   const comments = [
     !fieldSegmento && `Segmento: ${lead.segmento}`,
-    lead.indicadoPor && !fieldIndicadoPor && `Indicado por: ${lead.indicadoPor}`,
+    lead.negocioOutro && !fieldNegocioOutro && `Negócio (outro): ${lead.negocioOutro}`,
     `Origem: ${workshopOrigem}`,
   ]
     .filter(Boolean)
@@ -121,7 +121,7 @@ export async function sendWorkshopLeadToBitrix(
   };
 
   if (fieldSegmento) fields[fieldSegmento] = lead.segmento;
-  if (lead.indicadoPor && fieldIndicadoPor) fields[fieldIndicadoPor] = lead.indicadoPor;
+  if (lead.negocioOutro && fieldNegocioOutro) fields[fieldNegocioOutro] = lead.negocioOutro;
 
   return postLeadToBitrix(fields, "workshop-lead");
 }

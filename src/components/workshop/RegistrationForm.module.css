@@ -3,7 +3,7 @@
 }
 
 .form {
-  margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+  margin: clamp(2rem, 1.5rem + 2vw, 3rem) auto 0;
   max-width: 30rem;
   display: flex;
   flex-direction: column;

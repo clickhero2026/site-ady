@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/workshop/Hero";
 import { ForWho } from "@/components/workshop/ForWho";
 import { WhatYoullSee } from "@/components/workshop/WhatYoullSee";
+import { PlatformPreview } from "@/components/workshop/PlatformPreview";
 import { Presenters } from "@/components/workshop/Presenters";
 import { RegistrationForm } from "@/components/workshop/RegistrationForm";
 import { StickyMobileCta } from "@/components/workshop/StickyMobileCta";
@@ -20,6 +21,7 @@ export default function WorkshopPage() {
       <Hero />
       <ForWho />
       <WhatYoullSee />
+      <PlatformPreview />
       <Presenters />
       <RegistrationForm />
       {/* Rodapé mínimo, exclusivo do funil de workshop — só o símbolo do

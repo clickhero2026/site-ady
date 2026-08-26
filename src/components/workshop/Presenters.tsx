@@ -22,9 +22,10 @@ export function Presenters() {
             </h3>
             <p className={styles.role}>{WORKSHOP.apresentadores.jean.cargo}</p>
             <p className="body-text">
-              Passa o dia conversando com dono de negócio. Conduz o
-              workshop e vai fazer, na hora da demonstração, as perguntas
-              que você faria.
+              Com mais de 12 anos de experiência em vendas de alta
+              performance, foi coroado como #1 em vendas por 2 anos
+              consecutivos competindo com mais de 60 vendedores e já ajudou
+              a treinar e formar mais de 100 times comerciais.
             </p>
           </article>
 
@@ -45,8 +46,7 @@ export function Presenters() {
             <p className="body-text">
               Operou marketing pra dezenas de negócios locais durante anos,
               viu por dentro por que o modelo não funciona pro pequeno, e
-              construiu o ady pra resolver isso. É ele quem vai mostrar a
-              tela.
+              construiu o ady pra resolver isso.
             </p>
           </article>
         </div>

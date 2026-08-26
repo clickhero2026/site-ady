@@ -1,0 +1,15 @@
+.frame {
+  margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+  max-width: 48rem;
+  margin-inline: auto;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
+  box-shadow: 0 20px 40px -20px color-mix(in srgb, var(--on-surface) 30%, transparent);
+}
+
+.img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

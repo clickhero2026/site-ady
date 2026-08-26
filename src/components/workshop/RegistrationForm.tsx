@@ -16,7 +16,7 @@ interface FormState {
   email: string;
   negocio: string;
   segmento: string;
-  indicadoPor: string;
+  negocioOutro: string;
 }
 
 const EMPTY_FORM: FormState = {
@@ -25,7 +25,7 @@ const EMPTY_FORM: FormState = {
   email: "",
   negocio: "",
   segmento: "",
-  indicadoPor: "",
+  negocioOutro: "",
 };
 
 type Status = "idle" | "submitting" | "error";
@@ -54,6 +54,9 @@ export function RegistrationForm() {
       next.negocio = "Digite o nome do seu negócio.";
     }
     if (!form.segmento) next.segmento = "Escolha uma opção.";
+    if (form.segmento === "Outro" && form.negocioOutro.trim().length < 2) {
+      next.negocioOutro = "Conta pra gente o que seu negócio faz.";
+    }
 
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -76,7 +79,7 @@ export function RegistrationForm() {
           email: form.email,
           negocio: form.negocio,
           segmento: form.segmento,
-          indicadoPor: form.indicadoPor,
+          negocioOutro: form.segmento === "Outro" ? form.negocioOutro : "",
         }),
       });
 
@@ -160,7 +163,17 @@ export function RegistrationForm() {
           <Field label="O que seu negócio faz" error={errors.segmento}>
             <select
               value={form.segmento}
-              onChange={(e) => handleField("segmento", e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setForm((prev) => ({
+                  ...prev,
+                  segmento: value,
+                  negocioOutro: value === "Outro" ? prev.negocioOutro : "",
+                }));
+                if (value !== "Outro") {
+                  setErrors((prev) => ({ ...prev, negocioOutro: undefined }));
+                }
+              }}
               aria-invalid={Boolean(errors.segmento)}
             >
               <option value="" disabled>
@@ -174,13 +187,16 @@ export function RegistrationForm() {
             </select>
           </Field>
 
-          <Field label="Se alguém te indicou, coloque o nome aqui" optional>
-            <input
-              type="text"
-              value={form.indicadoPor}
-              onChange={(e) => handleField("indicadoPor", e.target.value)}
-            />
-          </Field>
+          {form.segmento === "Outro" && (
+            <Field label="Qual é o seu negócio?" error={errors.negocioOutro}>
+              <input
+                type="text"
+                value={form.negocioOutro}
+                onChange={(e) => handleField("negocioOutro", e.target.value)}
+                aria-invalid={Boolean(errors.negocioOutro)}
+              />
+            </Field>
+          )}
 
           {/* Honeypot — invisível pra gente, alvo fácil pra bot. */}
           <input
