@@ -93,8 +93,8 @@ export async function sendLeadToBitrix(lead: LeadData): Promise<BitrixResult> {
  * `BITRIX_FIELD_SEGMENTO_WORKSHOP` e `BITRIX_FIELD_NEGOCIO_OUTRO` são
  * opcionais, mesmo padrão do lead da home — campo customizado se existir,
  * senão vai em COMMENTS. A origem (`workshop-[DATA]`, briefing seção 6)
- * sempre vai em COMMENTS, é o que mede a performance de cada convite do
- * BNI — não deve depender de campo customizado existir ou não.
+ * sempre vai em COMMENTS, é o que identifica a turma de cada inscrito —
+ * não deve depender de campo customizado existir ou não.
  */
 export async function sendWorkshopLeadToBitrix(
   lead: WorkshopLeadData,

@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error:
-          "Não deu pra enviar agora. Tenta de novo em instantes ou chama o Jean no WhatsApp.",
+          "Não deu pra enviar agora. Tenta de novo em instantes ou chama a gente no WhatsApp.",
       },
       { status: 502 },
     );

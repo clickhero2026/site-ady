@@ -23,7 +23,7 @@ export function Hero() {
 
       <div className={`container ${styles.inner}`}>
         <p className={styles.eyebrow}>
-          WORKSHOP EXCLUSIVO PARA MEMBROS BNI · GRÁTIS · {WORKSHOP.vagas} VAGAS
+          WORKSHOP AO VIVO · GRÁTIS · {WORKSHOP.vagas} VAGAS
         </p>
 
         <h1 className={styles.title}>{WORKSHOP.nome}</h1>
@@ -38,7 +38,7 @@ export function Hero() {
         <ul className={styles.facts}>
           <li>➜ {workshopDataHorario}</li>
           <li>➜ Ao vivo, pelo Google Meet</li>
-          <li>➜ Grátis, exclusivo para membros BNI</li>
+          <li>➜ Grátis</li>
         </ul>
 
         <CtaLink>Garantir minha vaga</CtaLink>

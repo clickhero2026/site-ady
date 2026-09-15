@@ -34,10 +34,6 @@ export const WORKSHOP = {
   temGravacao: false,
 
   apresentadores: {
-    jean: {
-      nomeCompleto: "Jean Dentz",
-      cargo: "Sócio da Click Hero, responsável comercial",
-    },
     rafael: {
       nomeCompleto: "Rafael Cruz",
       cargo: "Fundador da Click Hero",

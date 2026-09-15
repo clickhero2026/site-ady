@@ -7,8 +7,8 @@ import { WORKSHOP, WORKSHOP_WHATSAPP } from "@/config/workshop";
 import { buildWhatsappLink } from "@/lib/whatsapp";
 import styles from "./RegistrationForm.module.css";
 
-const JEAN_FALLBACK_MESSAGE =
-  "Oi Jean, tentei me inscrever no workshop pelo site mas deu erro. Pode me ajudar?";
+const WHATSAPP_FALLBACK_MESSAGE =
+  "Oi! Tentei me inscrever no workshop pelo site mas deu erro. Pode me ajudar?";
 
 interface FormState {
   nome: string;
@@ -106,7 +106,10 @@ export function RegistrationForm() {
     }
   }
 
-  const jeanFallbackLink = buildWhatsappLink(WORKSHOP_WHATSAPP, JEAN_FALLBACK_MESSAGE);
+  const whatsappFallbackLink = buildWhatsappLink(
+    WORKSHOP_WHATSAPP,
+    WHATSAPP_FALLBACK_MESSAGE,
+  );
 
   return (
     <section id="inscricao" className="section">
@@ -114,8 +117,8 @@ export function RegistrationForm() {
         <div className={styles.intro}>
           <h2 className={styles.title}>Garanta sua vaga</h2>
           <p className={styles.lead}>
-            {WORKSHOP.data}, {WORKSHOP.horario}. Gratuito, exclusivo
-            membros BNI. São {WORKSHOP.vagas} vagas e não tem gravação.
+            {WORKSHOP.data}, {WORKSHOP.horario}. Gratuito. São{" "}
+            {WORKSHOP.vagas} vagas e não tem gravação.
           </p>
         </div>
 
@@ -213,11 +216,11 @@ export function RegistrationForm() {
           {status === "error" && errorMessage && (
             <p role="alert" className={styles.formError}>
               {errorMessage}
-              {jeanFallbackLink && (
+              {whatsappFallbackLink && (
                 <>
                   {" "}
-                  <a href={jeanFallbackLink} target="_blank" rel="noopener noreferrer">
-                    Chamar o Jean no WhatsApp
+                  <a href={whatsappFallbackLink} target="_blank" rel="noopener noreferrer">
+                    Falar com a gente no WhatsApp
                   </a>
                   .
                 </>

@@ -14,7 +14,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const JEAN_MESSAGE = "Oi Jean, acabei de me inscrever no workshop";
+// O número em si (NEXT_PUBLIC_WORKSHOP_WHATSAPP) continua sendo o do Jean,
+// por decisão deliberada — só o texto visível ao usuário foi generalizado
+// pra "a gente".
+const WHATSAPP_MESSAGE = "Oi! Acabei de me inscrever no workshop";
 
 const SHARE_MESSAGE =
   `Achei que isso ia te interessar. É um workshop ao vivo pra dono de ` +
@@ -38,7 +41,7 @@ const SHARE_MESSAGE =
  * disparado por esses mesmos eventos de dataLayer.
  */
 export default function WorkshopObrigadoPage() {
-  const jeanHref = buildWhatsappLink(WORKSHOP_WHATSAPP, JEAN_MESSAGE);
+  const whatsappHref = buildWhatsappLink(WORKSHOP_WHATSAPP, WHATSAPP_MESSAGE);
   const shareHref = `https://wa.me/?text=${encodeURIComponent(SHARE_MESSAGE)}`;
   const icsHref = WORKSHOP.dataISO ? "/api/workshop-ics" : null;
 
@@ -77,14 +80,14 @@ export default function WorkshopObrigadoPage() {
             </p>
           )}
 
-          {jeanHref && (
+          {whatsappHref && (
             <a
               className={styles.secondary}
-              href={jeanHref}
+              href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Chamar o Jean no WhatsApp
+              Falar com a gente no WhatsApp
             </a>
           )}
         </div>
