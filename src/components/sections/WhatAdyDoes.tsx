@@ -51,18 +51,22 @@ const blocks: { title: string; body: string; media: BlockMedia }[] = [
     title: "Coloca seus anúncios no ar",
     body: "Ele cria o anúncio, escolhe quem vai ver e acompanha se está dando gente. Se não estiver, ele mexe.",
     media: {
-      type: "placeholder",
-      id: "IMG-11",
-      description: "Criação de anúncio",
+      type: "image",
+      src: "/images/img-11.webp",
+      width: 1000,
+      height: 536,
+      alt: "Tela de campanhas do ady mostrando anúncios ativos e pausados, com investimento e ações de ativar ou pausar",
     },
   },
   {
     title: "Te mostra o que deu certo",
     body: "Quanta gente viu, quanta gente chamou, quanto custou cada cliente novo. Em números que fazem sentido.",
     media: {
-      type: "placeholder",
-      id: "IMG-12",
-      description: "Painel de resultados com números",
+      type: "image",
+      src: "/images/img-12.webp",
+      width: 1400,
+      height: 781,
+      alt: "Painel do ady mostrando clientes alcançados, investimento total, custo por cliente e gráfico de desempenho da semana",
     },
   },
 ];
