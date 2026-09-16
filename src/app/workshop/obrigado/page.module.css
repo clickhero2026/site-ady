@@ -94,12 +94,16 @@
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  background: transparent;
+  /* Não é transparente: o CTA secundário também precisa saltar do fundo
+     (pedido do Rafael). Petróleo lavado + sombra leve — mais presença que
+     um botão fantasma, sem competir com o `.primary` sólido acima. */
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+  box-shadow: 0 4px 14px -6px color-mix(in srgb, var(--accent) 55%, transparent);
   transition: background 0.15s ease;
 }
 
 .secondary:hover {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  background: color-mix(in srgb, var(--accent) 28%, var(--surface));
 }
 
 .pendingNote {

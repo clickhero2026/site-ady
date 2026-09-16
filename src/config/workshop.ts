@@ -28,7 +28,6 @@ export const WORKSHOP = {
   /** Não aparece em texto visível da página (removido a pedido) — só
    * segue usado pro cálculo interno do DTEND do .ics. */
   duracaoMinutos: 60,
-  duracaoLabel: "60 minutos",
   vagas: 30,
   plataforma: "Google Meet",
   temGravacao: false,

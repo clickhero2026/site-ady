@@ -16,6 +16,7 @@ export const WORKSHOP_SEGMENTOS = [
   "Imobiliário",
   "Contabilidade e serviços financeiros",
   "Tecnologia e informática",
+  "Casa e decoração",
   "Outro",
 ] as const;
 
