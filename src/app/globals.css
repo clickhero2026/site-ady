@@ -253,6 +253,33 @@ a {
   margin-top: 1rem;
 }
 
+/* Moldura padrão das capturas de tela do produto — hoje as seções
+   "Como funciona" (IMG-04..06) e "O que ele faz" (IMG-08..12).
+
+   A hairline não é decoração: as capturas do ady têm fundo claro ou
+   escuro conforme a tela fotografada, então sem borda a captura clara
+   se dissolve no tema claro e a escura some no tema escuro. Como
+   --on-surface inverte junto com o tema, a mesma regra resolve os dois
+   casos sem precisar de variante por tema.
+
+   Mora aqui, e não num CSS Module, porque as duas seções precisam da
+   mesma moldura — duplicar o valor nos dois módulos é o tipo de coisa
+   que sai de sincronia na primeira mudança de marca. */
+.screenshot-frame {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
+}
+
+/* Reserva a altura pelo aspect-ratio intrínseco (width/height que o
+   next/image escreve no <img>), então a caixa já nasce do tamanho final
+   e a troca do placeholder pelo asset real não desloca nada. */
+.screenshot-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

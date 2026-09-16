@@ -87,13 +87,12 @@ export function WhatAdyDoes() {
               data-reverse={i % 2 === 1 ? "" : undefined}
             >
               {block.media.type === "image" ? (
-                <div className={styles.media}>
+                <div className="screenshot-frame">
                   <Image
                     src={block.media.src}
                     alt={block.media.alt}
                     width={block.media.width}
                     height={block.media.height}
-                    className={styles.mediaImg}
                   />
                 </div>
               ) : (

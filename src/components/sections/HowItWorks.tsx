@@ -1,4 +1,4 @@
-import { MediaPlaceholder } from "@/components/media/MediaPlaceholder";
+import Image from "next/image";
 import styles from "./HowItWorks.module.css";
 
 const steps = [
@@ -7,8 +7,10 @@ const steps = [
     title: "Conectar",
     body: "Você conecta seu Instagram. Leva dois minutos e a gente faz junto com você pelo WhatsApp.",
     img: {
-      id: "IMG-04",
-      description: "Tela de conexão de conta",
+      src: "/images/img-04.webp",
+      width: 800,
+      height: 600,
+      alt: "Tela de integrações do ady mostrando a conta do Meta conectada e ativa",
     },
   },
   {
@@ -16,8 +18,10 @@ const steps = [
     title: "Contar o que seu negócio faz",
     body: "Seu nome, o que você vende, quem é seu cliente, sua logo e suas cores. É só uma vez.",
     img: {
-      id: "IMG-05",
-      description: "Tela de cadastro do negócio: nome, segmento, logo, cores",
+      src: "/images/img-05.webp",
+      width: 800,
+      height: 525,
+      alt: "Tela do ady pedindo o objetivo da campanha, o nicho do negócio e o produto principal para configurar as metas",
     },
   },
   {
@@ -25,8 +29,10 @@ const steps = [
     title: "O ady assume",
     body: "Ele monta o mês inteiro de conteúdo, cria os posts, publica na hora certa e coloca seus anúncios no ar. Você não precisa fazer mais nada.",
     img: {
-      id: "IMG-06",
-      description: "Calendário de conteúdo montado, mês cheio",
+      src: "/images/img-06.webp",
+      width: 800,
+      height: 446,
+      alt: "Tela do Estúdio do ady mostrando vários anúncios já criados e aprovados, prontos para uso",
     },
   },
 ];
@@ -40,12 +46,14 @@ export function HowItWorks() {
         <ol className={styles.steps}>
           {steps.map((step) => (
             <li key={step.n} className={styles.step}>
-              <MediaPlaceholder
-                id={step.img.id}
-                width={800}
-                height={600}
-                description={step.img.description}
-              />
+              <div className="screenshot-frame">
+                <Image
+                  src={step.img.src}
+                  alt={step.img.alt}
+                  width={step.img.width}
+                  height={step.img.height}
+                />
+              </div>
               <span className={styles.number} aria-hidden="true">
                 {step.n}
               </span>
