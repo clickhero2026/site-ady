@@ -20,6 +20,41 @@
   gap: 0.75rem;
 }
 
+/* As três capturas têm proporções diferentes (1.333, 1.524 e 1.794), então
+   cada imagem tem altura própria. Com o card em `flex`, tudo abaixo da
+   imagem herdava esse desencontro e número/título/corpo desciam em escada
+   entre as colunas — o topo dos três <h3> chegava a 66px de diferença.
+
+   `subgrid` corrige sem tocar nas imagens: as quatro linhas do card
+   (imagem · número · título · corpo) passam a SER as linhas do grid
+   externo, então cada faixa é dimensionada pelo card mais alto e os três
+   passos se alinham entre si. As imagens seguem em width:100%/height:auto,
+   sem proporção forçada e sem corte — a mudança é só na estrutura do card.
+
+   Só a partir de 48rem: em coluna única não há com o que alinhar, e aí o
+   card continua no flex declarado acima. */
+@media (min-width: 48rem) {
+  @supports (grid-template-rows: subgrid) {
+    .steps {
+      grid-template-rows: auto auto auto auto;
+      /* Como os três cards ocupam as MESMAS quatro linhas, o row-gap do
+         grid externo passa a ser o espaçamento interno do card. Vale o
+         mesmo 0.75rem que o flex usava, e o respiro entre colunas segue
+         nos 2rem. O `gap` do .step é idêntico de propósito: parent e
+         subgrid concordam, então não importa qual dos dois o browser
+         aplica. */
+      column-gap: 2rem;
+      row-gap: 0.75rem;
+    }
+
+    .step {
+      display: grid;
+      grid-row: span 4;
+      grid-template-rows: subgrid;
+    }
+  }
+}
+
 .number {
   font-size: var(--fs-small);
   font-weight: var(--fw-semibold);
