@@ -99,7 +99,7 @@ export function WhatAdyDoes() {
                 <MediaPlaceholder
                   id={block.media.id}
                   width={1000}
-                  height={750}
+                  height={540}
                   description={block.media.description}
                 />
               )}
