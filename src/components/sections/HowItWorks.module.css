@@ -55,6 +55,52 @@
   }
 }
 
+/* Realce das capturas desta seção. As três telas (Integrações, Metas,
+   Estúdio) são de fundo branco e a seção também é clara, então o hairline
+   de 12% que a `.screenshot-frame` global aplica não dava conta aqui: o
+   card encostava no fundo sem separação.
+
+   Vive neste módulo, e não em globals.css, de propósito — a Seção 4 já
+   foi aprovada com o contraste padrão e não deve mudar junto.
+
+   Não há token de superfície elevada neste design system (só --surface /
+   --on-surface / --accent), então o preenchimento é derivado por
+   color-mix, o mesmo idioma usado no resto do projeto, em vez de uma cor
+   nova fora do guia. Como --on-surface e --surface invertem com o tema, a
+   mesma regra vale no claro e no escuro. */
+.stepShot {
+  /* Passe-partout: a moldura ganha fundo e respiro, então existe uma
+     faixa de cor entre a captura branca e o fundo da seção. */
+  padding: 0.5rem;
+  background: color-mix(in srgb, var(--on-surface) 6%, var(--surface));
+  /* Sobrepõe os 12% da .screenshot-frame global. */
+  border-color: color-mix(in srgb, var(--on-surface) 22%, transparent);
+  /* Sombra neutra (não em petróleo — petróleo aqui é cor de CTA), mesma
+     construção do PlatformPreview. */
+  box-shadow: 0 12px 28px -18px color-mix(in srgb, var(--on-surface) 38%, transparent);
+}
+
+/* Com o passe-partout, a captura precisa do próprio raio — senão os
+   cantos retos dela brigam com os cantos arredondados da moldura. */
+.stepShot img {
+  border-radius: calc(var(--radius-md) - 0.5rem);
+}
+
+/* No escuro a sombra não serve: por ser derivada de --on-surface ela
+   inverte junto com o tema e vira uma difusão CLARA sob o card — luz onde
+   deveria haver ausência dela. Some. O passe-partout e a borda de 22% já
+   dão a separação necessária contra o fundo escuro.
+
+   O tema claro não é tocado: lá a sombra é escura sobre fundo claro, que é
+   o comportamento correto.
+
+   `data-theme` é sempre escrito no <html> pelo script de tema
+   (src/lib/theme.ts) antes do primeiro paint, então o seletor nunca fica
+   sem valor. */
+:root[data-theme="dark"] .stepShot {
+  box-shadow: none;
+}
+
 .number {
   font-size: var(--fs-small);
   font-weight: var(--fw-semibold);

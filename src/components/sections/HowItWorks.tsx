@@ -46,7 +46,7 @@ export function HowItWorks() {
         <ol className={styles.steps}>
           {steps.map((step) => (
             <li key={step.n} className={styles.step}>
-              <div className="screenshot-frame">
+              <div className={`screenshot-frame ${styles.stepShot}`}>
                 <Image
                   src={step.img.src}
                   alt={step.img.alt}
