@@ -280,6 +280,25 @@ a {
   height: auto;
 }
 
+/* Variante retrato — captura de app mobile (IMG-10, 700x1514).
+
+   Na largura cheia da coluna essa proporção (0.46) viraria uma tira de
+   ~1200px de altura, então a moldura é limitada a uma largura de
+   "aparelho" e centralizada na coluna. A imagem segue em
+   width:100%/height:auto: a proporção nativa é preservada e nada é
+   cortado — é a MOLDURA que encolhe, não a imagem que é recortada.
+
+   `min()` com 100% garante que em telas estreitas a moldura nunca fique
+   mais larga que a coluna disponível.
+
+   Como a Seção 4 é empilhamento de linhas independentes (cada bloco tem
+   seu próprio grid de 2 colunas), essa altura maior não afeta o
+   alinhamento de nenhum bloco vizinho. */
+.screenshot-frame.is-portrait {
+  max-width: min(100%, 15rem);
+  margin-inline: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

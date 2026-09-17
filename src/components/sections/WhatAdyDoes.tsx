@@ -1,26 +1,31 @@
 import Image from "next/image";
-import { MediaPlaceholder } from "@/components/media/MediaPlaceholder";
 import styles from "./WhatAdyDoes.module.css";
 
-type BlockMedia =
-  | { type: "placeholder"; id: string; description: string }
-  | { type: "image"; src: string; width: number; height: number; alt: string };
+interface BlockMedia {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  /** Captura de app mobile: moldura estreita e centralizada em vez da
+   * largura cheia da coluna (ver `.screenshot-frame.is-portrait`). */
+  portrait?: boolean;
+}
 
 const blocks: { title: string; body: string; media: BlockMedia }[] = [
   {
     title: "Escreve seus posts",
     body: "Ele sabe o que seu negócio vende e escreve na sua voz. Nada de texto genérico que serve pra qualquer um.",
     media: {
-      type: "placeholder",
-      id: "IMG-07",
-      description: "Texto de post gerado pela IA",
+      src: "/images/img-013.webp",
+      width: 1000,
+      height: 803,
+      alt: "Tela de criação de post do ady mostrando a legenda gerada e a imagem pronta para publicação no Instagram",
     },
   },
   {
     title: "Cria as imagens",
     body: "Com a sua logo, as suas cores e a sua cara. Sem designer, sem banco de imagem, sem Canva às onze da noite.",
     media: {
-      type: "image",
       src: "/images/img-08.webp",
       width: 1296,
       height: 646,
@@ -31,7 +36,6 @@ const blocks: { title: string; body: string; media: BlockMedia }[] = [
     title: "Monta Todos os Posts do Mês no Instagram pra Você",
     body: "Ele planeja o calendário completo de conteúdo. Você abre e já está tudo lá, pronto.",
     media: {
-      type: "image",
       src: "/images/img-09.webp",
       width: 1301,
       height: 569,
@@ -42,16 +46,17 @@ const blocks: { title: string; body: string; media: BlockMedia }[] = [
     title: "Publica sozinho",
     body: "No dia certo, no horário certo, no seu Instagram. Você não precisa lembrar de nada.",
     media: {
-      type: "placeholder",
-      id: "IMG-10",
-      description: "Agendamento e publicação no Instagram",
+      src: "/images/img-10.webp",
+      width: 700,
+      height: 1514,
+      alt: "Tela do Instagram no celular mostrando o perfil com os posts publicados automaticamente pelo ady",
+      portrait: true,
     },
   },
   {
     title: "Coloca seus anúncios no ar",
     body: "Ele cria o anúncio, escolhe quem vai ver e acompanha se está dando gente. Se não estiver, ele mexe.",
     media: {
-      type: "image",
       src: "/images/img-11.webp",
       width: 1000,
       height: 536,
@@ -62,7 +67,6 @@ const blocks: { title: string; body: string; media: BlockMedia }[] = [
     title: "Te mostra o que deu certo",
     body: "Quanta gente viu, quanta gente chamou, quanto custou cada cliente novo. Em números que fazem sentido.",
     media: {
-      type: "image",
       src: "/images/img-12.webp",
       width: 1400,
       height: 781,
@@ -86,23 +90,21 @@ export function WhatAdyDoes() {
               className={styles.block}
               data-reverse={i % 2 === 1 ? "" : undefined}
             >
-              {block.media.type === "image" ? (
-                <div className="screenshot-frame">
-                  <Image
-                    src={block.media.src}
-                    alt={block.media.alt}
-                    width={block.media.width}
-                    height={block.media.height}
-                  />
-                </div>
-              ) : (
-                <MediaPlaceholder
-                  id={block.media.id}
-                  width={1000}
-                  height={540}
-                  description={block.media.description}
+              <div
+                className={[
+                  "screenshot-frame",
+                  block.media.portrait ? "is-portrait" : null,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <Image
+                  src={block.media.src}
+                  alt={block.media.alt}
+                  width={block.media.width}
+                  height={block.media.height}
                 />
-              )}
+              </div>
               <div className={styles.blockCopy}>
                 <h3 className={styles.blockTitle}>{block.title}</h3>
                 <p className="body-text">{block.body}</p>
