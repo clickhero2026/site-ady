@@ -7,9 +7,10 @@ import type { PlanoKey } from "./leadOptions";
  * instalado direto no app: se um dia precisar do Pixel, ele entra como tag
  * dentro do próprio GTM, disparado por esses mesmos eventos de dataLayer.
  *
- * No-op silencioso se `NEXT_PUBLIC_GTM_ID` não estiver configurado (o
- * `<GoogleTagManager>` do layout não carrega, então esses pushes só ficam
- * acumulando num `dataLayer` que nada lê — inofensivo).
+ * O container carrega pelo loader do Stape no layout raiz
+ * (`conversionapi.useady.com.br`). `sendGTMEvent` não depende daquele
+ * loader: só faz `window.dataLayer.push`, então evento disparado antes
+ * do GTM subir fica na fila e é consumido quando ele carrega.
  */
 
 /** `page_view` — todas as páginas, disparado a cada troca de rota. */
