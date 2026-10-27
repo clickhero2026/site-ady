@@ -14,3 +14,20 @@ export const LP_TITULOS: Record<LpVariant, string> = {
   E: "7 DIAS GRÁTIS. SEM CARTÃO DE CRÉDITO. SEU INSTAGRAM E SEUS ANÚNCIOS FUNCIONANDO COM A GENTE",
   F: "POST SEM ANÚNCIO SÓ FALA COM QUEM JÁ TE CONHECE. EXPERIMENTE TER OS DOIS EM DIA, POR 7 DIAS",
 };
+
+/**
+ * Faixa de tamanho do título no celular, pelo número de caracteres. O
+ * teste de títulos só vale se as seis versões mostram o formulário
+ * inteiro na primeira tela; os títulos mais longos usam uma fonte menor
+ * (mínimo 28px) pra isso. O CSS do hero (`data-titulo`) aplica a faixa.
+ * Título editado cai na faixa certa sozinho.
+ *
+ * Hoje: A, E, F (89–91) → "curto"; C (108) → "medio"; B, D (119–122) → "longo".
+ */
+export type FaixaTitulo = "curto" | "medio" | "longo";
+
+export function faixaDoTitulo(titulo: string): FaixaTitulo {
+  if (titulo.length <= 100) return "curto";
+  if (titulo.length <= 112) return "medio";
+  return "longo";
+}

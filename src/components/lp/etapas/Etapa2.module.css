@@ -1,6 +1,7 @@
 .form {
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
 }
 
 /* ---- Cabeçalho do bloco: nome + contador + barra ---- */
@@ -123,19 +124,30 @@ legend + .nota {
   width: 100%;
   min-height: 3.5rem;
   padding: 0.85rem 1rem;
-  border: 2px solid #9fb9c2;
+  border: 2px solid #6f8a93; /* 3.7:1 sobre branco */
   border-radius: 0.875rem;
   background: #ffffff;
   color: var(--lp-text);
   font-size: 1.1875rem;
   line-height: 1.4;
   resize: vertical;
+  scroll-margin-block: 1rem;
+}
+
+/* Três linhas visíveis no mínimo; cresce com o rows e o puxador. */
+textarea.texto {
+  min-height: 6.75rem;
+}
+
+.texto::placeholder {
+  color: #5f6f74; /* 4.9:1 sobre branco */
+  opacity: 1;
 }
 
 .texto:focus-visible {
-  outline: none;
+  outline: 3px solid var(--lp-text);
+  outline-offset: 2px;
   border-color: var(--lp-petrol);
-  box-shadow: 0 0 0 4px rgb(23 112 138 / 0.2);
 }
 
 .texto[aria-invalid="true"] {
@@ -168,7 +180,7 @@ legend + .nota {
 }
 
 .cartao:hover {
-  border-color: #9fb9c2;
+  border-color: #6f8a93;
 }
 
 .cartao:has(.radio:checked) {
@@ -177,7 +189,7 @@ legend + .nota {
 }
 
 .cartao:has(.radio:focus-visible) {
-  outline: 3px solid var(--lp-petrol);
+  outline: 3px solid var(--lp-text);
   outline-offset: 2px;
 }
 
@@ -199,7 +211,7 @@ legend + .nota {
   place-items: center;
   width: 1.6rem;
   height: 1.6rem;
-  border: 2px solid #7f9aa3;
+  border: 2px solid #6f8a93;
   border-radius: 50%;
   background: #ffffff;
 }
@@ -232,12 +244,6 @@ legend + .nota {
 .outroLabel {
   font-size: 1.0625rem;
   font-weight: 600;
-}
-
-.erro {
-  color: #b3261e;
-  font-size: 1.0625rem;
-  font-weight: 700;
 }
 
 /* ---- Voltar / Continuar ---- */

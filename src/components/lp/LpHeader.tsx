@@ -5,7 +5,7 @@ import styles from "./LpHeader.module.css";
  * tela (`StickyCta`). */
 export function LpHeader() {
   return (
-    <header className={styles.header}>
+    <header className={styles.header} data-topo-fixo>
       <div className={`lp-container ${styles.inner}`}>
         <LpLogo />
         <a href="#inscricao" className={`lp-cta ${styles.cta}`}>

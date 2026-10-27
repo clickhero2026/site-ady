@@ -4,6 +4,7 @@
 
 .lista {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.875rem;
   margin-top: 2.5rem;
 }
@@ -11,11 +12,10 @@
 .item {
   border: 1px solid var(--lp-line);
   border-radius: 1.25rem;
-  background: var(--lp-bg-alt);
+  background: #ffffff; /* a seção já tem o fundo alternado */
 }
 
 .item[open] {
-  background: #ffffff;
   box-shadow: var(--lp-shadow);
 }
 

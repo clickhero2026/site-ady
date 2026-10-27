@@ -8,7 +8,7 @@ import { HORARIO_STORAGE_KEY } from "./HorarioMarcado";
 import styles from "./Agendar.module.css";
 
 type CalendlyGlobal = {
-  initInlineWidget: (opts: { url: string; parentElement: HTMLElement }) => void;
+  initInlineWidget: (opts: { url: string; parentElement: HTMLElement; resize?: boolean }) => void;
 };
 
 /**
@@ -105,7 +105,9 @@ export function AgendarCalendly({
   const iniciarWidget = useCallback(() => {
     const calendly = (window as unknown as { Calendly?: CalendlyGlobal }).Calendly;
     if (calendly && alvo.current && urlComDados && !alvo.current.childElementCount) {
-      calendly.initInlineWidget({ url: urlComDados, parentElement: alvo.current });
+      // resize: o Calendly avisa a altura da página dele (calendly.page_height)
+      // e o widget ajusta a caixa — sem rolagem dentro da rolagem.
+      calendly.initInlineWidget({ url: urlComDados, parentElement: alvo.current, resize: true });
     }
   }, [urlComDados]);
 
@@ -130,7 +132,12 @@ export function AgendarCalendly({
         strategy="afterInteractive"
         onReady={iniciarWidget}
       />
-      <div ref={alvo} className={styles.calendly} aria-label="Agenda com os horários disponíveis" />
+      <div
+        ref={alvo}
+        role="region"
+        className={styles.calendly}
+        aria-label="Agenda com os horários disponíveis"
+      />
       {registrandoEstado && (
         <p className={styles.registrando} role="status">
           Conversa marcada! Só um instante…

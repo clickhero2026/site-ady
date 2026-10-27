@@ -67,10 +67,31 @@ html:has(.lp-root) {
   scroll-padding-top: 5.5rem; /* não esconder âncora atrás da barra fixa */
 }
 
+/* Movimento reduzido: nada desliza, gira ou anima em todas as páginas da
+   LP (as mudanças de estado continuam, só sem transição). */
 @media (prefers-reduced-motion: reduce) {
   html:has(.lp-root) {
     scroll-behavior: auto;
   }
+
+  .lp-root *,
+  .lp-root *::before,
+  .lp-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .lp-cta:hover {
+    transform: none;
+  }
+}
+
+/* Texto ampliado (200%, acessibilidade do sistema): palavra que não cabe
+   quebra em vez de alargar o cartão e vazar da tela. Com o tamanho
+   normal nenhuma palavra chega a quebrar. */
+.lp-root :where(h1, h2, h3, p, li, dt, dd, summary, label, legend) {
+  overflow-wrap: anywhere;
 }
 
 .lp-container {
@@ -145,6 +166,8 @@ html:has(.lp-root) {
   letter-spacing: 0.01em;
   text-align: center;
   text-decoration: none;
+  overflow-wrap: anywhere; /* texto ampliado: quebra em vez de vazar */
+  max-width: 100%;
   cursor: pointer;
   box-shadow: 0 10px 24px -10px rgb(207 111 3 / 0.6);
   transition:

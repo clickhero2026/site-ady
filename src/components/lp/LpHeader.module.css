@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 4rem;
+  min-height: 3.5rem;
 }
 
 /* `.inner .cta` pra vencer o `display` do `.lp-cta` global. */

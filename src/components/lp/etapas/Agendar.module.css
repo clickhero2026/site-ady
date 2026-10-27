@@ -23,21 +23,16 @@
   font-size: 1.25rem;
 }
 
-/* Calendly: alto o bastante pra mostrar os dias e os horários sem
-   rolagem interna (no celular a lista de horários vem embaixo). */
+/* Calendly: a altura aqui é só a inicial. Com `resize`, o widget troca
+   pela altura real da página do Calendly a cada passo (dias, horários,
+   formulário) — a página rola, a agenda não. */
 .calendly {
-  min-width: 18rem;
-  height: 66rem;
+  min-width: 0;
+  height: 44rem;
   overflow: hidden;
   border: 1px solid var(--lp-line);
   border-radius: var(--lp-radius);
   background: #ffffff;
-}
-
-@media (min-width: 48rem) {
-  .calendly {
-    height: 44rem;
-  }
 }
 
 .registrando {
@@ -68,6 +63,8 @@
 
 .simular {
   justify-self: start;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   min-height: 3.5rem;
   padding: 0 1.25rem;
   border: 2px dashed #b07d00;

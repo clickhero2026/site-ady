@@ -1,5 +1,8 @@
+/* minmax(0, 1fr): nada de dentro (a agenda, palavra longa com texto
+   ampliado) alarga a página além da tela. */
 .shell {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   min-height: 100dvh;
 }
 
@@ -24,13 +27,14 @@
 
 /* ---- Conteúdo ---- */
 .conteudo {
-  padding: 1.5rem var(--lp-gutter) 3rem;
+  padding: 1.25rem var(--lp-gutter) 3rem;
   background: var(--lp-bg);
 }
 
 .conteudoInner {
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
   width: 100%;
   max-width: 40rem;
   margin-inline: auto;
@@ -109,7 +113,7 @@
 
 @media (min-width: 64rem) {
   .shell {
-    grid-template-columns: minmax(20rem, 28rem) 1fr;
+    grid-template-columns: minmax(20rem, 28rem) minmax(0, 1fr);
   }
 
   .painel {
@@ -146,5 +150,9 @@
 
   .conteudo {
     padding: 3rem 3rem 4rem;
+  }
+
+  .conteudoInner {
+    gap: 1.5rem;
   }
 }

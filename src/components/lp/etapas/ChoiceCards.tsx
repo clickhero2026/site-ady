@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ErroCampo } from "../ErroCampo";
 import styles from "./Etapa2.module.css";
 
 /**
@@ -55,11 +56,7 @@ export function ChoiceCards({
         ))}
       </div>
       {children}
-      {erro && (
-        <p id={erroId} className={styles.erro}>
-          {erro}
-        </p>
-      )}
+      {erro && <ErroCampo id={erroId}>{erro}</ErroCampo>}
     </fieldset>
   );
 }

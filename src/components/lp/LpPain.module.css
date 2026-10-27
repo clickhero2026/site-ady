@@ -8,7 +8,9 @@
 
 @media (min-width: 48rem) {
   .grade {
-    grid-template-columns: repeat(3, 1fr);
+    /* 3 colunas; com texto ampliado (o mínimo de 14rem cresce junto),
+       vira 1 em vez de espremer os cartões. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
     gap: 1.5rem;
   }
 }

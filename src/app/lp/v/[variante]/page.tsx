@@ -4,7 +4,6 @@ import { LpAllInOne } from "@/components/lp/LpAllInOne";
 import { LpComparison } from "@/components/lp/LpComparison";
 import { LpFaq } from "@/components/lp/LpFaq";
 import { LpFinalCta } from "@/components/lp/LpFinalCta";
-import { LpFounders } from "@/components/lp/LpFounders";
 import { LpHeader } from "@/components/lp/LpHeader";
 import { LpHero } from "@/components/lp/LpHero";
 import { LpHowTrial } from "@/components/lp/LpHowTrial";
@@ -39,7 +38,6 @@ export default async function LpPage({ params }: PageProps<"/lp/v/[variante]">) 
         <LpComparison />
         <LpAllInOne />
         <LpHowTrial />
-        <LpFounders />
         <LpFaq />
         <LpFinalCta />
       </main>

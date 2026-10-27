@@ -11,7 +11,7 @@ const PERGUNTAS = [
  * tela sem nenhum JavaScript. */
 export function LpFaq() {
   return (
-    <section className="lp-section" aria-labelledby="lp-faq">
+    <section className="lp-section lp-section--alt" aria-labelledby="lp-faq">
       <div className={`lp-container ${styles.estreito}`}>
         <h2 id="lp-faq" className="lp-h2 lp-h2--center lp-spark">
           Perguntas rápidas

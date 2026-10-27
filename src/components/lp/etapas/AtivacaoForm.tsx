@@ -21,6 +21,8 @@ import {
   type Respostas,
   type TelaId,
 } from "@/lib/teste7dEtapa2";
+import { useVisivelComTeclado } from "@/lib/useVisivelComTeclado";
+import { ErroCampo } from "../ErroCampo";
 import { useHidratado } from "../InscricaoForm";
 import { ChoiceCards } from "./ChoiceCards";
 import styles from "./Etapa2.module.css";
@@ -57,6 +59,9 @@ export function AtivacaoForm({ inicial, telaInicial }: { inicial: Respostas; tel
   const tituloRef = useRef<HTMLHeadingElement>(null);
   const primeiraRenderizacao = useRef(true);
   const hidratado = useHidratado();
+  const formRef = useRef<HTMLFormElement>(null);
+  const acoesRef = useRef<HTMLDivElement>(null);
+  useVisivelComTeclado(formRef, acoesRef);
 
   const atual = TELAS[tela];
   const ultima = tela === TELAS.length - 1;
@@ -144,7 +149,7 @@ export function AtivacaoForm({ inicial, telaInicial }: { inicial: Respostas; tel
   const blocoMudou = tela === 0 || TELAS[tela - 1].bloco !== atual.bloco;
 
   return (
-    <form className={styles.form} method="post" onSubmit={avancar} noValidate>
+    <form ref={formRef} className={styles.form} method="post" onSubmit={avancar} noValidate>
       <div className={styles.cabecalhoBloco}>
         <p className={styles.blocoNome}>{BLOCOS[atual.bloco]}</p>
         <p className={styles.contador}>
@@ -186,13 +191,14 @@ export function AtivacaoForm({ inicial, telaInicial }: { inicial: Respostas; tel
               id="negocio"
               className={styles.texto}
               rows={3}
+              autoCapitalize="sentences"
               maxLength={300}
               value={r.negocio_nome_oferta ?? ""}
               onChange={(e) => set("negocio_nome_oferta", e.target.value)}
               aria-describedby={`negocio-nota${erro ? ` ${erroId}` : ""}`}
               aria-invalid={Boolean(erro) || undefined}
             />
-            {erro && <p id={erroId} className={styles.erro}>{erro}</p>}
+            {erro && <ErroCampo id={erroId}>{erro}</ErroCampo>}
           </div>
         )}
 
@@ -207,6 +213,9 @@ export function AtivacaoForm({ inicial, telaInicial }: { inicial: Respostas; tel
               type="text"
               maxLength={200}
               placeholder="Ex.: Fortaleza, Aldeota"
+              autoCapitalize="words"
+              autoComplete="address-level2"
+              enterKeyHint="next"
               value={r.cidade_bairro ?? ""}
               onChange={(e) => set("cidade_bairro", e.target.value)}
               aria-describedby={erro ? erroId : undefined}
@@ -222,7 +231,7 @@ export function AtivacaoForm({ inicial, telaInicial }: { inicial: Respostas; tel
               <span className={`${styles.cartaoMarca} ${styles.cartaoMarcaCheck}`} aria-hidden="true" />
               <span>Atendo todo o Brasil / vendo pela internet</span>
             </label>
-            {erro && <p id={erroId} className={styles.erro}>{erro}</p>}
+            {erro && <ErroCampo id={erroId}>{erro}</ErroCampo>}
           </div>
         )}
 
@@ -346,17 +355,18 @@ export function AtivacaoForm({ inicial, telaInicial }: { inicial: Respostas; tel
               id="observacoes"
               className={styles.texto}
               rows={4}
+              autoCapitalize="sentences"
               maxLength={2000}
               value={r.observacoes ?? ""}
               onChange={(e) => set("observacoes", e.target.value)}
               aria-describedby={`observacoes-nota${erro ? ` ${erroId}` : ""}`}
             />
-            {erro && <p id={erroId} className={styles.erro}>{erro}</p>}
+            {erro && <ErroCampo id={erroId}>{erro}</ErroCampo>}
           </div>
         )}
       </div>
 
-      <div className={styles.acoes}>
+      <div ref={acoesRef} className={styles.acoes}>
         {tela > 0 && (
           <button type="button" className={styles.voltar} onClick={() => irPara(tela - 1)} disabled={salvando}>
             Voltar
