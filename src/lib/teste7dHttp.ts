@@ -25,7 +25,18 @@ export async function lerCorpo<S extends z.ZodType>(
 
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
-    return { response: erro(parsed.error.issues[0]?.message ?? "Confira os dados e tente de novo.", 422) };
+    const issue = parsed.error.issues[0];
+    // `campo` deixa o formulário mostrar o erro embaixo do campo certo.
+    return {
+      response: NextResponse.json(
+        {
+          ok: false,
+          error: issue?.message ?? "Confira os dados e tente de novo.",
+          campo: typeof issue?.path[0] === "string" ? issue.path[0] : undefined,
+        },
+        { status: 422 },
+      ),
+    };
   }
   return { data: parsed.data };
 }

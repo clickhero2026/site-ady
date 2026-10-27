@@ -1,0 +1,121 @@
+.topo {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.titulo {
+  font-size: clamp(1.875rem, 1.5rem + 1.4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.texto {
+  font-size: 1.25rem;
+  color: var(--lp-text-soft);
+}
+
+.horario {
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background: var(--lp-petrol-soft);
+  font-size: 1.25rem;
+}
+
+/* Calendly: alto o bastante pra mostrar os dias e os horários sem
+   rolagem interna (no celular a lista de horários vem embaixo). */
+.calendly {
+  min-width: 18rem;
+  height: 66rem;
+  overflow: hidden;
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  background: #ffffff;
+}
+
+@media (min-width: 48rem) {
+  .calendly {
+    height: 44rem;
+  }
+}
+
+.registrando {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--lp-petrol);
+}
+
+.erroAgenda {
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background: #fbe9e7;
+  color: #8c1d16;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.avisoDev {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 2px dashed #b07d00;
+  border-radius: 1rem;
+  background: #fff7e0;
+  color: #4a3405;
+  font-size: 1rem;
+}
+
+.simular {
+  justify-self: start;
+  min-height: 3.5rem;
+  padding: 0 1.25rem;
+  border: 2px dashed #b07d00;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #4a3405;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.simular:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* ---- /obrigado ---- */
+.depois {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: var(--lp-radius);
+  background: var(--lp-bg-alt);
+  border: 1px solid var(--lp-line);
+}
+
+.depoisTitulo {
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.depoisLista {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.depoisLista li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.depoisLista svg {
+  flex: none;
+  color: var(--lp-petrol);
+}

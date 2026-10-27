@@ -1,4 +1,4 @@
-import { neon } from "@neondatabase/serverless";
+import { neon, neonConfig } from "@neondatabase/serverless";
 import { TESTE7D } from "@/config/teste7d";
 import type { AtivacaoData, InscricaoData } from "./teste7dSchema";
 
@@ -76,10 +76,27 @@ export class DatabaseNotConfiguredError extends Error {
   }
 }
 
+/**
+ * Só desenvolvimento: aponta o driver pra um proxy HTTP do Neon local
+ * (ex. http://127.0.0.1:4444/sql, imagem local-neon-http-proxy na frente
+ * de um Postgres local) pra testar o fluxo sem tocar no banco de verdade.
+ * Nunca configurar na Vercel.
+ */
+if (process.env.NEON_LOCAL_SQL_ENDPOINT) {
+  neonConfig.fetchEndpoint = process.env.NEON_LOCAL_SQL_ENDPOINT;
+}
+
 function db() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new DatabaseNotConfiguredError();
   return neon(connectionString);
+}
+
+/** Linha da inscrição, ou null se o id não existe. */
+export async function buscarInscricao(id: string): Promise<InscricaoRow | null> {
+  const sql = db();
+  const rows = await sql`SELECT * FROM teste7d_inscricoes WHERE id = ${id}`;
+  return (rows[0] as InscricaoRow | undefined) ?? null;
 }
 
 /** Quantas inscrições deste IP foram criadas/atualizadas na janela do rate limit. */
@@ -105,7 +122,7 @@ export async function contarRecentesPorIp(ipHash: string): Promise<number> {
 export async function upsertInscricao(
   data: Omit<InscricaoData, "empresa_site">,
   meta: { userAgent: string | null; ipHash: string | null },
-): Promise<{ id: string }> {
+): Promise<Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em">> {
   const sql = db();
   const temUtm = Boolean(data.utm_source || data.utm_medium || data.utm_campaign || data.utm_content || data.utm_term);
 
@@ -136,9 +153,9 @@ export async function upsertInscricao(
       user_agent  = COALESCE(EXCLUDED.user_agent,  teste7d_inscricoes.user_agent),
       ip_hash     = COALESCE(EXCLUDED.ip_hash,     teste7d_inscricoes.ip_hash),
       bitrix_sync_status = 'pendente'
-    RETURNING id
+    RETURNING id, status, etapa2_concluida_em
   `;
-  return { id: rows[0].id as string };
+  return rows[0] as Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em">;
 }
 
 /** Colunas que a etapa 2 pode escrever — a lista é a única fonte dos nomes
@@ -182,21 +199,33 @@ export async function salvarAtivacao(
   return (rows[0] as InscricaoRow | undefined) ?? null;
 }
 
-/** Perguntas obrigatórias da etapa 2 que ainda estão sem resposta (texto
- * da pergunta, pra mensagem de erro). Vazio = pode concluir. */
-export function etapa2Pendencias(row: InscricaoRow): string[] {
-  const faltando: string[] = [];
-  if (!row.negocio_nome_oferta) faltando.push("Qual o nome do seu negócio e o que você vende?");
-  if (!row.cidade_bairro && !row.atende_todo_brasil) faltando.push("Você atende clientes de qual cidade e bairro?");
-  if (!row.acao_desejada || (row.acao_desejada === "outro" && !row.acao_desejada_outro)) {
-    faltando.push("Quando a pessoa vir o seu anúncio, o que você quer que ela faça?");
+/** Pergunta obrigatória da etapa 2 ainda sem resposta. `campo` é a
+ * coluna que o formulário usa pra voltar na pergunta certa. */
+export interface Pendencia {
+  campo: (typeof ETAPA2_COLUMNS)[number];
+  pergunta: string;
+}
+
+/** Perguntas obrigatórias da etapa 2 sem resposta. Vazio = pode concluir.
+ * Qualquer opção conta como resposta — inclusive "Não tenho"/"Não sei":
+ * elas servem pra preparar a conversa, nunca pra barrar ninguém. */
+export function etapa2Pendencias(row: InscricaoRow): Pendencia[] {
+  const faltando: Pendencia[] = [];
+  const falta = (campo: Pendencia["campo"], pergunta: string) => faltando.push({ campo, pergunta });
+
+  if (!row.negocio_nome_oferta) falta("negocio_nome_oferta", "Qual o nome do seu negócio e o que você vende?");
+  if (!row.cidade_bairro && !row.atende_todo_brasil) falta("cidade_bairro", "Você atende clientes de qual cidade e bairro?");
+  if (!row.acao_desejada) {
+    falta("acao_desejada", "Quando a pessoa vir o seu anúncio, o que você quer que ela faça?");
+  } else if (row.acao_desejada === "outro" && !row.acao_desejada_outro) {
+    falta("acao_desejada_outro", "Quando a pessoa vir o seu anúncio, o que você quer que ela faça?");
   }
-  if (!row.experiencia_anuncios) faltando.push("Você já pagou para divulgar seu negócio no Instagram ou no Facebook?");
-  if (!row.acesso_redes) faltando.push("Seu negócio tem perfil no Instagram e página no Facebook?");
-  if (!row.conta_anuncios) faltando.push("Você já tem uma conta de anúncios criada?");
-  if (!row.cartao_pagamento) faltando.push("Você tem um cartão de crédito para os anúncios?");
-  if (!row.arquivo_logo) faltando.push("Você tem o arquivo da logo do seu negócio?");
-  if (!row.reuniao_computador) faltando.push("Você consegue participar da reunião pelo computador?");
+  if (!row.experiencia_anuncios) falta("experiencia_anuncios", "Você já pagou para divulgar seu negócio no Instagram ou no Facebook?");
+  if (!row.acesso_redes) falta("acesso_redes", "Seu negócio tem perfil no Instagram e página no Facebook?");
+  if (!row.conta_anuncios) falta("conta_anuncios", "Você já tem uma conta de anúncios criada?");
+  if (!row.cartao_pagamento) falta("cartao_pagamento", "Você tem um cartão de crédito para os anúncios?");
+  if (!row.arquivo_logo) falta("arquivo_logo", "Você tem o arquivo da logo do seu negócio?");
+  if (!row.reuniao_computador) falta("reuniao_computador", "Você consegue participar da conversa pelo computador?");
   return faltando;
 }
 

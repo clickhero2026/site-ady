@@ -32,7 +32,7 @@ export async function PATCH(request: Request) {
         return NextResponse.json(
           {
             ok: false,
-            error: `Falta responder: ${pendencias.join(" ")}`,
+            error: `Falta responder: ${pendencias.map((p) => p.pergunta).join(" ")}`,
             pendencias,
           },
           { status: 422 },

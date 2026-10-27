@@ -3,6 +3,7 @@ import { after, NextResponse } from "next/server";
 import { TESTE7D } from "@/config/teste7d";
 import { syncInscricaoBitrix } from "@/lib/bitrix-teste7d";
 import { contarRecentesPorIp, upsertInscricao } from "@/lib/teste7dDb";
+import { proximaPagina } from "@/lib/teste7dFluxo";
 import { erro, erroInterno, lerCorpo } from "@/lib/teste7dHttp";
 import { inscricaoSchema } from "@/lib/teste7dSchema";
 import { hashRequestIp, setInscricaoCookie } from "@/lib/teste7dSession";
@@ -35,11 +36,12 @@ export async function POST(request: Request) {
       return erro("Recebemos muitas inscrições daqui em pouco tempo. Espere alguns minutos e tente de novo.", 429);
     }
 
-    const { id } = await upsertInscricao(data, {
+    const inscricao = await upsertInscricao(data, {
       userAgent: request.headers.get("user-agent")?.slice(0, 500) ?? null,
       ipHash,
     });
 
+    const { id } = inscricao;
     await setInscricaoCookie(id);
     after(() => syncInscricaoBitrix(id));
 
@@ -50,7 +52,8 @@ export async function POST(request: Request) {
       ok: true,
       id,
       eventId: `${id}:lead`,
-      proximaUrl: TESTE7D.paginas.ativacao,
+      // Quem já tinha se inscrito retoma de onde parou (ver teste7dFluxo).
+      proximaUrl: proximaPagina(inscricao),
     });
   } catch (err) {
     return erroInterno("teste7d-inscricao", err);
