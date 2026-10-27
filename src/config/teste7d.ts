@@ -4,13 +4,33 @@
  * que mais de um arquivo precisa conhecer ficam só aqui.
  */
 export const TESTE7D = {
-  /** Página da etapa 2 (briefing de ativação + Calendly). As páginas
-   * ainda não existem — entram nos próximos prompts. TODO: confirmar a
-   * rota final. */
-  etapa2Path: "/teste-gratis/ativacao",
+  /**
+   * Caminhos PÚBLICOS das páginas no host da LP (lp.useady.com.br). É o
+   * que aparece na barra do navegador e o que a API devolve pra navegação.
+   * Internamente o `src/proxy.ts` reescreve cada um pra `/lp/...` —
+   * ninguém fora do proxy monta caminho `/lp/...`.
+   */
+  paginas: {
+    lp: "/",
+    ativacao: "/ativacao",
+    agendar: "/agendar",
+    obrigado: "/obrigado",
+  },
+
+  /** Endereço público da LP — canonical e links absolutos. */
+  lpOrigin: "https://lp.useady.com.br",
+
+  /** Site principal: logo, política de privacidade e termos apontam pra lá. */
+  siteOrigin: "https://useady.com.br",
+
+  /** Host é da LP quando começa com este prefixo (lp.useady.com.br em
+   * produção, lp.localhost em desenvolvimento). Hosts extras (ex. um
+   * domínio de preview da Vercel) vão em `LP_EXTRA_HOSTS`. */
+  lpHostPrefix: "lp.",
 
   /** Cookie httpOnly, assinado, que liga o navegador à inscrição da
-   * etapa 1 (ver lib/teste7dSession.ts). */
+   * etapa 1 (ver lib/teste7dSession.ts). Sem `Domain`: vale só no host
+   * que o criou, o mesmo da LP e das chamadas a /api/teste7d/*. */
   cookieName: "ady_t7d",
   cookieMaxAgeDias: 30,
 
@@ -18,8 +38,36 @@ export const TESTE7D = {
    * diferentes criadas/atualizadas na janela. */
   rateLimit: { max: 5, janelaMinutos: 10 },
 
+  /** Página de agendamento (briefing, seção 9). `tituloVariante` fica
+   * guardado pra um teste futuro — hoje não é usado em lugar nenhum. */
+  agendar: {
+    titulo: "Quase lá. Escolha o melhor horário para a sua conversa.",
+    tituloVariante: "Falta um passo: marque a conversa que libera os seus 7 dias.",
+    texto: "Seus 7 dias começam depois dessa conversa. Não precisa de cartão.",
+  },
+
+  /**
+   * Parâmetro de pré-preenchimento do telefone no Calendly. O Calendly só
+   * aceita telefone por URL em dois casos: `location` (quando o local do
+   * evento é "ligação: o convidado informa o número") ou `a1`..`a10`
+   * (n-ésima pergunta personalizada do evento). TODO: confirmar como o
+   * evento está configurado e ajustar aqui.
+   */
+  calendlyTelefoneParam: "location",
+
   /** Versões de título da landing page (briefing, seção 8). A é o controle. */
   lpVariants: ["A", "B", "C", "D", "E", "F"] as const,
 } as const;
 
 export type LpVariant = (typeof TESTE7D.lpVariants)[number];
+
+/** `?lp=` cru → versão válida; ausente ou inválido cai no controle (A). */
+export function normalizeLpVariant(value: string | null | undefined): LpVariant {
+  const upper = value?.trim().toUpperCase();
+  return (TESTE7D.lpVariants as readonly string[]).includes(upper ?? "")
+    ? (upper as LpVariant)
+    : "A";
+}
+
+/** Prefixo interno das rotas da LP em `src/app/lp/`. Só o proxy usa. */
+export const LP_INTERNAL_PREFIX = "/lp";

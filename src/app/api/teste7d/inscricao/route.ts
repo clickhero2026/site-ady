@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
   // Honeypot preenchido: finge sucesso, não grava nem seta cookie (bot).
   if (empresa_site) {
-    return NextResponse.json({ ok: true, id: randomUUID(), eventId: randomUUID(), proximaUrl: TESTE7D.etapa2Path });
+    return NextResponse.json({ ok: true, id: randomUUID(), eventId: randomUUID(), proximaUrl: TESTE7D.paginas.ativacao });
   }
 
   try {
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       ok: true,
       id,
       eventId: `${id}:lead`,
-      proximaUrl: TESTE7D.etapa2Path,
+      proximaUrl: TESTE7D.paginas.ativacao,
     });
   } catch (err) {
     return erroInterno("teste7d-inscricao", err);

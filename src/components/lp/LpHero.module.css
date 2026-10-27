@@ -1,0 +1,115 @@
+.hero {
+  padding-block: 1rem 3rem;
+  background:
+    radial-gradient(60rem 30rem at 100% 0%, var(--lp-petrol-soft) 0%, transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, var(--lp-bg-alt) 100%);
+}
+
+.grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.texto {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-self: start;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: var(--lp-petrol);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.seloPonto {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.3);
+}
+
+.titulo {
+  font-size: var(--lp-fs-h1);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.subtitulo {
+  font-size: 1.25rem;
+  line-height: 1.45;
+  color: var(--lp-text-soft);
+  max-width: 38rem;
+}
+
+.formCard {
+  margin-top: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  background: #ffffff;
+  box-shadow: var(--lp-shadow-lg);
+}
+
+.visual {
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .hero {
+    padding-block: 1.75rem 4.5rem;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .subtitulo {
+    font-size: 1.3125rem;
+  }
+
+  .formCard {
+    padding: 1.5rem;
+  }
+}
+
+/* ---- Faixa de confiança ---- */
+.confianca {
+  background: linear-gradient(90deg, var(--lp-dark-from), var(--lp-dark-to));
+  color: #ffffff;
+}
+
+.confiancaLista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 2.5rem;
+  margin: 0 auto;
+  padding-block: 1.25rem;
+  list-style: none;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.confiancaLista li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}

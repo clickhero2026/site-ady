@@ -1,0 +1,206 @@
+.cena {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem 0 2.5rem;
+  max-width: 26rem;
+  margin-inline: auto;
+}
+
+.brilho {
+  position: absolute;
+  inset: 8% 4%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(30 136 168 / 0.28), transparent);
+  filter: blur(8px);
+}
+
+/* ---- Celular ---- */
+.celular {
+  position: relative;
+  width: min(17.5rem, 74vw);
+  padding: 0.6rem;
+  border-radius: 2.6rem;
+  background: #0c0d0a;
+  box-shadow:
+    0 0 0 2px #2b3033,
+    0 40px 80px -30px rgb(11 58 72 / 0.55);
+  transform: rotate(-2deg);
+}
+
+.notch {
+  position: absolute;
+  top: 0.95rem;
+  left: 50%;
+  z-index: 2;
+  width: 5.5rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: #0c0d0a;
+  transform: translateX(-50%);
+}
+
+.tela {
+  overflow: hidden;
+  padding-top: 2.6rem;
+  border-radius: 2.1rem;
+  background: #ffffff;
+  color: #0c0d0a;
+}
+
+.igTopo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem 0.6rem;
+}
+
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--lp-petrol);
+}
+
+.avatarPonto {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--lp-spark);
+}
+
+.igNome {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.post {
+  width: 100%;
+  height: auto;
+}
+
+.igAcoes {
+  display: flex;
+  gap: 0.85rem;
+  padding: 0.65rem 0.75rem 0.35rem;
+}
+
+.igSalvar {
+  margin-left: auto;
+}
+
+.igLegenda {
+  padding: 0 0.75rem 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.igFantasma {
+  height: 0.55rem;
+  margin: 0 0.75rem 0.5rem;
+  border-radius: 999px;
+  background: #e9eef0;
+}
+
+.igFantasma + .igFantasma {
+  width: 55%;
+  margin-bottom: 1.1rem;
+}
+
+/* ---- Selo "Post publicado" ---- */
+.publicado {
+  position: absolute;
+  top: 0.5rem;
+  right: -0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--lp-petrol);
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: var(--lp-shadow);
+}
+
+/* ---- Mensagem de WhatsApp chegando ---- */
+.whats {
+  position: absolute;
+  bottom: 0;
+  left: -0.5rem;
+  max-width: 16.5rem;
+  padding: 0.75rem 0.9rem 0.9rem;
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: var(--lp-shadow-lg);
+  transform: rotate(1.5deg);
+}
+
+.whatsTopo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #3b474b;
+}
+
+.whatsIcone {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #1f8f4e; /* verde de mensagem — só neste mockup */
+  color: #ffffff;
+}
+
+.whatsBalao {
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.25rem 1rem 1rem 1rem;
+  background: #dcf7c5;
+  color: #0c0d0a;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .whats {
+    animation: chegar 0.7s 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  }
+}
+
+@keyframes chegar {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.92) rotate(1.5deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(1.5deg);
+  }
+}
+
+@media (min-width: 64rem) {
+  .cena {
+    padding: 2rem 0 3rem;
+  }
+
+  .celular {
+    width: 18.5rem;
+  }
+
+  .whats {
+    left: -2.5rem;
+  }
+
+  .publicado {
+    right: -1.5rem;
+  }
+}
