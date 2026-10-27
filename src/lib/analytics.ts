@@ -32,3 +32,18 @@ export function trackSelectPlan(plan: PlanoKey) {
 export function trackLead() {
   sendGTMEvent({ event: "generate_lead" });
 }
+
+/**
+ * Teste grátis de 7 dias — etapa 1 confirmada pelo servidor. Mesmo
+ * `generate_lead` da home (a tag Lead do Meta no GTM pega os dois),
+ * separado por `form`. `event_id` vem da API (`eventId`) e é o que o
+ * Stape usa pra deduplicar navegador × Conversions API.
+ */
+export function trackTeste7dLead(eventId: string, lpVariant: string | null) {
+  sendGTMEvent({ event: "generate_lead", form: "teste7d", event_id: eventId, lp_variant: lpVariant });
+}
+
+/** Teste grátis — conversa marcada no Calendly (evento Schedule do Meta). */
+export function trackTeste7dSchedule(eventId: string) {
+  sendGTMEvent({ event: "schedule", form: "teste7d", event_id: eventId });
+}
