@@ -15,7 +15,19 @@ export const TESTE7D = {
     ativacao: "/ativacao",
     agendar: "/agendar",
     obrigado: "/obrigado",
+    /** Retomada do fluxo: `?t=<token>` (link enviado pelo time) ou
+     * WhatsApp + e-mail. */
+    ativarConta: "/ativar-conta",
   },
+
+  /** Validade do link de retomada (`token_retomada`), contada desde a
+   * inscrição (`created_at`). */
+  retomadaDias: 30,
+
+  /** Limites da retomada por WhatsApp + e-mail (POST /api/teste7d/retomar):
+   * tentativas por IP (`ip_hash`) e tentativas erradas por cadastro, na
+   * mesma janela. */
+  retomadaLimite: { maxPorIp: 10, maxFalhasPorCadastro: 5, janelaMinutos: 15 },
 
   /** Endereço público da LP — canonical e links absolutos. */
   lpOrigin: "https://lp.useady.com.br",
@@ -57,6 +69,11 @@ export const TESTE7D = {
   /** Versões de título da landing page (briefing, seção 8). A é o controle. */
   lpVariants: ["A", "B", "C", "D", "E", "F"] as const,
 } as const;
+
+/** Cabeçalho interno (proxy → route handler do link de retomada) que leva
+ * o token de `/ativar-conta?t=`. O proxy sempre sobrescreve: não adianta o
+ * navegador mandar um próprio. */
+export const TOKEN_HEADER = "x-t7d-retomada";
 
 export type LpVariant = (typeof TESTE7D.lpVariants)[number];
 

@@ -64,6 +64,12 @@ export interface InscricaoRow {
   bitrix_sync_status: "pendente" | "ok" | "erro";
   bitrix_sync_em: Date | null;
   bitrix_erro: string | null;
+  /** Segredo do link de retomada (`/ativar-conta?t=`). Só servidor: nunca
+   * vai em resposta de API, log, mensagem de erro ou HTML. */
+  token_retomada: string;
+  ultima_retomada_em: Date | null;
+  retomada_falhas: number;
+  retomada_falhas_desde: Date | null;
 }
 
 /** Linha + `updated_at` em texto, com precisão de microssegundo (o `Date`
@@ -116,13 +122,18 @@ export async function contarRecentesPorIp(ipHash: string): Promise<number> {
  * mesmo id (e o mesmo lead no Bitrix) e o status que já tinha — uma nova
  * inscrição nunca rebaixa alguém que já agendou.
  *
+ * Só atualiza se o WhatsApp também for o mesmo do cadastro: e-mail igual
+ * com WhatsApp diferente não mexe na linha e devolve null (a rota manda a
+ * pessoa pra /ativar-conta, sem cookie) — senão bastaria saber o e-mail de
+ * alguém pra trocar o WhatsApp dele e entrar no cadastro.
+ *
  * UTMs: último toque, como um bloco — se a nova visita veio com UTM, as
  * cinco são trocadas juntas; se veio sem, as antigas ficam.
  */
 export async function upsertInscricao(
   data: Omit<InscricaoData, "empresa_site">,
   meta: { userAgent: string | null; ipHash: string | null },
-): Promise<Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em">> {
+): Promise<Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em"> | null> {
   const sql = db();
   const temUtm = Boolean(data.utm_source || data.utm_medium || data.utm_campaign || data.utm_content || data.utm_term);
 
@@ -153,9 +164,10 @@ export async function upsertInscricao(
       user_agent  = COALESCE(EXCLUDED.user_agent,  teste7d_inscricoes.user_agent),
       ip_hash     = COALESCE(EXCLUDED.ip_hash,     teste7d_inscricoes.ip_hash),
       bitrix_sync_status = 'pendente'
+    WHERE teste7d_inscricoes.whatsapp = EXCLUDED.whatsapp
     RETURNING id, status, etapa2_concluida_em
   `;
-  return rows[0] as Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em">;
+  return (rows[0] as Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em"> | undefined) ?? null;
 }
 
 /** Colunas que a etapa 2 pode escrever — a lista é a única fonte dos nomes
@@ -270,6 +282,79 @@ export async function registrarAgendamento(
     RETURNING *
   `;
   return (rows[0] as InscricaoRow | undefined) ?? null;
+}
+
+// ── Retomada (/ativar-conta) ──
+
+type Retomada = Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em">;
+
+/** Cadastro do link de retomada, se o token existe e ainda vale
+ * (`TESTE7D.retomadaDias` desde a inscrição). Já grava a retomada. O token
+ * vai só como parâmetro da consulta — nunca é devolvido nem logado. */
+export async function retomarPorToken(token: string): Promise<Retomada | null> {
+  const sql = db();
+  const rows = await sql`
+    UPDATE teste7d_inscricoes
+    SET ultima_retomada_em = now(), retomada_falhas = 0, retomada_falhas_desde = NULL
+    WHERE token_retomada = ${token}
+      AND created_at > now() - make_interval(days => ${TESTE7D.retomadaDias})
+    RETURNING id, status, etapa2_concluida_em
+  `;
+  return (rows[0] as Retomada | undefined) ?? null;
+}
+
+export type ResultadoRetomada =
+  | { tipo: "ok"; inscricao: Retomada }
+  | { tipo: "nao_encontrado" }
+  | { tipo: "bloqueado" };
+
+/**
+ * Retomada por WhatsApp + e-mail: só vale se os DOIS baterem com o mesmo
+ * cadastro. Quando só um bate, conta uma falha no(s) cadastro(s) dele; com
+ * `maxFalhasPorCadastro` falhas na janela, o cadastro fica bloqueado (mesmo
+ * com os dados certos) até a janela passar — chutar o WhatsApp de um
+ * e-mail conhecido não funciona.
+ */
+export async function retomarPorDados(email: string, whatsapp: string): Promise<ResultadoRetomada> {
+  const sql = db();
+  const { maxFalhasPorCadastro, janelaMinutos } = TESTE7D.retomadaLimite;
+
+  const rows = await sql`
+    SELECT id, whatsapp, status, etapa2_concluida_em,
+           (retomada_falhas >= ${maxFalhasPorCadastro}
+            AND retomada_falhas_desde > now() - make_interval(mins => ${janelaMinutos})) AS bloqueado
+    FROM teste7d_inscricoes
+    WHERE lower(email) = lower(${email})
+  `;
+  const porEmail = rows[0] as (Retomada & { whatsapp: string; bloqueado: boolean }) | undefined;
+
+  if (porEmail?.bloqueado) return { tipo: "bloqueado" };
+
+  if (porEmail && porEmail.whatsapp === whatsapp) {
+    const ok = await sql`
+      UPDATE teste7d_inscricoes
+      SET ultima_retomada_em = now(), retomada_falhas = 0, retomada_falhas_desde = NULL
+      WHERE id = ${porEmail.id}
+      RETURNING id, status, etapa2_concluida_em
+    `;
+    return { tipo: "ok", inscricao: ok[0] as Retomada };
+  }
+
+  // Falha: conta no cadastro do e-mail (WhatsApp errado) e nos do
+  // WhatsApp (e-mail errado). Janela vencida recomeça do 1.
+  await sql`
+    UPDATE teste7d_inscricoes
+    SET retomada_falhas = CASE
+          WHEN retomada_falhas_desde > now() - make_interval(mins => ${janelaMinutos}) THEN retomada_falhas + 1
+          ELSE 1
+        END,
+        retomada_falhas_desde = CASE
+          WHEN retomada_falhas_desde > now() - make_interval(mins => ${janelaMinutos}) THEN retomada_falhas_desde
+          ELSE now()
+        END
+    WHERE lower(email) = lower(${email}) OR whatsapp = ${whatsapp}
+  `;
+  return { tipo: "nao_encontrado" };
 }
 
 // ── Bitrix ──

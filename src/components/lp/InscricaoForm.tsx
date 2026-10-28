@@ -54,14 +54,25 @@ function validar(dados: { nome: string; whatsapp: string; email: string; consent
  * O botão trava no primeiro clique (ref, não só estado: dois cliques no
  * mesmo frame passariam pelo estado antigo) — a API pode criar lead
  * duplicado no Bitrix com dois envios em menos de 1s.
+ *
+ * `variant` é null fora da LP (cadastro novo em /ativar-conta). `inicial`
+ * preenche WhatsApp e e-mail com o que a pessoa já digitou lá.
  */
-export function InscricaoForm({ variant }: { variant: LpVariant }) {
+export function InscricaoForm({
+  variant,
+  inicial,
+}: {
+  variant: LpVariant | null;
+  inicial?: { whatsapp?: string; email?: string };
+}) {
   const id = useId();
   const enviando = useRef(false);
   const [estado, setEstado] = useState<"livre" | "enviando" | "sucesso">("livre");
   const [erros, setErros] = useState<Erros>({});
   const [erroGeral, setErroGeral] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
+  // E-mail já cadastrado com outro WhatsApp: o erro leva pra /ativar-conta.
+  const [ativarUrl, setAtivarUrl] = useState<string | null>(null);
+  const [whatsapp, setWhatsapp] = useState(() => formatPhone(inicial?.whatsapp ?? ""));
   // Resumo dos erros pro leitor de tela (a região aria-live já existe na
   // página; só o texto muda). O contador força um texto novo a cada envio.
   const [resumo, setResumo] = useState("");
@@ -90,6 +101,7 @@ export function InscricaoForm({ variant }: { variant: LpVariant }) {
     const encontrados = validar(dados);
     setErros(encontrados);
     setErroGeral("");
+    setAtivarUrl(null);
     const comErro = Object.keys(encontrados) as Campo[];
     if (comErro.length) {
       tentativas.current += 1;
@@ -133,6 +145,7 @@ export function InscricaoForm({ variant }: { variant: LpVariant }) {
       if (!res.ok || !json.ok) {
         const campo = json.campo as Campo | undefined;
         const mensagem: string = json.error ?? "Não deu para enviar agora. Tente de novo em instantes.";
+        if (typeof json.ativarUrl === "string") setAtivarUrl(json.ativarUrl);
         if (campo && ["nome", "whatsapp", "email", "consentimento_lgpd"].includes(campo)) {
           setErros({ [campo]: mensagem });
           document.getElementById(`${id}-${campo}`)?.focus();
@@ -239,6 +252,7 @@ export function InscricaoForm({ variant }: { variant: LpVariant }) {
             autoCorrect="off"
             spellCheck={false}
             enterKeyHint="send"
+            defaultValue={inicial?.email}
             maxLength={180}
             required
           />
@@ -291,8 +305,33 @@ export function InscricaoForm({ variant }: { variant: LpVariant }) {
       <div role="status" aria-live="polite" className={styles.status}>
         {resumo && <p className="visually-hidden">{resumo}</p>}
         {estado === "sucesso" && <p className={styles.sucesso}>Inscrição feita! Levando você para o próximo passo.</p>}
-        {erroGeral && <ErroCampo id={`${id}-erro-geral`}>{erroGeral}</ErroCampo>}
+        {erroGeral && (
+          <ErroCampo id={`${id}-erro-geral`}>
+            {ativarUrl ? <ComLinkDeAtivacao texto={erroGeral} href={ativarUrl} /> : erroGeral}
+          </ErroCampo>
+        )}
       </div>
     </form>
+  );
+}
+
+/** "…use o link de ativação da conta." → o trecho "link de ativação da
+ * conta" vira o link pra /ativar-conta (o texto vem da API). */
+function ComLinkDeAtivacao({ texto, href }: { texto: string; href: string }) {
+  const trecho = "link de ativação da conta";
+  const i = texto.indexOf(trecho);
+  if (i === -1) {
+    return (
+      <>
+        {texto} <a href={href}>Continuar a ativação da conta</a>
+      </>
+    );
+  }
+  return (
+    <>
+      {texto.slice(0, i)}
+      <a href={href}>{trecho}</a>
+      {texto.slice(i + trecho.length)}
+    </>
   );
 }

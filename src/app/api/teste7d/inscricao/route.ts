@@ -16,9 +16,15 @@ import { hashRequestIp, setInscricaoCookie } from "@/lib/teste7dSession";
  * O Bitrix (só com `TESTE7D_BITRIX_ATIVO=true`) roda depois da resposta
  * (`after`) e nunca vira erro pro usuário (ver bitrix-teste7d.ts).
  *
+ * E-mail que já existe com outro WhatsApp: 409 `{ ok: false, error,
+ * ativarUrl }`, sem alterar a linha e sem cookie.
+ *
  * Resposta: `{ ok, id, eventId, proximaUrl }`. O cliente dispara o evento
  * Lead (`trackTeste7dLead(eventId, ...)`) e segue pra `proximaUrl`.
  */
+const EMAIL_COM_OUTRO_WHATSAPP =
+  "Este e-mail já tem um cadastro com outro WhatsApp. Para continuar, use o link de ativação da conta.";
+
 export async function POST(request: Request) {
   const body = await lerCorpo(request, inscricaoSchema);
   if ("response" in body) return body.response;
@@ -40,6 +46,15 @@ export async function POST(request: Request) {
       userAgent: request.headers.get("user-agent")?.slice(0, 500) ?? null,
       ipHash,
     });
+
+    // E-mail já cadastrado com outro WhatsApp: nada muda e nada de cookie;
+    // quem é dono do cadastro continua pelo /ativar-conta.
+    if (!inscricao) {
+      return NextResponse.json(
+        { ok: false, error: EMAIL_COM_OUTRO_WHATSAPP, ativarUrl: TESTE7D.paginas.ativarConta },
+        { status: 409 },
+      );
+    }
 
     const { id } = inscricao;
     await setInscricaoCookie(id);

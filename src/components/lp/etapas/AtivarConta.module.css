@@ -1,0 +1,116 @@
+.topo {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.titulo {
+  font-size: clamp(1.875rem, 1.5rem + 1.4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.texto {
+  font-size: 1.25rem;
+  color: var(--lp-text-soft);
+}
+
+/* Link vencido ou inválido: aviso visível, texto escuro (~17:1). */
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--lp-cta-hover);
+  border-radius: 1rem;
+  background: #fdf1e3;
+  color: var(--lp-text);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.aviso svg {
+  flex: none;
+  margin-top: 0.1em;
+  color: #8a4a02;
+}
+
+.cartao {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  background: #ffffff;
+  box-shadow: var(--lp-shadow);
+}
+
+.naoEncontrado {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Botão secundário (contorno petróleo), mesmo do "Voltar" da ativação. */
+.secundario {
+  flex: 1 1 12rem;
+  max-width: 100%;
+  min-height: 3.5rem;
+  padding: 0.5rem 1.25rem;
+  border: 2px solid var(--lp-petrol);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--lp-petrol);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.secundario:hover {
+  background: var(--lp-petrol-soft);
+}
+
+.secundario:focus-visible {
+  outline: 3px solid var(--lp-text);
+  outline-offset: 2px;
+}
+
+.cadastro {
+  display: grid;
+  gap: 1rem;
+}
+
+.cadastroTitulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.cadastroTitulo:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.cadastroTexto {
+  font-size: 1.125rem;
+  color: var(--lp-text-soft);
+}
+
+.suporte {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--lp-line);
+  font-size: 1.125rem;
+  color: var(--lp-text-soft);
+}
+
+.suporte a {
+  color: var(--lp-petrol);
+  font-weight: 700;
+}

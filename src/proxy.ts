@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { LP_INTERNAL_PREFIX, normalizeLpVariant, TESTE7D } from "@/config/teste7d";
+import { LP_INTERNAL_PREFIX, normalizeLpVariant, TESTE7D, TOKEN_HEADER } from "@/config/teste7d";
 
 /**
  * Roteamento por host. Mesmo projeto e mesmo build servem dois sites:
@@ -7,7 +7,9 @@ import { LP_INTERNAL_PREFIX, normalizeLpVariant, TESTE7D } from "@/config/teste7
  * - lp.useady.com.br (e lp.localhost em dev): só a LP do teste grátis.
  *   `/` vira `/lp/v/<A..F>` (a versão do título sai de `?lp=`, então cada
  *   versão é uma página estática pré-renderizada), `/ativacao`,
- *   `/agendar` e `/obrigado` viram `/lp/<página>`, e `/api/teste7d/*`
+ *   `/agendar`, `/obrigado` e `/ativar-conta` viram `/lp/<página>`
+ *   (`/ativar-conta?t=<token>` vai pro route handler do link de
+ *   retomada, que nunca mostra o token numa página), e `/api/teste7d/*`
  *   passa direto (mesma origem → o cookie da inscrição funciona sem
  *   Domain e sem CORS). Qualquer outro caminho é 404.
  * - Qualquer outro host (useady.com.br): o site de sempre; `/lp/*` não
@@ -38,7 +40,17 @@ const PAGINAS_LP: readonly string[] = [
   TESTE7D.paginas.ativacao,
   TESTE7D.paginas.agendar,
   TESTE7D.paginas.obrigado,
+  TESTE7D.paginas.ativarConta,
 ];
+
+/** /ativar-conta: dado pessoal na tela e, no link, um token na URL — sem
+ * cache, sem indexar e sem mandar a URL como referência pra ninguém. */
+function semRastroNaUrl(response: NextResponse) {
+  response.headers.set("Cache-Control", "no-store");
+  response.headers.set("Referrer-Policy", "no-referrer");
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
+}
 
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
@@ -48,6 +60,20 @@ export function proxy(request: NextRequest) {
 
     if (pathname === TESTE7D.paginas.lp) {
       return rewrite(request, `${LP_INTERNAL_PREFIX}/v/${normalizeLpVariant(searchParams.get("lp"))}`);
+    }
+
+    if (pathname === TESTE7D.paginas.ativarConta) {
+      if (!searchParams.has("t")) return semRastroNaUrl(rewrite(request, `${LP_INTERNAL_PREFIX}${pathname}`));
+
+      // Link de retomada: o token segue num cabeçalho da requisição, não
+      // na URL reescrita — o Next devolve a URL reescrita ao navegador
+      // (`x-middleware-rewrite`), e o token não pode aparecer em resposta.
+      const url = request.nextUrl.clone();
+      url.pathname = `${LP_INTERNAL_PREFIX}${pathname}/link`;
+      url.search = "";
+      const headers = new Headers(request.headers);
+      headers.set(TOKEN_HEADER, searchParams.get("t") ?? "");
+      return semRastroNaUrl(NextResponse.rewrite(url, { request: { headers } }));
     }
 
     if (PAGINAS_LP.includes(pathname)) {

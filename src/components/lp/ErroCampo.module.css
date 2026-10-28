@@ -15,3 +15,10 @@
   height: 1.25em;
   margin-top: 0.05em;
 }
+
+/* Link dentro do erro (ex. "link de ativação da conta"): mesma cor, sublinhado. */
+.erro a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
