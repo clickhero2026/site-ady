@@ -12,6 +12,11 @@ import { readInscricaoId } from "@/lib/teste7dSession";
  * as perguntas obrigatórias precisam estar respondidas (as deste envio
  * somadas às já salvas) e o status vira `ativacao_preenchida`.
  *
+ * Resposta de sucesso: `{ ok, status, concluida, primeira_conclusao,
+ * eventId? }`. `primeira_conclusao` só é true quando este envio fechou a
+ * etapa pela primeira vez (`etapa2_concluida_em` estava nula); aí vem o
+ * `eventId` (`<id>:activation`) e o cliente dispara activation_complete.
+ *
  * Exige o cookie assinado da etapa 1.
  */
 export async function PATCH(request: Request) {
@@ -24,6 +29,7 @@ export async function PATCH(request: Request) {
   try {
     let row = await salvarAtivacao(id, body.data);
     if (!row) return erro(SEM_SESSAO, 404);
+    let primeiraConclusao = false;
 
     if (body.data.concluir) {
       const pendencias = etapa2Pendencias(row);
@@ -38,7 +44,9 @@ export async function PATCH(request: Request) {
           { status: 422 },
         );
       }
-      row = await concluirAtivacao(id);
+      const concluida = await concluirAtivacao(id);
+      primeiraConclusao = concluida.primeira_conclusao;
+      row = concluida;
     }
 
     const saved = row;
@@ -48,6 +56,9 @@ export async function PATCH(request: Request) {
       ok: true,
       status: saved.status,
       concluida: Boolean(saved.etapa2_concluida_em),
+      // CompleteRegistration só na primeira vez que a etapa fecha.
+      primeira_conclusao: primeiraConclusao,
+      ...(primeiraConclusao && { eventId: `${id}:activation` }),
     });
   } catch (err) {
     return erroInterno("teste7d-ativacao", err);

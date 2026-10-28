@@ -54,6 +54,20 @@ export function trackTeste7dLead(eventId: string, lpVariant: string | null, onDo
   });
 }
 
+/** Teste grátis — ativação (etapa 2) concluída pela primeira vez (evento
+ * CompleteRegistration do Meta). Só dispara quando a API diz que esta foi
+ * a primeira conclusão (`primeira_conclusao`); `event_id` =
+ * `<id da inscrição>:activation`. `onDone`: mesmo contrato do
+ * `trackTeste7dLead`. */
+export function trackTeste7dAtivacao(eventId: string, onDone?: () => void) {
+  sendGTMEvent({
+    event: "activation_complete",
+    form: "teste7d",
+    event_id: eventId,
+    ...(onDone && { eventCallback: onDone, eventTimeout: 2000 }),
+  });
+}
+
 /** Teste grátis — conversa marcada no Calendly (evento Schedule do Meta).
  * `onDone`: mesmo contrato do `trackTeste7dLead`. */
 export function trackTeste7dSchedule(eventId: string, onDone?: () => void) {

@@ -122,6 +122,10 @@ export async function contarRecentesPorIp(ipHash: string): Promise<number> {
  * mesmo id (e o mesmo lead no Bitrix) e o status que já tinha — uma nova
  * inscrição nunca rebaixa alguém que já agendou.
  *
+ * `novo`: a linha foi criada agora (`xmax = 0` só numa linha inserida
+ * por esta instrução; numa atualizada pelo ON CONFLICT ele é o id da
+ * transação). Só cadastro novo dispara o Lead.
+ *
  * Só atualiza se o WhatsApp também for o mesmo do cadastro: e-mail igual
  * com WhatsApp diferente não mexe na linha e devolve null (a rota manda a
  * pessoa pra /ativar-conta, sem cookie) — senão bastaria saber o e-mail de
@@ -133,7 +137,7 @@ export async function contarRecentesPorIp(ipHash: string): Promise<number> {
 export async function upsertInscricao(
   data: Omit<InscricaoData, "empresa_site">,
   meta: { userAgent: string | null; ipHash: string | null },
-): Promise<Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em"> | null> {
+): Promise<(Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em"> & { novo: boolean }) | null> {
   const sql = db();
   const temUtm = Boolean(data.utm_source || data.utm_medium || data.utm_campaign || data.utm_content || data.utm_term);
 
@@ -165,9 +169,9 @@ export async function upsertInscricao(
       ip_hash     = COALESCE(EXCLUDED.ip_hash,     teste7d_inscricoes.ip_hash),
       bitrix_sync_status = 'pendente'
     WHERE teste7d_inscricoes.whatsapp = EXCLUDED.whatsapp
-    RETURNING id, status, etapa2_concluida_em
+    RETURNING id, status, etapa2_concluida_em, (xmax = 0) AS novo
   `;
-  return (rows[0] as Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em"> | undefined) ?? null;
+  return (rows[0] as (Pick<InscricaoRow, "id" | "status" | "etapa2_concluida_em"> & { novo: boolean }) | undefined) ?? null;
 }
 
 /** Colunas que a etapa 2 pode escrever — a lista é a única fonte dos nomes
@@ -242,18 +246,28 @@ export function etapa2Pendencias(row: InscricaoRow): Pendencia[] {
 }
 
 /** Fecha a etapa 2. Só promove quem ainda está em `inscrito` — quem já
- * agendou não volta pra `ativacao_preenchida`. */
-export async function concluirAtivacao(id: string): Promise<InscricaoRow> {
+ * agendou não volta pra `ativacao_preenchida`.
+ *
+ * `primeira_conclusao`: `etapa2_concluida_em` estava nula antes desta
+ * atualização. A linha é lida com FOR UPDATE na mesma instrução, então
+ * dois envios simultâneos não dão os dois `true`. */
+export async function concluirAtivacao(id: string): Promise<InscricaoRow & { primeira_conclusao: boolean }> {
   const sql = db();
   const rows = await sql`
-    UPDATE teste7d_inscricoes
-    SET etapa2_concluida_em = COALESCE(etapa2_concluida_em, now()),
-        status = CASE WHEN status = 'inscrito' THEN 'ativacao_preenchida' ELSE status END,
+    UPDATE teste7d_inscricoes AS t
+    SET etapa2_concluida_em = COALESCE(t.etapa2_concluida_em, now()),
+        status = CASE WHEN t.status = 'inscrito' THEN 'ativacao_preenchida' ELSE t.status END,
         bitrix_sync_status = 'pendente'
-    WHERE id = ${id}
-    RETURNING *
+    FROM (
+      SELECT id, etapa2_concluida_em AS antes
+      FROM teste7d_inscricoes
+      WHERE id = ${id}
+      FOR UPDATE
+    ) AS anterior
+    WHERE t.id = anterior.id
+    RETURNING t.*, (anterior.antes IS NULL) AS primeira_conclusao
   `;
-  return rows[0] as InscricaoRow;
+  return rows[0] as InscricaoRow & { primeira_conclusao: boolean };
 }
 
 /**

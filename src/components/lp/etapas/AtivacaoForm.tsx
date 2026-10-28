@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { TriangleAlert } from "lucide-react";
 import { TESTE7D } from "@/config/teste7d";
+import { trackTeste7dAtivacao } from "@/lib/analytics";
 import {
   ACAO_DESEJADA,
   ACESSO_REDES,
@@ -134,8 +135,21 @@ export function AtivacaoForm({ inicial, telaInicial }: { inicial: Respostas; tel
       }
 
       if (ultima) {
-        // Fica travado: a próxima página carrega do zero.
-        window.location.assign(TESTE7D.paginas.agendar);
+        // Fica travado: a próxima página carrega do zero. Na primeira
+        // conclusão, o activation_complete sai antes (mesmo esquema do Lead:
+        // segue quando o GTM confirmar ou depois de 2,5s, se ele falhar).
+        let foi = false;
+        const seguir = () => {
+          if (foi) return;
+          foi = true;
+          window.location.assign(TESTE7D.paginas.agendar);
+        };
+        if (json.primeira_conclusao === true && typeof json.eventId === "string") {
+          trackTeste7dAtivacao(json.eventId, seguir);
+          window.setTimeout(seguir, 2500);
+        } else {
+          seguir();
+        }
         return;
       }
       irPara(tela + 1);

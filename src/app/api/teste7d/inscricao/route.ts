@@ -19,8 +19,10 @@ import { hashRequestIp, setInscricaoCookie } from "@/lib/teste7dSession";
  * E-mail que já existe com outro WhatsApp: 409 `{ ok: false, error,
  * ativarUrl }`, sem alterar a linha e sem cookie.
  *
- * Resposta: `{ ok, id, eventId, proximaUrl }`. O cliente dispara o evento
- * Lead (`trackTeste7dLead(eventId, ...)`) e segue pra `proximaUrl`.
+ * Resposta: `{ ok, id, novo, eventId?, proximaUrl }`. `novo` só é true
+ * quando a linha foi criada agora; aí vem o `eventId` e o cliente dispara
+ * o Lead (`trackTeste7dLead(eventId, ...)`) antes de seguir pra
+ * `proximaUrl`. Inscrição repetida segue direto, sem evento.
  */
 const EMAIL_COM_OUTRO_WHATSAPP =
   "Este e-mail já tem um cadastro com outro WhatsApp. Para continuar, use o link de ativação da conta.";
@@ -66,7 +68,10 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       id,
-      eventId: `${id}:lead`,
+      // Lead só em cadastro novo: quem se inscreve de novo (mesmo e-mail e
+      // mesmo WhatsApp) não conta outra vez.
+      novo: inscricao.novo,
+      ...(inscricao.novo && { eventId: `${id}:lead` }),
       // Quem já tinha se inscrito retoma de onde parou (ver teste7dFluxo).
       proximaUrl: proximaPagina(inscricao),
     });

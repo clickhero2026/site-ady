@@ -167,8 +167,14 @@ export function InscricaoForm({
         // zero e o GTM registra o page_view dela.
         window.location.assign(destino);
       };
-      trackTeste7dLead(json.eventId, variant, seguir);
-      window.setTimeout(seguir, 2500);
+      // Lead só em cadastro novo (`novo` da API); quem já tinha cadastro
+      // com o mesmo WhatsApp segue direto, sem evento.
+      if (json.novo === true && typeof json.eventId === "string") {
+        trackTeste7dLead(json.eventId, variant, seguir);
+        window.setTimeout(seguir, 2500);
+      } else {
+        seguir();
+      }
     } catch {
       setErroGeral("Sem conexão no momento. Confira sua internet e tente de novo.");
       enviando.current = false;
