@@ -1,0 +1,40 @@
+.faixa {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faísca grande e discreta no canto — detalhe de marca. */
+.faixa::before {
+  content: "";
+  position: absolute;
+  top: 2.5rem;
+  right: 8%;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: var(--lp-spark);
+  box-shadow: 0 0 0 10px rgb(207 111 3 / 0.15);
+}
+
+.inner {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  text-align: center;
+}
+
+.botao {
+  width: 100%;
+  max-width: 30rem;
+  margin-top: 1rem;
+}
+
+.ps {
+  max-width: 40rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(255 255 255 / 0.25);
+  font-size: 1.25rem;
+  font-style: italic;
+  color: #ffffff;
+}

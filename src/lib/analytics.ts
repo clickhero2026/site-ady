@@ -32,3 +32,35 @@ export function trackSelectPlan(plan: PlanoKey) {
 export function trackLead() {
   sendGTMEvent({ event: "generate_lead" });
 }
+
+/**
+ * Teste grátis de 7 dias — etapa 1 confirmada pelo servidor. Mesmo
+ * `generate_lead` da home (a tag Lead do Meta no GTM pega os dois),
+ * separado por `form`. `event_id` vem da API (`eventId`) e é o que o
+ * Stape usa pra deduplicar navegador × Conversions API.
+ *
+ * `onDone` roda quando o GTM terminar as tags do evento (`eventCallback`)
+ * — a LP navega pra próxima página só depois disso. Se o GTM não
+ * carregar (bloqueador), o callback nunca vem: quem chama precisa de um
+ * tempo-limite próprio.
+ */
+export function trackTeste7dLead(eventId: string, lpVariant: string | null, onDone?: () => void) {
+  sendGTMEvent({
+    event: "generate_lead",
+    form: "teste7d",
+    event_id: eventId,
+    lp_variant: lpVariant,
+    ...(onDone && { eventCallback: onDone, eventTimeout: 2000 }),
+  });
+}
+
+/** Teste grátis — conversa marcada no Calendly (evento Schedule do Meta).
+ * `onDone`: mesmo contrato do `trackTeste7dLead`. */
+export function trackTeste7dSchedule(eventId: string, onDone?: () => void) {
+  sendGTMEvent({
+    event: "schedule",
+    form: "teste7d",
+    event_id: eventId,
+    ...(onDone && { eventCallback: onDone, eventTimeout: 2000 }),
+  });
+}

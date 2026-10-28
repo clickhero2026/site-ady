@@ -1,0 +1,262 @@
+/* ==========================================================================
+   LP do teste grátis de 7 dias (lp.useady.com.br) — tokens e utilitários.
+   Só carrega nas rotas de src/app/lp. Tema claro fixo: não segue o
+   toggle de tema do site principal.
+   ========================================================================== */
+
+.lp-root {
+  /* Superfícies e texto */
+  --lp-bg: #ffffff;
+  --lp-bg-alt: #f4f9fb;
+  --lp-text: #0c0d0a;
+  --lp-text-soft: #3b474b; /* 9.4:1 sobre branco — nada de cinza claro */
+  --lp-line: #d6e6ec;
+
+  /* Petróleo: #17708A é o tom pra texto/ícone sobre claro (5.6:1);
+     #1E88A8 só como acento grande/decorativo ou sobre escuro. */
+  --lp-petrol: #17708a;
+  --lp-petrol-bright: #1e88a8;
+  --lp-petrol-soft: #e3f1f5;
+  --lp-dark-from: #17708a;
+  --lp-dark-to: #0b3a48;
+
+  /* Botão principal — exceção consciente à regra "laranja só na faísca"
+     (decisão de marketing, prompt da LP). Pra voltar ao petróleo, trocar
+     só estas três linhas. Texto branco a 20px/700 = "texto grande" na
+     WCAG: 3.5:1 passa AA; no hover escurece e sobe pra 4.9:1. */
+  --lp-cta: #cf6f03;
+  --lp-cta-hover: #a65802;
+  --lp-on-cta: #ffffff;
+
+  --lp-spark: #cf6f03;
+
+  --lp-radius: 1.5rem;
+  --lp-radius-lg: 2rem;
+  --lp-shadow: 0 1px 2px rgb(12 13 10 / 0.04), 0 12px 32px -12px rgb(11 58 72 / 0.18);
+  --lp-shadow-lg: 0 2px 4px rgb(12 13 10 / 0.05), 0 28px 60px -20px rgb(11 58 72 / 0.32);
+
+  --lp-container: 74rem;
+  --lp-gutter: 1rem;
+  --lp-section-y: clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+
+  /* Tipografia: corpo 20px no celular, 18px no desktop (pedido explícito). */
+  --lp-fs-body: 1.25rem;
+  --lp-fs-h1: clamp(2.5rem, 2.1rem + 1.1vw, 3rem);
+  --lp-fs-h2: clamp(1.875rem, 1.45rem + 1.6vw, 2.75rem);
+  --lp-fs-h3: clamp(1.375rem, 1.25rem + 0.5vw, 1.625rem);
+
+  --accent: var(--lp-petrol); /* anel de foco global (globals.css) */
+
+  background: var(--lp-bg);
+  color: var(--lp-text);
+  font-size: var(--lp-fs-body);
+  line-height: 1.5;
+  color-scheme: light;
+  overflow-x: clip;
+}
+
+@media (min-width: 48rem) {
+  .lp-root {
+    --lp-fs-body: 1.125rem;
+    --lp-gutter: 1.5rem;
+  }
+}
+
+html:has(.lp-root) {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem; /* não esconder âncora atrás da barra fixa */
+}
+
+/* Movimento reduzido: nada desliza, gira ou anima em todas as páginas da
+   LP (as mudanças de estado continuam, só sem transição). */
+@media (prefers-reduced-motion: reduce) {
+  html:has(.lp-root) {
+    scroll-behavior: auto;
+  }
+
+  .lp-root *,
+  .lp-root *::before,
+  .lp-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .lp-cta:hover {
+    transform: none;
+  }
+}
+
+/* Texto ampliado (200%, acessibilidade do sistema): palavra que não cabe
+   quebra em vez de alargar o cartão e vazar da tela. Com o tamanho
+   normal nenhuma palavra chega a quebrar. */
+.lp-root :where(h1, h2, h3, p, li, dt, dd, summary, label, legend) {
+  overflow-wrap: anywhere;
+}
+
+.lp-container {
+  width: 100%;
+  max-width: var(--lp-container);
+  margin-inline: auto;
+  padding-inline: var(--lp-gutter);
+}
+
+/* ---- Faixas de seção ---- */
+.lp-section {
+  padding-block: var(--lp-section-y);
+}
+
+.lp-section--alt {
+  background: var(--lp-bg-alt);
+}
+
+.lp-section--dark {
+  background: linear-gradient(160deg, var(--lp-dark-from) 0%, var(--lp-dark-to) 100%);
+  color: #ffffff;
+  --accent: #ffffff;
+}
+
+.lp-h2 {
+  font-size: var(--lp-fs-h2);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+
+.lp-h2--center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.lp-h3 {
+  font-size: var(--lp-fs-h3);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Faísca: pontinho laranja ao lado de títulos — único laranja além do botão. */
+.lp-spark::after {
+  content: "";
+  display: inline-block;
+  width: 0.28em;
+  height: 0.28em;
+  margin-left: 0.12em;
+  border-radius: 50%;
+  background: var(--lp-spark);
+  vertical-align: 0.55em;
+}
+
+/* ---- Botão principal ---- */
+.lp-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.5rem;
+  padding: 0.85rem 1.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--lp-cta);
+  color: var(--lp-on-cta);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere; /* texto ampliado: quebra em vez de vazar */
+  max-width: 100%;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -10px rgb(207 111 3 / 0.6);
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.lp-cta:hover {
+  background: var(--lp-cta-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px -10px rgb(166 88 2 / 0.6);
+}
+
+.lp-cta:focus-visible {
+  outline: 3px solid var(--lp-text);
+  outline-offset: 3px;
+}
+
+.lp-section--dark .lp-cta:focus-visible {
+  outline-color: #ffffff;
+}
+
+.lp-cta[disabled],
+.lp-cta[aria-disabled="true"] {
+  cursor: progress;
+  opacity: 0.75;
+  transform: none;
+}
+
+.lp-cta--wide {
+  width: 100%;
+}
+
+.lp-cta-note {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  color: var(--lp-text-soft);
+}
+
+.lp-section--dark .lp-cta-note {
+  color: #e6f2f5;
+}
+
+/* ---- Moldura de print do app ---- */
+.lp-shot {
+  overflow: hidden;
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  background: #ffffff;
+  box-shadow: var(--lp-shadow-lg);
+}
+
+.lp-shot img {
+  width: 100%;
+  height: auto;
+}
+
+/* ---- Aparecer ao rolar: só CSS, só onde o navegador suporta ---- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .lp-reveal {
+      animation: lp-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+@keyframes lp-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Cartão que sobe de leve no hover (só com mouse). */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lp-lift {
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .lp-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--lp-shadow-lg);
+  }
+}

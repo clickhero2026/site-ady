@@ -1,0 +1,34 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgb(255 255 255 / 0.92);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--lp-line);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+}
+
+/* `.inner .cta` pra vencer o `display` do `.lp-cta` global. */
+.inner .cta {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .inner {
+    min-height: 4.75rem;
+  }
+
+  .inner .cta {
+    display: inline-flex;
+    min-height: 3.25rem;
+    padding-inline: 1.5rem;
+    font-size: 1.1875rem;
+  }
+}

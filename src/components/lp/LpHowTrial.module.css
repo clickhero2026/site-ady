@@ -1,0 +1,55 @@
+.grade {
+  display: grid;
+  gap: 1.25rem;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48rem) {
+  .grade {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.cartao {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  padding: 2rem 1.75rem;
+  border-radius: var(--lp-radius-lg);
+  background: var(--lp-bg-alt);
+  border: 1px solid var(--lp-line);
+  font-size: 1.3125rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.numero {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  color: var(--lp-petrol);
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.25;
+}
+
+.icone {
+  color: var(--lp-petrol);
+}
+
+.nota {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--lp-petrol);
+}
+
+.nota + * {
+  margin-top: 1.75rem;
+}

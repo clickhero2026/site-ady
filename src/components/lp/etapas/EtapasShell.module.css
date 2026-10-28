@@ -1,0 +1,158 @@
+/* minmax(0, 1fr): nada de dentro (a agenda, palavra longa com texto
+   ampliado) alarga a página além da tela. */
+.shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+/* ---- Painel petróleo: cabeçalho compacto no celular ---- */
+.painel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem var(--lp-gutter) 1.25rem;
+  background: linear-gradient(160deg, var(--lp-dark-from), var(--lp-dark-to));
+  color: #ffffff;
+}
+
+.painelTitulo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.confianca {
+  display: none;
+}
+
+/* ---- Conteúdo ---- */
+.conteudo {
+  padding: 1.25rem var(--lp-gutter) 3rem;
+  background: var(--lp-bg);
+}
+
+.conteudoInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.saudacao {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* ---- Progresso ---- */
+.progresso {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.passoTexto {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--lp-petrol);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.passos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.passo {
+  display: grid;
+  gap: 0.4rem;
+  align-content: start;
+  padding-top: 0.6rem;
+  border-top: 5px solid var(--lp-line);
+  font-size: 0.9375rem;
+  line-height: 1.25;
+  color: var(--lp-text-soft);
+}
+
+.passo[data-feito],
+.passo[data-atual] {
+  border-top-color: var(--lp-petrol);
+  color: var(--lp-text);
+}
+
+.passo[data-atual] {
+  font-weight: 700;
+}
+
+.passoMarca {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--lp-line);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.passo[data-feito] .passoMarca {
+  border-color: var(--lp-petrol);
+  background: var(--lp-petrol);
+  color: #ffffff;
+}
+
+.passo[data-atual] .passoMarca {
+  border-color: var(--lp-petrol);
+  color: var(--lp-petrol);
+}
+
+@media (min-width: 64rem) {
+  .shell {
+    grid-template-columns: minmax(20rem, 28rem) minmax(0, 1fr);
+  }
+
+  .painel {
+    position: sticky;
+    top: 0;
+    align-content: start;
+    gap: 2rem;
+    height: 100dvh;
+    padding: 2.5rem 3rem;
+  }
+
+  .painelTitulo {
+    margin-top: 2rem;
+    font-size: 2.25rem;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+  }
+
+  .confianca {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.1875rem;
+    font-weight: 600;
+  }
+
+  .confianca li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .conteudo {
+    padding: 3rem 3rem 4rem;
+  }
+
+  .conteudoInner {
+    gap: 1.5rem;
+  }
+}
