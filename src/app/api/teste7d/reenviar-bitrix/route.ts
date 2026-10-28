@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { syncInscricaoBitrix } from "@/lib/bitrix-teste7d";
+import { bitrixTeste7dAtivo, syncInscricaoBitrix } from "@/lib/bitrix-teste7d";
 import { lerParaSync, listarBitrixPendentes } from "@/lib/teste7dDb";
 import { erro, erroInterno } from "@/lib/teste7dHttp";
 import { safeEqual } from "@/lib/teste7dSession";
@@ -14,10 +14,17 @@ export const maxDuration = 60;
  * pelo header `x-teste7d-chave` = `TESTE7D_REENVIO_KEY`. Chamar de novo
  * até `restantes` ser 0.
  *
+ * Com `TESTE7D_BITRIX_ATIVO` diferente de "true", responde que a
+ * integração está desligada e não toca no banco nem no Bitrix.
+ *
  *   curl -X POST https://useady.com.br/api/teste7d/reenviar-bitrix \
  *     -H "x-teste7d-chave: $TESTE7D_REENVIO_KEY"
  */
 export async function POST(request: Request) {
+  if (!bitrixTeste7dAtivo()) {
+    return erro("Integração com o Bitrix desligada (TESTE7D_BITRIX_ATIVO). Nada foi reenviado.", 503);
+  }
+
   const chave = process.env.TESTE7D_REENVIO_KEY;
   const recebida = request.headers.get("x-teste7d-chave");
 

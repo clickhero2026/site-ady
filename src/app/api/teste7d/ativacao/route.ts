@@ -1,5 +1,5 @@
 import { after, NextResponse } from "next/server";
-import { syncAtualizacaoBitrix } from "@/lib/bitrix-teste7d";
+import { bitrixTeste7dAtivo, syncAtualizacaoBitrix } from "@/lib/bitrix-teste7d";
 import { concluirAtivacao, etapa2Pendencias, salvarAtivacao } from "@/lib/teste7dDb";
 import { erro, erroInterno, lerCorpo, SEM_SESSAO } from "@/lib/teste7dHttp";
 import { ativacaoSchema } from "@/lib/teste7dSchema";
@@ -28,7 +28,7 @@ export async function PATCH(request: Request) {
     if (body.data.concluir) {
       const pendencias = etapa2Pendencias(row);
       if (pendencias.length > 0) {
-        after(() => syncAtualizacaoBitrix(row!));
+        if (bitrixTeste7dAtivo()) after(() => syncAtualizacaoBitrix(row!));
         return NextResponse.json(
           {
             ok: false,
@@ -42,7 +42,7 @@ export async function PATCH(request: Request) {
     }
 
     const saved = row;
-    after(() => syncAtualizacaoBitrix(saved));
+    if (bitrixTeste7dAtivo()) after(() => syncAtualizacaoBitrix(saved));
 
     return NextResponse.json({
       ok: true,

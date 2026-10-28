@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { after, NextResponse } from "next/server";
 import { TESTE7D } from "@/config/teste7d";
-import { syncInscricaoBitrix } from "@/lib/bitrix-teste7d";
+import { bitrixTeste7dAtivo, syncInscricaoBitrix } from "@/lib/bitrix-teste7d";
 import { contarRecentesPorIp, upsertInscricao } from "@/lib/teste7dDb";
 import { proximaPagina } from "@/lib/teste7dFluxo";
 import { erro, erroInterno, lerCorpo } from "@/lib/teste7dHttp";
@@ -13,8 +13,8 @@ import { hashRequestIp, setInscricaoCookie } from "@/lib/teste7dSession";
  * WhatsApp e consentimento, mais o rastreio (UTMs, lp, fbclid).
  *
  * O Neon decide sucesso/erro — é ele que gera o id do cookie da etapa 2.
- * O Bitrix roda depois da resposta (`after`) e nunca vira erro pro
- * usuário (ver bitrix-teste7d.ts).
+ * O Bitrix (só com `TESTE7D_BITRIX_ATIVO=true`) roda depois da resposta
+ * (`after`) e nunca vira erro pro usuário (ver bitrix-teste7d.ts).
  *
  * Resposta: `{ ok, id, eventId, proximaUrl }`. O cliente dispara o evento
  * Lead (`trackTeste7dLead(eventId, ...)`) e segue pra `proximaUrl`.
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
     const { id } = inscricao;
     await setInscricaoCookie(id);
-    after(() => syncInscricaoBitrix(id));
+    if (bitrixTeste7dAtivo()) after(() => syncInscricaoBitrix(id));
 
     // Server-side não manda nada pro Meta direto: o projeto não tem
     // Conversions API própria — o CAPI sai do GTM server-side (Stape) a

@@ -1,5 +1,5 @@
 import { after, NextResponse } from "next/server";
-import { syncAtualizacaoBitrix } from "@/lib/bitrix-teste7d";
+import { bitrixTeste7dAtivo, syncAtualizacaoBitrix } from "@/lib/bitrix-teste7d";
 import { registrarAgendamento } from "@/lib/teste7dDb";
 import { erro, erroInterno, lerCorpo, SEM_SESSAO } from "@/lib/teste7dHttp";
 import { agendamentoSchema } from "@/lib/teste7dSchema";
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const row = await registrarAgendamento(id, body.data.calendly_evento_uri);
     if (!row) return erro(SEM_SESSAO, 404);
 
-    after(() => syncAtualizacaoBitrix(row));
+    if (bitrixTeste7dAtivo()) after(() => syncAtualizacaoBitrix(row));
 
     // event_id por evento do Calendly: reagendar gera um Schedule novo,
     // reenviar o mesmo evento é deduplicado.

@@ -25,6 +25,11 @@ import {
  * atualiza o lead. Por isso o reenvio (`/api/teste7d/reenviar-bitrix`) é
  * só chamar o mesmo `syncInscricaoBitrix` de novo.
  *
+ * Desligado por padrão: só roda com `TESTE7D_BITRIX_ATIVO=true` (o Bitrix
+ * do time está no plano gratuito, sem webhook/REST). Desligado, nada aqui
+ * chama o Bitrix nem lê `BITRIX_WEBHOOK_URL`, e as linhas ficam
+ * `pendente` — ligar a flag depois e chamar o reenvio leva tudo.
+ *
  * Nunca lança e nunca bloqueia o usuário: falha vira `bitrix_sync_status
  * = 'erro'` + motivo em `bitrix_erro`. Sem `BITRIX_WEBHOOK_URL` (mesma
  * variável e convenção do `bitrix.ts`), não chama nada e a linha fica
@@ -36,6 +41,12 @@ import {
  * - `BITRIX_TESTE7D_STATUS_ID`: etapa do lead na criação (ex. a de
  *   "qualificado" do funil de vocês). Sem ele, o Bitrix usa a padrão.
  */
+
+/** Flag server-side da integração do teste7d com o Bitrix. Qualquer valor
+ * diferente de "true" (inclusive ausente) = desligada. */
+export function bitrixTeste7dAtivo(): boolean {
+  return process.env.TESTE7D_BITRIX_ATIVO === "true";
+}
 
 type BitrixCall = { ok: true; result: unknown } | { ok: false; error: string };
 
@@ -162,6 +173,7 @@ async function syncUmaVez(id: string, webhookUrl: string): Promise<boolean> {
  * — agora como update — pra o dado novo não ficar esperando o reenvio.
  */
 export async function syncInscricaoBitrix(id: string): Promise<void> {
+  if (!bitrixTeste7dAtivo()) return;
   const webhookUrl = process.env.BITRIX_WEBHOOK_URL;
   if (!webhookUrl) {
     console.warn(`[teste7d-bitrix] BITRIX_WEBHOOK_URL não configurada — ${id} fica pendente.`);
@@ -183,6 +195,6 @@ export async function syncInscricaoBitrix(id: string): Promise<void> {
  * o reenvio) — dois `crm.lead.add` concorrentes duplicariam o lead.
  */
 export async function syncAtualizacaoBitrix(row: InscricaoRow): Promise<void> {
-  if (!row.bitrix_lead_id) return;
+  if (!bitrixTeste7dAtivo() || !row.bitrix_lead_id) return;
   await syncInscricaoBitrix(row.id);
 }
