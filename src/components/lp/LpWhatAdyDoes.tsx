@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { AD_CHANNELS, adChannelsText } from "@/lib/flags";
-import { CtaBlock } from "./CtaBlock";
 import styles from "./LpWhatAdyDoes.module.css";
 
 /**
@@ -80,7 +79,6 @@ export function LpWhatAdyDoes() {
           </article>
         </div>
 
-        <CtaBlock />
       </div>
     </section>
   );

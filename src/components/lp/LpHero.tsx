@@ -2,13 +2,12 @@ import { CreditCard, Handshake, Hourglass } from "lucide-react";
 import type { LpVariant } from "@/config/teste7d";
 import { LP_TITULOS, faixaDoTitulo } from "@/lib/lp-titulos";
 import { HeroVisual } from "./HeroVisual";
-import { InscricaoForm } from "./InscricaoForm";
 import styles from "./LpHero.module.css";
 
-/** Hero: selo, título da versão (A–F), subtítulo e o formulário — tudo
- * na primeira dobra; a composição visual fica à direita. No celular a
- * ordem é selo, título, formulário, subtítulo e a composição, pra o
- * formulário inteiro caber na primeira tela. Logo embaixo, a faixa de
+/** Hero: selo, título da versão (A–F), subtítulo e o botão que leva ao
+ * formulário (#cadastro, mais abaixo) — tudo na primeira dobra; o celular
+ * fica à direita no desktop e abaixo do botão no celular. O botão é um
+ * link comum: funciona mesmo sem JavaScript. Logo embaixo, a faixa de
  * confiança. */
 export function LpHero({ variant }: { variant: LpVariant }) {
   return (
@@ -18,20 +17,21 @@ export function LpHero({ variant }: { variant: LpVariant }) {
           <div className={styles.texto}>
             <p className={styles.selo}>
               <span className={styles.seloPonto} aria-hidden="true" />
-              TESTE GRÁTIS POR 7 DIAS, SEM CARTÃO DE CRÉDITO
+              TESTE O ady GRÁTIS
             </p>
             <h1 id="lp-titulo" className={styles.titulo}>
               {LP_TITULOS[variant]}
             </h1>
-            <div id="inscricao" className={styles.formCard}>
-              <InscricaoForm variant={variant} />
-            </div>
-
-            {/* Depois do formulário no HTML (ordem do celular); no desktop o
-                CSS sobe o subtítulo pra cima do formulário. */}
             <p className={styles.subtitulo}>
-              Vagas limitadas. A gente configura o ady com você numa conversa rápida e os 7 dias começam ali.
+              Veja seu WhatsApp bombar de clientes todos os dias sem precisar entender de anúncio na internet, sem
+              depender do sobrinho ou de especialistas que cobram caro
             </p>
+            <div className={styles.acao}>
+              <a id="hero-cta" href="#cadastro" className={`lp-cta ${styles.botao}`}>
+                QUERO TESTAR GRÁTIS
+              </a>
+              <p className={styles.nota}>Sem cartão de crédito. Os 7 dias só começam depois da ativação da sua conta.</p>
+            </div>
           </div>
 
           <div className={styles.visual}>

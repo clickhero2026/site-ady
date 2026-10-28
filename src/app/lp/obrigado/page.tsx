@@ -33,11 +33,11 @@ export default async function ObrigadoPage() {
           </li>
           <li>
             <MessageCircle aria-hidden="true" size={28} strokeWidth={2} />
-            Na conversa, a gente configura o ady com você, ao vivo.
+            Na conversa, a gente ativa a sua conta e configura o ady com você, ao vivo.
           </li>
           <li>
             <Sparkles aria-hidden="true" size={28} strokeWidth={2} />
-            Daí começam os seus 7 dias: o ady cria e publica os posts do seu negócio.
+            Com a conta ativada, começam os seus 7 dias: o ady cria e publica os posts do seu negócio.
           </li>
         </ol>
       </section>

@@ -43,7 +43,7 @@ export const TESTE7D = {
   agendar: {
     titulo: "Quase lá. Escolha o melhor horário para a sua conversa.",
     tituloVariante: "Falta um passo: marque a conversa que libera os seus 7 dias.",
-    texto: "Seus 7 dias começam depois dessa conversa. Não precisa de cartão.",
+    texto: "Nessa conversa a gente ativa a sua conta com você, e os 7 dias começam depois da ativação. Não precisa de cartão.",
   },
 
   /**

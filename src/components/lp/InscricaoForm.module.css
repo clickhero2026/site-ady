@@ -6,18 +6,11 @@
   gap: 0.75rem;
 }
 
-/* Três campos lado a lado quando cabem (hero no desktop); empilhados no
-   celular. */
+/* Campos sempre empilhados (o cartão do #cadastro é estreito). */
 .campos {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
-}
-
-@media (min-width: 40rem) {
-  .campos {
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  }
 }
 
 .campo {
@@ -129,20 +122,6 @@
 
 .rotulos > span[data-ativo="true"] {
   visibility: visible;
-}
-
-.longo {
-  display: none;
-}
-
-@media (min-width: 30rem) {
-  .curto {
-    display: none;
-  }
-
-  .longo {
-    display: inline;
-  }
 }
 
 .nota {

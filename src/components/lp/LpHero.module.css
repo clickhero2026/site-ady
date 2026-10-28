@@ -1,5 +1,5 @@
 .hero {
-  padding-block: 0.625rem 2.5rem;
+  padding-block: 1rem 3rem;
   background:
     radial-gradient(60rem 30rem at 100% 0%, var(--lp-petrol-soft) 0%, transparent 70%),
     linear-gradient(180deg, #ffffff 0%, var(--lp-bg-alt) 100%);
@@ -7,7 +7,7 @@
 
 .grid {
   display: grid;
-  gap: 2.5rem;
+  gap: 1rem;
 }
 
 /* minmax(0, 1fr): com texto ampliado (200%), a coluna não cresce até a
@@ -15,7 +15,7 @@
 .texto {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0.75rem;
+  gap: 1rem;
   align-content: start;
   min-width: 0;
 }
@@ -25,11 +25,11 @@
   align-items: center;
   gap: 0.5rem;
   justify-self: start;
-  padding: 0.3rem 0.75rem;
+  padding: 0.4rem 0.85rem;
   border-radius: 999px;
   background: var(--lp-petrol);
   color: #ffffff;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   line-height: 1.3;
@@ -62,43 +62,48 @@
   max-width: 38rem;
 }
 
-.formCard {
-  padding: 1rem;
-  scroll-margin-top: 4.5rem;
-  border: 1px solid var(--lp-line);
-  border-radius: var(--lp-radius);
-  background: #ffffff;
-  box-shadow: var(--lp-shadow-lg);
+/* Botão grande + a frase de baixo. */
+.acao {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* `.acao .botao` pra vencer o tamanho do `.lp-cta` global. */
+.acao .botao {
+  width: 100%;
+  min-height: 4rem;
+  font-size: 1.375rem;
+}
+
+.nota {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--lp-text-soft);
 }
 
 .visual {
   min-width: 0;
 }
 
-/* Celular: H1 em ~34px (30 a 36px). Desktop segue o --lp-fs-h1. */
+/* Celular: H1 entre 34 e 42px, pela faixa do título (`faixaDoTitulo`),
+   pra selo, título, subtítulo e botão caberem na primeira tela nas seis
+   versões. Quebra normal, não "balance": o balance gasta uma linha a mais.
+   Curto: 38px em 360 → 42px a partir de ~412. Médio: 36 → 40px (480).
+   Longo: 34 → 38px (480). Em 320, 36 / 34 / 34px. */
 @media (max-width: 30rem) {
-  /* Quebra normal, não "balance": o balance gasta uma linha a mais. */
   .titulo {
-    font-size: clamp(1.875rem, 1.2rem + 3.85vw, 2.25rem);
-    line-height: 1.04;
+    font-size: clamp(2.25rem, 0.645rem + 7.7vw, 2.625rem);
     text-wrap: wrap;
   }
 
-  .selo {
-    font-size: 0.75rem;
-    line-height: 1.25;
-    letter-spacing: 0.01em;
+  .hero[data-titulo="medio"] .titulo {
+    font-size: clamp(2.125rem, 1.5rem + 3.33vw, 2.5rem);
   }
 
-  /* Sem a moldura do cartão: no celular estreito ela come ~30px de altura
-     e a largura que faz o consentimento caber em 3 linhas. Os campos têm
-     borda forte própria, então o formulário continua bem delimitado. */
-  .formCard {
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: none;
-    box-shadow: none;
+  .hero[data-titulo="longo"] .titulo {
+    font-size: clamp(2.125rem, 1.375rem + 3.33vw, 2.375rem);
   }
 
   .subtitulo {
@@ -106,78 +111,18 @@
   }
 }
 
-/* Celular baixo (360x740, 320x568, ou qualquer um com a barra do
-   navegador comendo a tela): título no piso de 30px, pra sobrar altura
-   pro formulário. Os espaçamentos já foram reduzidos antes disto. */
-@media (max-width: 30rem) and (max-height: 50rem) {
-  .titulo {
-    font-size: 1.875rem;
-  }
-}
-
-/* Títulos médios e longos (`faixaDoTitulo`), de 336px a 480px: fonte um
-   pouco menor (piso de 29px e 28px), pra todas as versões mostrarem o
-   formulário inteiro na primeira tela. 320px fica como estava. */
-@media (min-width: 21rem) and (max-width: 30rem) {
-  .hero[data-titulo="medio"] .titulo {
-    font-size: clamp(1.8125rem, 1.14rem + 3.66vw, 2.125rem);
-  }
-
-  .hero[data-titulo="longo"] .titulo {
-    font-size: clamp(1.75rem, 1.08rem + 3.46vw, 2rem);
-    line-height: 1;
-  }
-}
-
-@media (min-width: 21rem) and (max-width: 30rem) and (max-height: 50rem) {
-  .hero[data-titulo="medio"] .titulo {
-    font-size: 1.8125rem;
-  }
-
-  .hero[data-titulo="longo"] .titulo {
-    font-size: 1.75rem;
-  }
-
-  /* Só os longos em tela baixa: a fonte no piso não basta, então o selo e
-     as margens do hero encolhem um pouco. Campos e botão não mudam. */
-  .hero[data-titulo="longo"] {
-    padding-top: 0.375rem;
-  }
-
-  .hero[data-titulo="longo"] .texto {
-    gap: 0.5rem;
-  }
-
-  .hero[data-titulo="longo"] .selo {
-    padding-block: 0.2rem;
-    line-height: 1.15;
-  }
-}
-
 @media (min-width: 30rem) {
-  .texto {
-    gap: 1rem;
-  }
-
-  .selo {
-    padding: 0.4rem 0.85rem;
-    font-size: 0.875rem;
-  }
-
-  .formCard {
-    padding: 1.25rem;
+  .acao .botao {
+    justify-self: start;
+    width: auto;
+    min-width: 22rem;
+    padding-inline: 2.5rem;
   }
 }
 
 @media (min-width: 64rem) {
   .hero {
     padding-block: 1.75rem 4.5rem;
-  }
-
-  /* Ordem do desktop: selo, título, subtítulo, formulário. */
-  .formCard {
-    order: 1;
-    margin-top: 0.5rem;
   }
 
   .grid {
@@ -188,10 +133,6 @@
 
   .subtitulo {
     font-size: 1.3125rem;
-  }
-
-  .formCard {
-    padding: 1.5rem;
   }
 }
 

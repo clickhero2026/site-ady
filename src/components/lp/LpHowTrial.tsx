@@ -26,7 +26,7 @@ export function LpHowTrial() {
             </li>
           ))}
         </ol>
-        <p className={styles.nota}>Os 7 dias só começam depois da conversa.</p>
+        <p className={styles.nota}>Os 7 dias só começam depois da ativação da sua conta, que a gente faz junto com você na conversa.</p>
         <CtaBlock />
       </div>
     </section>

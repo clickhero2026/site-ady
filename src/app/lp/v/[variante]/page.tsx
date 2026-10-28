@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { TESTE7D, type LpVariant } from "@/config/teste7d";
 import { LpAllInOne } from "@/components/lp/LpAllInOne";
+import { LpCadastro } from "@/components/lp/LpCadastro";
 import { LpComparison } from "@/components/lp/LpComparison";
 import { LpFaq } from "@/components/lp/LpFaq";
 import { LpFinalCta } from "@/components/lp/LpFinalCta";
@@ -35,6 +36,7 @@ export default async function LpPage({ params }: PageProps<"/lp/v/[variante]">) 
         <LpHero variant={variant} />
         <LpPain />
         <LpWhatAdyDoes />
+        <LpCadastro variant={variant} />
         <LpComparison />
         <LpAllInOne />
         <LpHowTrial />

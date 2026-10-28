@@ -10,7 +10,7 @@ export default function LpNotFound() {
           <h1 className="lp-h2">Essa página não existe.</h1>
           <p>Mas o teste grátis de 7 dias continua aqui.</p>
           <a href={TESTE7D.paginas.lp} className="lp-cta">
-            QUERO TESTAR GRÁTIS POR 7 DIAS
+            QUERO TESTAR GRÁTIS
           </a>
         </div>
       </main>

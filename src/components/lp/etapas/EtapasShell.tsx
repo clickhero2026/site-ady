@@ -40,7 +40,7 @@ export function EtapasShell({
           </li>
           <li>
             <CalendarClock aria-hidden="true" size={24} strokeWidth={2} />
-            Os 7 dias só começam depois da conversa
+            Os 7 dias só começam depois da ativação da sua conta
           </li>
           <li>
             <Handshake aria-hidden="true" size={24} strokeWidth={2} />

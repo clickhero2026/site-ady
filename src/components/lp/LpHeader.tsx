@@ -8,7 +8,7 @@ export function LpHeader() {
     <header className={styles.header} data-topo-fixo>
       <div className={`lp-container ${styles.inner}`}>
         <LpLogo />
-        <a href="#inscricao" className={`lp-cta ${styles.cta}`}>
+        <a href="#cadastro" className={`lp-cta ${styles.cta}`}>
           QUERO TESTAR GRÁTIS
         </a>
       </div>

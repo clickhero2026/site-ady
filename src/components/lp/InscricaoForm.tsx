@@ -269,8 +269,7 @@ export function InscricaoForm({ variant }: { variant: LpVariant }) {
       </div>
 
       {/* Os rótulos de todos os estados ocupam a mesma célula: o botão tem
-          sempre o tamanho do maior, sem "pulo" ao trocar o texto. No
-          celular estreito vai a versão curta, pra caber em uma linha. */}
+          sempre o tamanho do maior, sem "pulo" ao trocar o texto. */}
       <button
         ref={botaoRef}
         type="submit"
@@ -278,10 +277,7 @@ export function InscricaoForm({ variant }: { variant: LpVariant }) {
         disabled={!hidratado || estado !== "livre"}
       >
         <span className={styles.rotulos}>
-          <span data-ativo={estado === "livre"}>
-            <span className={styles.longo}>QUERO TESTAR GRÁTIS POR 7 DIAS</span>
-            <span className={styles.curto}>QUERO TESTAR GRÁTIS</span>
-          </span>
+          <span data-ativo={estado === "livre"}>QUERO TESTAR GRÁTIS</span>
           <span data-ativo={estado === "enviando"}>
             <span className={styles.spinner} aria-hidden="true" />
             ENVIANDO…
@@ -290,7 +286,7 @@ export function InscricaoForm({ variant }: { variant: LpVariant }) {
         </span>
       </button>
 
-      <p className={styles.nota}>Sem cartão de crédito. Os 7 dias só começam depois da conversa.</p>
+      <p className={styles.nota}>Sem cartão de crédito. Os 7 dias só começam depois da ativação da sua conta.</p>
 
       <div role="status" aria-live="polite" className={styles.status}>
         {resumo && <p className="visually-hidden">{resumo}</p>}
