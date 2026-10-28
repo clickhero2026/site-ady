@@ -47,13 +47,12 @@ export const TESTE7D = {
   },
 
   /**
-   * Parâmetro de pré-preenchimento do telefone no Calendly. O Calendly só
-   * aceita telefone por URL em dois casos: `location` (quando o local do
-   * evento é "ligação: o convidado informa o número") ou `a1`..`a10`
-   * (n-ésima pergunta personalizada do evento). TODO: confirmar como o
-   * evento está configurado e ajustar aqui.
+   * Parâmetro de pré-preenchimento do telefone no Calendly: `a1` = primeira
+   * pergunta personalizada do evento, que é o telefone. (O Calendly também
+   * aceitaria `location`, só se o local do evento fosse "ligação: o
+   * convidado informa o número" — não é o caso.)
    */
-  calendlyTelefoneParam: "location",
+  calendlyTelefoneParam: "a1",
 
   /** Versões de título da landing page (briefing, seção 8). A é o controle. */
   lpVariants: ["A", "B", "C", "D", "E", "F"] as const,

@@ -16,6 +16,19 @@
   color: var(--lp-text-soft);
 }
 
+/* O que ter à mão na conversa — texto escuro sobre petróleo claro (~18:1). */
+.aMao {
+  min-width: 0;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--lp-petrol);
+  border-radius: 1rem;
+  background: var(--lp-petrol-soft);
+  color: var(--lp-text);
+  font-size: 1.125rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
 .horario {
   padding: 1rem 1.25rem;
   border-radius: 1rem;

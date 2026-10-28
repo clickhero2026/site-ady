@@ -24,11 +24,13 @@ export default async function AgendarPage() {
       <div className={styles.topo}>
         <h1 className={styles.titulo}>{TESTE7D.agendar.titulo}</h1>
         <p className={styles.texto}>{TESTE7D.agendar.texto}</p>
-        {/* PENDENTE (briefing, seção 9): linha "o que ter à mão na
-            conversa" — esperando o Denilson confirmar o conteúdo. Para
-            ativar, descomentar e trocar o texto:
-        <p className={styles.texto}>[o que ter à mão na conversa]</p>
-        */}
+        {/* Briefing, seção 9: o que ter à mão na conversa. */}
+        <p className={styles.aMao}>
+          Na conversa, tenha por perto: o login do Instagram e do Facebook do
+          negócio, o arquivo da logo e, se tiver, o cartão para o pagamento
+          dos anúncios (não precisa informar número agora). Fique de um
+          computador, com cerca de 1 hora livre.
+        </p>
       </div>
 
       <AgendarCalendly
