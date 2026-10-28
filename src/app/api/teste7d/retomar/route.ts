@@ -4,6 +4,7 @@ import { retomarPorDados } from "@/lib/teste7dDb";
 import { proximaPagina } from "@/lib/teste7dFluxo";
 import { erro, erroInterno, lerCorpo } from "@/lib/teste7dHttp";
 import { retomadaExcedida } from "@/lib/teste7dLimite";
+import { ehRobo, paginaParaRobo } from "@/lib/teste7dRobo";
 import { normalizeWhatsappBR } from "@/lib/teste7dSchema";
 import { hashRequestIp, setInscricaoCookie } from "@/lib/teste7dSession";
 
@@ -31,11 +32,15 @@ const retomarSchema = z.object({
  * assinado do cadastro e devolve o próximo passo.
  *
  * Não dispara evento de rastreio: retomar não é um cadastro novo.
+ * Robô (User-Agent da lista em `src/config/robos.ts`): página mínima,
+ * sem gravar retomada e sem cookie, igual ao link com token.
  *
  * Resposta: `{ ok: true, proximaUrl }`, ou `{ ok: false, error }` (404 neutro,
  * 429 no limite de tentativas).
  */
 export async function POST(request: Request) {
+  if (ehRobo(request)) return paginaParaRobo({ "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" });
+
   const ipHash = hashRequestIp(request);
   if (ipHash && retomadaExcedida(ipHash)) return erro(MUITAS_TENTATIVAS, 429);
 

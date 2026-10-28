@@ -1,6 +1,7 @@
 import { TESTE7D, TOKEN_HEADER } from "@/config/teste7d";
 import { retomarPorToken } from "@/lib/teste7dDb";
 import { proximaPagina } from "@/lib/teste7dFluxo";
+import { ehRobo, paginaParaRobo } from "@/lib/teste7dRobo";
 import { setInscricaoCookie } from "@/lib/teste7dSession";
 
 /** 32 caracteres hexadecimais (uuid sem hífens). */
@@ -20,12 +21,20 @@ function ir(destino: string) {
 /**
  * Link de retomada: `lp.useady.com.br/ativar-conta?t=<token>`. O proxy
  * manda pra cá só quando há `?t=`, com o token no cabeçalho `TOKEN_HEADER`
- * (fora da URL reescrita) — a página /ativar-conta nunca recebe o token. Válido: grava a retomada, define o mesmo cookie assinado do
- * cadastro e redireciona (302) pra onde a pessoa parou. Inválido, vencido
- * ou com formato errado: volta pra /ativar-conta sem o token, com o aviso
- * e o formulário manual. O token nunca é logado nem devolvido.
+ * (fora da URL reescrita) — a página /ativar-conta nunca recebe o token.
+ *
+ * Robô de prévia ou de busca, ou HEAD (ver `ehRobo`): página mínima, sem
+ * gravar retomada, sem cookie e sem redirecionar — é ela que vira a
+ * prévia do link no WhatsApp.
+ *
+ * Pessoa: token válido grava a retomada, define o mesmo cookie assinado
+ * do cadastro e redireciona (302) pra onde a pessoa parou. Inválido,
+ * vencido ou com formato errado: volta pra /ativar-conta sem o token, com
+ * o aviso e o formulário manual. O token nunca é logado nem devolvido.
  */
 export async function GET(request: Request) {
+  if (ehRobo(request)) return paginaParaRobo(CABECALHOS);
+
   const token = request.headers.get(TOKEN_HEADER)?.trim().toLowerCase() ?? "";
   const invalido = `${TESTE7D.paginas.ativarConta}?link=invalido`;
   if (!TOKEN_RE.test(token)) return ir(invalido);
@@ -41,4 +50,9 @@ export async function GET(request: Request) {
     console.error("[teste7d-link-retomada] Erro inesperado:", (err as Error)?.name ?? "desconhecido");
     return ir(invalido);
   }
+}
+
+/** HEAD nunca conta como retomada: mesma página mínima, sem corpo. */
+export function HEAD() {
+  return paginaParaRobo(CABECALHOS);
 }
