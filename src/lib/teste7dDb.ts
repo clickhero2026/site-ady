@@ -273,7 +273,9 @@ export async function concluirAtivacao(id: string): Promise<InscricaoRow & { pri
 /**
  * Agendamento vindo do Calendly. `agendado_em` só muda se o evento for
  * outro (reagendamento), não a cada reenvio do mesmo evento. Quem já teve
- * a conversa realizada mantém `realizado`.
+ * a conversa realizada mantém `realizado`. `nao_compareceu` só volta para
+ * `agendado` (e perde `realizada_em`) com um evento novo — o reenvio do
+ * mesmo evento (URI comparado sem diferenciar maiúsculas) não muda nada.
  *
  * `reuniao_em` fica nulo: o postMessage do Calendly não traz a data da
  * conversa (ver TODO no resumo — precisa da API ou de webhook do Calendly).
@@ -289,8 +291,18 @@ export async function registrarAgendamento(
           WHEN calendly_evento_uri IS DISTINCT FROM ${calendlyEventoUri} THEN now()
           ELSE agendado_em
         END,
+        realizada_em = CASE
+          WHEN status = 'nao_compareceu'
+           AND lower(calendly_evento_uri) IS DISTINCT FROM lower(${calendlyEventoUri}::text) THEN NULL
+          ELSE realizada_em
+        END,
         calendly_evento_uri = ${calendlyEventoUri},
-        status = CASE WHEN status = 'realizado' THEN status ELSE 'agendado' END,
+        status = CASE
+          WHEN status = 'realizado' THEN status
+          WHEN status = 'nao_compareceu'
+           AND lower(calendly_evento_uri) IS NOT DISTINCT FROM lower(${calendlyEventoUri}::text) THEN status
+          ELSE 'agendado'
+        END,
         bitrix_sync_status = 'pendente'
     WHERE id = ${id}
     RETURNING *
