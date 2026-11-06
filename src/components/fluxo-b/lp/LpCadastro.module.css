@@ -1,0 +1,57 @@
+/* Chegando por #cadastro: o título para logo abaixo da barra fixa (o
+   scroll-padding-top do lp.css já desconta a barra; aqui desconta o
+   respiro de cima da seção, pra o título não ficar longe do topo). */
+.cadastro {
+  scroll-margin-top: calc(1rem - var(--lp-section-y));
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.texto {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.titulo {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Foco levado por script (tabindex=-1): sem anel pra quem clicou; quem
+   navega pelo teclado continua vendo. */
+.titulo:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.apoio {
+  font-size: 1.25rem;
+  line-height: 1.45;
+  color: var(--lp-text-soft);
+  max-width: 34rem;
+}
+
+.cartao {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  background: #ffffff;
+  box-shadow: var(--lp-shadow-lg);
+}
+
+@media (min-width: 60rem) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .cartao {
+    padding: 2rem;
+  }
+}

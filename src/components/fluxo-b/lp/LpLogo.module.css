@@ -1,0 +1,24 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  color: var(--lp-text);
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.mark {
+  color: var(--lp-petrol);
+}
+
+.logo[data-inverse] {
+  color: #ffffff;
+}
+
+.logo[data-inverse] .mark {
+  color: #ffffff;
+}

@@ -1,0 +1,109 @@
+.nome {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+@media (min-width: 64rem) {
+  .nome {
+    font-size: 2rem;
+  }
+}
+
+.form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.fieldset {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: 0.25rem;
+}
+
+.cartoes {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 30rem) {
+  .cartoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Cartão inteiro é o rótulo (toque em qualquer ponto). Checkbox nativo,
+   escondido só visualmente: teclado e leitor de tela continuam nele. */
+.cartao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--lp-line);
+  border-radius: 1rem;
+  background: #ffffff;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.cartao:hover {
+  border-color: var(--lp-petrol-bright);
+}
+
+.cartao:has(.caixa:checked) {
+  border-color: var(--lp-petrol);
+  background: var(--lp-petrol-soft);
+}
+
+.cartao:has(.caixa:focus-visible) {
+  outline: 3px solid var(--lp-text);
+  outline-offset: 2px;
+}
+
+.cartao:has(.caixa:disabled) {
+  cursor: progress;
+}
+
+.caixa {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+
+.marca {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid #6b7b80; /* 4.4:1 sobre branco: borda de controle passa 3:1 */
+  border-radius: 0.4rem;
+  background: #ffffff;
+  color: transparent;
+}
+
+.caixa:checked + .marca {
+  border-color: var(--lp-petrol);
+  background: var(--lp-petrol);
+  color: #ffffff;
+}

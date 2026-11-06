@@ -1,0 +1,102 @@
+.boasVindas {
+  margin: 0;
+}
+
+.centro {
+  display: grid;
+  justify-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.textos {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* Selo circular com degradê petróleo. */
+.selo {
+  display: grid;
+  place-items: center;
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 50%;
+  background: linear-gradient(160deg, var(--lp-petrol-bright), var(--lp-dark-to));
+  color: #ffffff;
+  box-shadow: var(--lp-shadow-lg);
+  transition: transform 0.3s ease;
+}
+
+.selo[data-sucesso] {
+  animation: aparecer 0.4s ease both;
+}
+
+.selospinner {
+  width: 3rem;
+  height: 3rem;
+  border: 5px solid rgb(255 255 255 / 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: girar 0.9s linear infinite;
+}
+
+.preparando {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 18rem;
+  font-size: 1rem;
+  color: var(--lp-text-soft);
+}
+
+.trilho {
+  position: relative;
+  display: block;
+  height: 0.25rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--lp-petrol-soft);
+}
+
+.corre {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 40%;
+  border-radius: inherit;
+  background: var(--lp-petrol);
+  animation: correr 1.4s ease-in-out infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes correr {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@keyframes aparecer {
+  from {
+    transform: scale(0.85);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Movimento reduzido: o lp.css já zera as animações; aqui a barra fica
+   parada e cheia, em vez de presa num canto. */
+@media (prefers-reduced-motion: reduce) {
+  .corre {
+    width: 100%;
+    animation: none;
+  }
+}

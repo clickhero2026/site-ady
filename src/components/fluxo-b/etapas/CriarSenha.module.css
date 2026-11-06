@@ -1,0 +1,156 @@
+.form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.cabeca {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.campo {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.campo label {
+  font-weight: 700;
+}
+
+.linhaSenha {
+  position: relative;
+}
+
+/* 18px+: sem zoom ao focar no iOS (precisa ≥16px). */
+.linhaSenha input {
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.75rem 3.75rem 0.75rem 1rem;
+  border: 2px solid #6b7b80;
+  border-radius: 0.875rem;
+  background: #ffffff;
+  color: var(--lp-text);
+  font: inherit;
+  font-size: 1.125rem;
+}
+
+.linhaSenha input:focus-visible {
+  outline: 3px solid var(--lp-petrol);
+  outline-offset: 1px;
+  border-color: var(--lp-petrol);
+}
+
+.linhaSenha input[aria-invalid="true"] {
+  border-color: #b3261e;
+}
+
+.olho {
+  position: absolute;
+  top: 50%;
+  right: 0.25rem;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: var(--lp-text-soft);
+  cursor: pointer;
+}
+
+.olho:hover {
+  background: var(--lp-petrol-soft);
+  color: var(--lp-petrol);
+}
+
+.olho:focus-visible {
+  outline: 3px solid var(--lp-petrol);
+}
+
+/* Medidor de força: 4 segmentos, um por regra cumprida. */
+.forca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 1.5rem;
+}
+
+.segmentos {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.375rem;
+}
+
+.segmentos span {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--lp-line);
+  transition: background-color 0.2s ease;
+}
+
+.segmentos[data-nivel="1"] span[data-ligado] {
+  background: #b3261e;
+}
+.segmentos[data-nivel="2"] span[data-ligado] {
+  background: #cf6f03;
+}
+.segmentos[data-nivel="3"] span[data-ligado] {
+  background: #1e88a8;
+}
+.segmentos[data-nivel="4"] span[data-ligado] {
+  background: #1f7a3a;
+}
+
+.forcaTexto {
+  font-size: 1rem;
+  color: var(--lp-text-soft);
+  white-space: nowrap;
+}
+
+.regras {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1rem;
+  color: var(--lp-text-soft);
+}
+
+.regras li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.regras li[data-ok] {
+  color: var(--lp-text);
+}
+
+.check {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border: 2px solid #6b7b80;
+  border-radius: 50%;
+  color: transparent;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.regras li[data-ok] .check {
+  border-color: #1f7a3a;
+  background: #1f7a3a;
+  color: #ffffff;
+}
+
+.aviso {
+  color: #b3261e;
+  font-weight: 600;
+}

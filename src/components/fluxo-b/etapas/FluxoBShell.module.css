@@ -1,0 +1,106 @@
+/* Casca das telas do Fluxo B. Tokens da LP (lp.css do Fluxo B). */
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+/* ---- Painel petróleo: cabeçalho compacto no celular ---- */
+.painel {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding: 1rem var(--lp-gutter) 1.25rem;
+  background: linear-gradient(160deg, var(--lp-dark-from), var(--lp-dark-to));
+  color: #ffffff;
+  --accent: #ffffff;
+}
+
+.painelConteudo {
+  display: grid;
+  gap: 0.75rem;
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+
+.painelConteudo :where(p) {
+  color: #e6f2f5;
+}
+
+.painelConteudo :where(strong, :global(.destaque)) {
+  color: #ffffff;
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ---- Lado do conteúdo ---- */
+.lado {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--lp-bg);
+}
+
+.progresso {
+  height: 0.3125rem;
+  background: var(--lp-line);
+}
+
+.progressoBarra {
+  display: block;
+  height: 100%;
+  background: var(--lp-petrol);
+  border-radius: 0 999px 999px 0;
+  transition: width 0.6s ease;
+}
+
+.conteudo {
+  flex: 1;
+  display: grid;
+  padding: 2rem var(--lp-gutter) 3rem;
+}
+
+.conteudoInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 30rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 64rem) {
+  .shell {
+    grid-template-columns: clamp(22.5rem, 35%, 32.5rem) minmax(0, 1fr);
+  }
+
+  .painel {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    align-content: center;
+    gap: 2.5rem;
+    padding: 3rem clamp(2rem, 3vw, 3.5rem);
+  }
+
+  .painelConteudo {
+    gap: 1rem;
+    font-size: 1.25rem;
+  }
+
+  .painelConteudo :where(strong, :global(.destaque)) {
+    font-size: 2rem;
+  }
+
+  .conteudo {
+    align-items: center;
+    padding-block: 4rem;
+  }
+
+  .conteudoInner {
+    align-content: center;
+  }
+}

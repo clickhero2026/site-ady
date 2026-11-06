@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { LP_INTERNAL_PREFIX, normalizeLpVariant, TESTE7D, TOKEN_HEADER } from "@/config/teste7d";
+import { FLUXO_B_PREFIX, FLUXO_B_TELAS } from "@/config/fluxoB";
+import { isFluxoBHost } from "@/lib/fluxo-b/host";
 
 /**
  * Roteamento por host. Mesmo projeto e mesmo build servem dois sites:
@@ -52,8 +54,32 @@ function semRastroNaUrl(response: NextResponse) {
   return response;
 }
 
+/**
+ * Fluxo B do teste grátis (teste.useady.com.br — placeholder, ver
+ * config/fluxoB.ts). Regra separada, só pra esse host exato: não toca nos
+ * hosts da LP nem do site. `/` e as telas viram `/fluxo-b/...`; as APIs
+ * do teste7d (salvamento do lead) e do Fluxo B passam direto; o resto é
+ * 404. Tudo com noindex (é duplicata da LP).
+ */
+const TELAS_FLUXO_B: readonly string[] = Object.values(FLUXO_B_TELAS).filter((t) => t !== "/");
+
+function proxyFluxoB(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/api/teste7d/") || pathname.startsWith("/api/fluxo-b/")) return NextResponse.next();
+
+  let destino = NAO_EXISTE;
+  if (pathname === "/") destino = FLUXO_B_PREFIX;
+  else if (TELAS_FLUXO_B.includes(pathname)) destino = `${FLUXO_B_PREFIX}${pathname}`;
+
+  const response = rewrite(request, destino);
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
+}
+
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+
+  if (isFluxoBHost(request.headers.get("host"))) return proxyFluxoB(request);
 
   if (isLpHost(request)) {
     if (pathname.startsWith("/api/teste7d/")) return NextResponse.next();
