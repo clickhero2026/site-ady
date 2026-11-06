@@ -48,7 +48,7 @@ export function LpHero({ variant }: { variant: LpVariant }) {
           </li>
           <li>
             <Handshake aria-hidden="true" size={26} strokeWidth={2} />
-            Configurado junto com você
+            Comece na hora
           </li>
           <li>
             <Hourglass aria-hidden="true" size={26} strokeWidth={2} />

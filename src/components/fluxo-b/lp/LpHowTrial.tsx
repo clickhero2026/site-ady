@@ -1,10 +1,10 @@
-import { CalendarCheck, Settings2, Sparkles } from "lucide-react";
+import { Settings2, Sparkles, UserPlus } from "lucide-react";
 import { CtaBlock } from "./CtaBlock";
 import styles from "./LpHowTrial.module.css";
 
 const ETAPAS = [
-  { Icone: CalendarCheck, texto: "Você marca uma conversa rápida com a gente" },
-  { Icone: Settings2, texto: "A gente configura o ady com você, ao vivo" },
+  { Icone: UserPlus, texto: "Você cria sua conta grátis, sem cartão" },
+  { Icone: Settings2, texto: "Você conta sobre o seu negócio e escolhe suas metas" },
   { Icone: Sparkles, texto: "Por 7 dias, o ady cria e publica os posts do seu negócio" },
 ];
 
@@ -26,7 +26,7 @@ export function LpHowTrial() {
             </li>
           ))}
         </ol>
-        <p className={styles.nota}>Os 7 dias só começam depois da ativação da sua conta, que a gente faz junto com você na conversa.</p>
+        <p className={styles.nota}>Seus 7 dias começam assim que sua conta é criada.</p>
         <CtaBlock />
       </div>
     </section>
