@@ -39,7 +39,7 @@ async function signup(lead: LeadFluxoB, mock: boolean): Promise<SignupResult> {
     });
     const json = (await res.json().catch(() => null)) as (SignupResult & { debug?: string }) | null;
     if (json?.debug) console.error(json.debug); // só vem em desenvolvimento
-    if (json && json.ok === true && typeof json.redirectUrl === "string") return json;
+    if (json && json.ok === true) return { ok: true, redirectUrl: typeof json.redirectUrl === "string" ? json.redirectUrl : null };
     if (json && json.ok === false && typeof json.code === "string") return { ok: false, code: json.code };
     return { ok: false, code: res.ok ? "UNKNOWN" : "NETWORK" };
   } catch {

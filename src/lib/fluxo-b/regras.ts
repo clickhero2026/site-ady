@@ -32,3 +32,13 @@ export function bloqueadoNoHostPrincipal(pathname: string, vercelEnv: string | u
   if (vercelEnv !== "production") return false;
   return PREFIXOS_BLOQUEADOS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
+
+/** Signup do trial no app: produção só em Production; homologação em
+ * Preview e em desenvolvimento local. `TRIAL_SIGNUP_URL` sobrescreve. */
+export const SIGNUP_URL_PRODUCAO = "https://clickhero-fury-api.u7pe19.easypanel.host/api/public/trial/signup";
+export const SIGNUP_URL_HMG = "https://clickhero-hmg-fury-api.u7pe19.easypanel.host/api/public/trial/signup";
+
+export function urlDoSignup(env: { trialSignupUrl?: string; vercelEnv?: string }): string {
+  if (env.trialSignupUrl?.trim()) return env.trialSignupUrl.trim();
+  return env.vercelEnv === "production" ? SIGNUP_URL_PRODUCAO : SIGNUP_URL_HMG;
+}

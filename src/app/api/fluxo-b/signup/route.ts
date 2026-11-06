@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { SIGNUP_TIMEOUT_MS } from "@/config/fluxoB";
+import { urlDoSignup } from "@/lib/fluxo-b/regras";
 import { normalizarSignup, parseSignupResponse, SignupContratoError, type SignupResult } from "@/lib/fluxo-b/signup";
 
 /**
@@ -11,7 +12,6 @@ import { normalizarSignup, parseSignupResponse, SignupContratoError, type Signup
  * Corpo enviado ao app: EXATAMENTE `{ name, email, phone }` (phone em
  * E.164). Nada de dado pessoal no log.
  */
-const PADRAO_URL = "https://clickhero-fury-api.u7pe19.easypanel.host/api/public/trial/signup";
 const DEV = process.env.NODE_ENV !== "production";
 
 function resultado(r: SignupResult, debug?: string) {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
   let res: Response;
   try {
-    res = await fetch(process.env.TRIAL_SIGNUP_URL || PADRAO_URL, {
+    res = await fetch(urlDoSignup({ trialSignupUrl: process.env.TRIAL_SIGNUP_URL, vercelEnv: process.env.VERCEL_ENV }), {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ name: body.name, email: body.email, phone: body.phone }),

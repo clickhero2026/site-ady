@@ -40,7 +40,7 @@ export const sessao = {
   gravarLead: (lead: LeadFluxoB) => gravar(CHAVES.lead, lead),
 
   lerConta: () => ler<ContaFluxoB>(CHAVES.conta),
-  gravarConta: (redirectUrl: string) => gravar(CHAVES.conta, { criada: true, redirectUrl } satisfies ContaFluxoB),
+  gravarConta: (redirectUrl: string | null) => gravar(CHAVES.conta, { criada: true, redirectUrl } satisfies ContaFluxoB),
   /** Pega o redirectUrl e apaga da sessão (uso único). */
   consumirRedirect(): string | null {
     const conta = ler<ContaFluxoB>(CHAVES.conta);
