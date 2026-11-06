@@ -7,7 +7,7 @@ export function CtaBlock({ texto = "QUERO TESTAR GRÁTIS" }: { texto?: string })
       <a href="#cadastro" className="lp-cta">
         {texto}
       </a>
-      <p className="lp-cta-note">Sem cartão de crédito. Os 7 dias só começam depois da ativação da sua conta.</p>
+      <p className="lp-cta-note">Sem cartão de crédito. Seus 7 dias começam assim que sua conta é criada.</p>
     </div>
   );
 }

@@ -11,7 +11,7 @@ export function LpFinalCta() {
         <a href="#cadastro" className={`lp-cta ${styles.botao}`}>
           QUERO TESTAR GRÁTIS
         </a>
-        <p className="lp-cta-note">Sem cartão de crédito. Os 7 dias só começam depois da ativação da sua conta.</p>
+        <p className="lp-cta-note">Sem cartão de crédito. Seus 7 dias começam assim que sua conta é criada.</p>
         <p className={styles.ps}>
           P.S. As vagas do teste são limitadas. Se o seu negócio precisa aparecer, não deixe para a semana que vem.
         </p>

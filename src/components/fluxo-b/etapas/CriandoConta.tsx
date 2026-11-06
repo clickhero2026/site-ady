@@ -2,7 +2,7 @@
 
 import { Check } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { APP_LOGIN_URL, DURACAO_TESTE, MOCK_ATIVO, PROGRESSO, SIGNUP_TIMEOUT_MS } from "@/config/fluxoB";
+import { APP_LOGIN_URL, DURACAO_TESTE, PROGRESSO, SIGNUP_TIMEOUT_MS, type EstadoMock } from "@/config/fluxoB";
 import { trackContaCriada, trackErroCriacao } from "@/lib/fluxo-b/analytics";
 import { irPara, caminho } from "@/lib/fluxo-b/rotas";
 import { primeiroNome, sessao, type LeadFluxoB } from "@/lib/fluxo-b/sessao";
@@ -27,8 +27,8 @@ async function signupMock(): Promise<SignupResult> {
   return { ok: true, redirectUrl: `${window.location.origin}${caminho("appMock")}` };
 }
 
-async function signup(lead: LeadFluxoB): Promise<SignupResult> {
-  if (MOCK_ATIVO) return signupMock();
+async function signup(lead: LeadFluxoB, mock: boolean): Promise<SignupResult> {
+  if (mock) return signupMock();
   try {
     const res = await fetch("/api/fluxo-b/signup", {
       method: "POST",
@@ -54,7 +54,7 @@ async function signup(lead: LeadFluxoB): Promise<SignupResult> {
  * segue direto pro ramo, sem novo POST). "Conta criada" só aparece
  * depois do POST confirmar.
  */
-export function CriandoConta() {
+export function CriandoConta({ mock }: { mock: EstadoMock }) {
   const { lead, conta } = useSessaoFluxoB();
   const [fase, setFase] = useState<Fase>({ tipo: "criando" });
   const iniciado = useRef(false);
@@ -82,14 +82,14 @@ export function CriandoConta() {
       irPara("ramo", { replace: true });
       return;
     }
-    void signup(lead).then(aplicar);
-  }, [lead, conta, aplicar]);
+    void signup(lead, mock.ativo).then(aplicar);
+  }, [lead, conta, aplicar, mock.ativo]);
 
   const nome = primeiroNome(lead?.name);
   const tentarDeNovo = () => {
     if (!lead) return;
     setFase({ tipo: "criando" });
-    void signup(lead).then(aplicar);
+    void signup(lead, mock.ativo).then(aplicar);
   };
 
   return (

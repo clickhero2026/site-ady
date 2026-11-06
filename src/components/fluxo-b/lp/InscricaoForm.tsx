@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent } from "react";
 import type { LpVariant } from "@/config/teste7d";
 import { TESTE7D } from "@/config/teste7d";
+import { APP_LOGIN_URL } from "@/config/fluxoB";
 import { trackLeadFluxoB } from "@/lib/fluxo-b/analytics";
 import { toE164Br } from "@/lib/fluxo-b/phone";
 import { caminho } from "@/lib/fluxo-b/rotas";
@@ -22,6 +23,8 @@ const ROTULOS: Record<Campo, string> = {
   email: "Seu e-mail",
   consentimento_lgpd: "Consentimento",
 };
+
+const EMAIL_JA_CADASTRADO = "Esse e-mail já foi cadastrado. Use o mesmo WhatsApp do cadastro.";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -55,7 +58,9 @@ function validar(dados: { nome: string; whatsapp: string; email: string; consent
  * sucesso: o Lead vai com `flow: "b"`, `{ name, email, phone }` fica no
  * sessionStorage (nunca na URL) e a navegação vai pra "conta criada" do
  * Fluxo B em vez da ativação em 10 passos. O link de erro "ativação da
- * conta" aponta pro host da LP atual (o /ativar-conta só existe lá).
+ * E-mail já cadastrado com outro WhatsApp (409): sem link pro
+ * /ativar-conta (é do fluxo atual) — mensagem própria e, se houver
+ * NEXT_PUBLIC_ADY_APP_LOGIN_URL, botão "Entrar".
  *
  * Formulário da etapa 1 (nome, WhatsApp, e-mail, consentimento). Depois do
  * OK da API: evento Lead no GTM (com o event_id da API) e navegação
@@ -81,8 +86,8 @@ export function InscricaoForm({
   const [estado, setEstado] = useState<"livre" | "enviando" | "sucesso">("livre");
   const [erros, setErros] = useState<Erros>({});
   const [erroGeral, setErroGeral] = useState("");
-  // E-mail já cadastrado com outro WhatsApp: o erro leva pra /ativar-conta.
-  const [ativarUrl, setAtivarUrl] = useState<string | null>(null);
+  // E-mail já cadastrado com outro WhatsApp (a API manda `ativarUrl`).
+  const [emailJaCadastrado, setEmailJaCadastrado] = useState(false);
   const [whatsapp, setWhatsapp] = useState(() => formatPhone(inicial?.whatsapp ?? ""));
   // Resumo dos erros pro leitor de tela (a região aria-live já existe na
   // página; só o texto muda). O contador força um texto novo a cada envio.
@@ -116,7 +121,7 @@ export function InscricaoForm({
     const encontrados = validar(dados);
     setErros(encontrados);
     setErroGeral("");
-    setAtivarUrl(null);
+    setEmailJaCadastrado(false);
     const comErro = Object.keys(encontrados) as Campo[];
     if (comErro.length) {
       tentativas.current += 1;
@@ -160,7 +165,13 @@ export function InscricaoForm({
       if (!res.ok || !json.ok) {
         const campo = json.campo as Campo | undefined;
         const mensagem: string = json.error ?? "Não deu para enviar agora. Tente de novo em instantes.";
-        if (typeof json.ativarUrl === "string") setAtivarUrl(new URL(json.ativarUrl, TESTE7D.lpOrigin).href);
+        if (typeof json.ativarUrl === "string") {
+          setEmailJaCadastrado(true);
+          setErroGeral(EMAIL_JA_CADASTRADO);
+          enviando.current = false;
+          setEstado("livre");
+          return;
+        }
         if (campo && ["nome", "whatsapp", "email", "consentimento_lgpd"].includes(campo)) {
           setErros({ [campo]: mensagem });
           document.getElementById(`${id}-${campo}`)?.focus();
@@ -328,38 +339,22 @@ export function InscricaoForm({
         </span>
       </button>
 
-      <p className={styles.nota}>Sem cartão de crédito. Os 7 dias só começam depois da ativação da sua conta.</p>
+      <p className={styles.nota}>Sem cartão de crédito. Seus 7 dias começam assim que sua conta é criada.</p>
 
       <div role="status" aria-live="polite" className={styles.status}>
         {resumo && <p className="visually-hidden">{resumo}</p>}
         {estado === "sucesso" && <p className={styles.sucesso}>Inscrição feita! Levando você para o próximo passo.</p>}
         {erroGeral && (
           <ErroCampo id={`${id}-erro-geral`}>
-            {ativarUrl ? <ComLinkDeAtivacao texto={erroGeral} href={ativarUrl} /> : erroGeral}
+            {erroGeral}
           </ErroCampo>
+        )}
+        {emailJaCadastrado && APP_LOGIN_URL && (
+          <a href={APP_LOGIN_URL} className={`lp-cta lp-cta--wide ${styles.entrar}`}>
+            Entrar
+          </a>
         )}
       </div>
     </form>
-  );
-}
-
-/** "…use o link de ativação da conta." → o trecho "link de ativação da
- * conta" vira o link pra /ativar-conta (o texto vem da API). */
-function ComLinkDeAtivacao({ texto, href }: { texto: string; href: string }) {
-  const trecho = "link de ativação da conta";
-  const i = texto.indexOf(trecho);
-  if (i === -1) {
-    return (
-      <>
-        {texto} <a href={href}>Continuar a ativação da conta</a>
-      </>
-    );
-  }
-  return (
-    <>
-      {texto.slice(0, i)}
-      <a href={href}>{trecho}</a>
-      {texto.slice(i + trecho.length)}
-    </>
   );
 }

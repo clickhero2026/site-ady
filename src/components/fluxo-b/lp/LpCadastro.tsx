@@ -15,7 +15,7 @@ export function LpCadastro({ variant }: { variant: LpVariant }) {
             Comece agora o seu teste grátis
           </h2>
           <p className={styles.apoio}>
-            Preencha abaixo. Depois a gente pergunta um pouco sobre o seu negócio e você escolhe o melhor horário.
+            Preencha abaixo. Depois a gente pergunta um pouco sobre o seu negócio e você entra na hora e começa a usar.
           </p>
         </div>
 

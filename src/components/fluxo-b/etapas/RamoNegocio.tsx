@@ -2,7 +2,7 @@
 
 import { Check, UserRound } from "lucide-react";
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { PROGRESSO, RAMOS, SENHA_ATIVA, type Ramo } from "@/config/fluxoB";
+import { PROGRESSO, RAMOS, SENHA_ATIVA, type EstadoMock, type Ramo } from "@/config/fluxoB";
 import { trackRamoConcluido } from "@/lib/fluxo-b/analytics";
 import { entrarNoApp } from "@/lib/fluxo-b/entrarNoApp";
 import { irPara } from "@/lib/fluxo-b/rotas";
@@ -21,7 +21,7 @@ import styles from "./RamoNegocio.module.css";
  * vai só pro dataLayer. Depois: senha (se a flag estiver ligada) ou
  * entrada direta no app.
  */
-export function RamoNegocio() {
+export function RamoNegocio({ mock }: { mock: EstadoMock }) {
   const { lead, conta } = useSessaoFluxoB();
   const id = useId();
   const [marcados, setMarcados] = useState<Ramo[]>([]);
@@ -51,7 +51,7 @@ export function RamoNegocio() {
         irPara("senha");
         return;
       }
-      if (!entrarNoApp()) {
+      if (!entrarNoApp(mock.ativo)) {
         enviando.current = false;
         setEstado("falhou");
       }

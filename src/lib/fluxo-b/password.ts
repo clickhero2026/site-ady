@@ -1,5 +1,3 @@
-import { MOCK_ATIVO } from "@/config/fluxoB";
-
 /**
  * Gravação da senha no app. A rota AINDA NÃO EXISTE.
  *
@@ -22,9 +20,9 @@ export class SenhaNaoImplementadaError extends Error {
   }
 }
 
-export async function setPassword(input: { password: string; email: string }): Promise<void> {
+export async function setPassword(input: { password: string; email: string }, opcoes: { mock: boolean }): Promise<void> {
   void input; // TODO(contrato): enviar ao app quando a rota existir.
-  if (MOCK_ATIVO) {
+  if (opcoes.mock) {
     await new Promise((r) => setTimeout(r, 800));
     return;
   }

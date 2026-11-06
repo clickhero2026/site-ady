@@ -9,8 +9,8 @@ import { sessao } from "./sessao";
  * o erro. TODO(contrato): se o login automático expirar rápido, é o app
  * que precisa resolver (não renovamos aqui).
  */
-export function entrarNoApp(): boolean {
-  const destino = destinoSeguro(sessao.consumirRedirect());
+export function entrarNoApp(mock: boolean): boolean {
+  const destino = destinoSeguro(sessao.consumirRedirect(), mock);
   if (!destino) {
     if (process.env.NODE_ENV !== "production") {
       console.error("[fluxo-b] redirectUrl ausente ou fora de NEXT_PUBLIC_ADY_APP_ORIGIN.");

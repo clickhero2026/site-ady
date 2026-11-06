@@ -157,3 +157,8 @@
 .status:empty {
   margin-top: -0.75rem;
 }
+
+/* Fluxo B: botão "Entrar" no erro de e-mail já cadastrado. */
+.entrar {
+  margin-top: 0.75rem;
+}

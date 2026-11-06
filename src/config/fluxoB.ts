@@ -11,10 +11,13 @@
  * domínio próprio) vão em `FLUXO_B_EXTRA_HOSTS`, separados por vírgula. */
 export const FLUXO_B_HOST = "teste.useady.com.br";
 
+import { AVISO_MOCK_IGNORADO, resolverMock, type EstadoMock } from "@/lib/fluxo-b/regras";
+
 /** Prefixo interno das rotas em `src/app/fluxo-b/`. No host próprio o
  * proxy tira o prefixo (`/criando` → `/fluxo-b/criando`); no preview da
  * Vercel o acesso é direto por `/fluxo-b`. */
-export const FLUXO_B_PREFIX = "/fluxo-b";
+export { FLUXO_B_PREFIX } from "@/lib/fluxo-b/regras";
+export type { EstadoMock } from "@/lib/fluxo-b/regras";
 
 /** Telas do fluxo, sem o prefixo. */
 export const FLUXO_B_TELAS = {
@@ -60,9 +63,22 @@ export type Ramo = keyof typeof RAMOS;
  * NEXT_PUBLIC → entra no build; trocar exige novo deploy. */
 export const SENHA_ATIVA = process.env.NEXT_PUBLIC_FLUXO_B_SENHA === "1";
 
-/** Modo de teste sem backend: simula o signup (e os erros, via
- * `?mock=exists|invalid|network`) e "entra" numa página de teste. */
-export const MOCK_ATIVO = process.env.NEXT_PUBLIC_FLUXO_B_MOCK === "1";
+/**
+ * Modo de teste sem backend (NEXT_PUBLIC_FLUXO_B_MOCK=1): simula o signup
+ * (e os erros, via `?mock=exists|invalid|network`) e "entra" numa página
+ * de teste. IGNORADO em produção (VERCEL_ENV=production), com aviso.
+ *
+ * Só no servidor: o navegador não enxerga VERCEL_ENV, então as páginas
+ * calculam aqui e passam o resultado pros componentes por prop.
+ */
+export function mockDoServidor(): EstadoMock {
+  if (typeof window !== "undefined") {
+    throw new Error("[fluxo-b] mockDoServidor() é só do servidor; passe o resultado por prop.");
+  }
+  const estado = resolverMock({ mock: process.env.NEXT_PUBLIC_FLUXO_B_MOCK, vercelEnv: process.env.VERCEL_ENV });
+  if (estado.ignorado) console.warn(AVISO_MOCK_IGNORADO);
+  return estado;
+}
 
 /** Origem do app do ady. O redirecionamento final só vai pra cá. */
 export const APP_ORIGIN = process.env.NEXT_PUBLIC_ADY_APP_ORIGIN ?? "";

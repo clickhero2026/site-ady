@@ -2,7 +2,7 @@
 
 import { Check, Eye, EyeOff, LockKeyhole } from "lucide-react";
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { PROGRESSO } from "@/config/fluxoB";
+import { PROGRESSO, type EstadoMock } from "@/config/fluxoB";
 import { trackSenhaCriada } from "@/lib/fluxo-b/analytics";
 import { entrarNoApp } from "@/lib/fluxo-b/entrarNoApp";
 import { setPassword } from "@/lib/fluxo-b/password";
@@ -23,7 +23,7 @@ const FORCA = ["Fraca", "Fraca", "Média", "Boa", "Forte"] as const;
  * A senha vive só no estado deste componente: nunca em log, storage ou
  * dataLayer, e é apagada do estado logo depois do envio.
  */
-export function CriarSenha() {
+export function CriarSenha({ mock }: { mock: EstadoMock }) {
   const { lead, conta } = useSessaoFluxoB();
   const id = useId();
   const [senha, setSenha] = useState("");
@@ -49,10 +49,10 @@ export function CriarSenha() {
 
     const password = senha;
     try {
-      await setPassword({ password, email: lead.email });
+      await setPassword({ password, email: lead.email }, { mock: mock.ativo });
       setSenha("");
       trackSenhaCriada(() => {
-        if (!entrarNoApp()) setEstado("falhou-entrar");
+        if (!entrarNoApp(mock.ativo)) setEstado("falhou-entrar");
       });
     } catch {
       setSenha("");

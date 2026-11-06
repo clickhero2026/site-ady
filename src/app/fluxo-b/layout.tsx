@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { TESTE7D } from "@/config/teste7d";
+import { AvisoMockIgnorado } from "@/components/fluxo-b/etapas/AvisoMockIgnorado";
+import { mockDoServidor } from "@/config/fluxoB";
 import { LpFooter } from "@/components/fluxo-b/lp/LpFooter";
 import "./lp.css";
 
@@ -23,6 +25,7 @@ export default function FluxoBLayout({ children }: LayoutProps<"/fluxo-b">) {
     <div className="lp-root">
       {children}
       <LpFooter />
+      {mockDoServidor().ignorado && <AvisoMockIgnorado />}
     </div>
   );
 }
