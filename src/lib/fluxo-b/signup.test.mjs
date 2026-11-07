@@ -43,7 +43,7 @@ test("diagnóstico: só nomes das chaves, nunca valores", () => {
 });
 
 test("{ erro: EMAIL_JA_CADASTRADO } → EMAIL_EXISTS em qualquer status (corpo decide)", () => {
-  for (const status of [409, 400, 422, 200, 202, 403, 500]) {
+  for (const status of [409, 400, 422, 200, 201, 202, 403, 500]) {
     assert.deepEqual(parseSignupResponse(status, { erro: "EMAIL_JA_CADASTRADO" }), { ok: false, code: "EMAIL_EXISTS" }, String(status));
   }
 });
@@ -65,8 +65,37 @@ test("429 → RATE_LIMIT; 5xx → NETWORK", () => {
   assert.deepEqual(parseSignupResponse(503, { message: "x" }), { ok: false, code: "NETWORK" });
 });
 
-test("status fora do contrato (inclui 409 sem código) → SignupContratoError", () => {
-  assert.throws(() => parseSignupResponse(409, {}), SignupContratoError);
-  assert.throws(() => parseSignupResponse(404, { error: { code: "NOT_FOUND" } }), SignupContratoError);
-  assert.throws(() => parseSignupResponse(401, null), SignupContratoError);
+test("contrato 201: { created, redirect_url do frontend com #token, message } → link intacto", () => {
+  const link = "https://app.useady.com.br/trial/acesso#token=abc";
+  const r = parseSignupResponse(201, { created: true, redirect_url: link, message: "Conta criada" });
+  assert.deepEqual(r, { ok: true, redirectUrl: link });
+  assert.equal(new URL(r.redirectUrl).hash, "#token=abc");
+});
+
+test("201 com created: true e sem link → ok sem link (tela 'Sua conta está pronta')", () => {
+  assert.deepEqual(parseSignupResponse(201, { created: true, message: "Conta criada" }), { ok: true, redirectUrl: null });
+});
+
+test("409 → EMAIL_EXISTS pelo status, mesmo sem corpo", () => {
+  assert.deepEqual(parseSignupResponse(409, {}), { ok: false, code: "EMAIL_EXISTS" });
+  assert.deepEqual(parseSignupResponse(409, null), { ok: false, code: "EMAIL_EXISTS" });
+  assert.deepEqual(parseSignupResponse(409, { erro: "EMAIL_JA_CADASTRADO" }), { ok: false, code: "EMAIL_EXISTS" });
+});
+
+test("401/403 → erro claro com status e só nomes de chave (sem valores)", () => {
+  for (const status of [401, 403]) {
+    let msg = "";
+    try {
+      parseSignupResponse(status, { erro: "TOKEN_INVALIDO", detalhe: "segredo-123" });
+    } catch (e) {
+      assert.ok(e instanceof SignupContratoError);
+      msg = e.message;
+    }
+    assert.match(msg, new RegExp(`API recusou a chamada \\(${status}\\); chaves: erro, detalhe`));
+    assert.doesNotMatch(msg, /segredo|TOKEN_INVALIDO/);
+  }
+});
+
+test("status fora do contrato → SignupContratoError só com status e chaves", () => {
+  assert.throws(() => parseSignupResponse(404, { error: { code: "NOT_FOUND" } }), (e) => e instanceof SignupContratoError && !/NOT_FOUND/.test(e.message) && /404; chaves: error/.test(e.message));
 });

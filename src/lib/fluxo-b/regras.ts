@@ -116,13 +116,19 @@ export function linkExpirado(recebidoEm: number | null | undefined, agora: numbe
 /**
  * Origens permitidas para o redirecionamento final (o link de login é da
  * API, que valida o token e manda pro app). `FLUXO_B_REDIRECT_ORIGINS`
- * (vírgula) sobrescreve; padrão = origem da rota de signup do ambiente
- * (hmg fora de Production). Só entra origem https sem usuário/senha;
+ * (vírgula) sobrescreve; padrão em Production = origem da API de produção
+ * + https://app.useady.com.br; fora dela = origem da rota hmg. Só entra origem https sem usuário/senha;
  * entrada inválida é descartada (lista vazia = nada permitido).
  */
+/** Frontend do app: o `redirect_url` de produção aponta pra cá
+ * (`/trial/acesso#token=...`). */
+export const APP_FRONTEND_ORIGIN = "https://app.useady.com.br";
+
 export function origensDeRedirect(env: { lista?: string; vercelEnv?: string }): string[] {
-  const padrao = env.vercelEnv === "production" ? SIGNUP_URL_PRODUCAO : SIGNUP_URL_HMG;
-  const bruto = env.lista?.trim() ? env.lista.split(",") : [padrao];
+  // Produção: origem da API e do frontend do app. Fora dela: só a hmg (a
+  // rota de homologação nunca entra na lista de produção).
+  const padrao = env.vercelEnv === "production" ? [SIGNUP_URL_PRODUCAO, APP_FRONTEND_ORIGIN] : [SIGNUP_URL_HMG];
+  const bruto = env.lista?.trim() ? env.lista.split(",") : padrao;
   const origens = new Set<string>();
   for (const item of bruto) {
     try {
@@ -136,7 +142,8 @@ export function origensDeRedirect(env: { lista?: string; vercelEnv?: string }): 
 }
 
 /**
- * Destino final validado, ou null. Exige URL absoluta, https, sem
+ * Destino final validado, ou null. Devolve `URL.href`, que preserva o
+ * fragmento (`#token=...`) intacto. Exige URL absoluta, https, sem
  * usuário/senha e origem EXATA da lista. `origemMock` (só com o mock
  * ligado, fora de produção) libera a própria origem do site — inclusive
  * http local — pra página de teste /fluxo-b/app-mock.
