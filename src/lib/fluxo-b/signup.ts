@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { toE164Br } from "./phone";
 
-export { parseSignupResponse, SignupContratoError } from "./signupResposta";
+export { chavesDoCorpo, parseSignupResponse, SignupContratoError } from "./signupResposta";
 export type { SignupCode, SignupResult } from "./signupResposta";
 
 /**
