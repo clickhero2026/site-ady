@@ -5,7 +5,75 @@
 
 /** Prefixo interno das rotas em `src/app/fluxo-b/` (e da API). */
 export const FLUXO_B_PREFIX = "/fluxo-b";
-const PREFIXOS_BLOQUEADOS = [FLUXO_B_PREFIX, "/api/fluxo-b"];
+
+/** URL pública do Fluxo B no domínio principal: useady.com.br/testegratis.
+ * O proxy reescreve pra `/fluxo-b/...`; o navegador continua vendo
+ * `/testegratis/...`. */
+export const PREFIXO_PUBLICO = "/testegratis";
+
+/** Domínio principal. NUNCA é "host do Fluxo B" (o rewrite de `/` desse
+ * host trocaria a home do site pela LP clonada). */
+export const HOSTS_PRINCIPAIS = ["useady.com.br", "www.useady.com.br"] as const;
+const HOSTS_PROIBIDOS_NO_FLUXO_B = [...HOSTS_PRINCIPAIS, "lp.useady.com.br"];
+
+const sobPrefixo = (pathname: string, prefixo: string) => pathname === prefixo || pathname.startsWith(`${prefixo}/`);
+
+/**
+ * Hosts que o proxy trata como "host do Fluxo B" (`/` → LP clonada): o
+ * host próprio + `FLUXO_B_EXTRA_HOSTS`. Domínio principal e host da LP
+ * atual são descartados mesmo se alguém configurar por engano.
+ */
+export function hostsDoFluxoB(hostProprio: string, extrasEnv?: string): string[] {
+  const todos = [hostProprio, ...(extrasEnv?.split(",") ?? [])].map((h) => h.trim().toLowerCase()).filter(Boolean);
+  return [...new Set(todos)].filter((h) => !HOSTS_PROIBIDOS_NO_FLUXO_B.includes(h));
+}
+
+export function ehHostDoFluxoB(hostHeader: string | null | undefined, hostProprio: string, extrasEnv?: string): boolean {
+  const hostname = (hostHeader ?? "").split(":")[0].toLowerCase();
+  return Boolean(hostname) && hostsDoFluxoB(hostProprio, extrasEnv).includes(hostname);
+}
+
+/** Hosts que podem chamar /api/fluxo-b/signup (checagem de Origin/Host),
+ * separados da lista do rewrite: domínio principal (/testegratis) + hosts
+ * do Fluxo B. Previews e localhost entram na própria checagem (fora de
+ * produção). */
+export function hostsDaApi(hostProprio: string, extrasEnv?: string): string[] {
+  return [...new Set([...HOSTS_PRINCIPAIS, ...hostsDoFluxoB(hostProprio, extrasEnv)])];
+}
+
+export type DecisaoHostPrincipal = { tipo: "reescrever"; destino: string } | { tipo: "bloquear" } | { tipo: "noindex" } | null;
+
+/**
+ * Proxy, hosts que NÃO são o da LP atual nem o do Fluxo B (domínio
+ * principal e previews):
+ * - `/testegratis[/...]` → reescreve pra `/fluxo-b[/...]` (todo ambiente);
+ * - `/fluxo-b[/...]` direto → 404 em produção; fora dela segue, com noindex;
+ * - o resto → null (o proxy não mexe).
+ * A API (`/api/fluxo-b/*`) não passa por aqui: funciona em todo host não-LP
+ * e se protege sozinha (Origin/Host, honeypot, limites).
+ */
+export function decidirHostPrincipal(pathname: string, vercelEnv: string | undefined): DecisaoHostPrincipal {
+  if (sobPrefixo(pathname, PREFIXO_PUBLICO)) {
+    const resto = pathname.slice(PREFIXO_PUBLICO.length);
+    return { tipo: "reescrever", destino: `${FLUXO_B_PREFIX}${resto === "/" ? "" : resto}` };
+  }
+  if (sobPrefixo(pathname, FLUXO_B_PREFIX)) return vercelEnv === "production" ? { tipo: "bloquear" } : { tipo: "noindex" };
+  return null;
+}
+
+/** Prefixo das telas na URL em que a pessoa está: `/testegratis` (domínio
+ * principal), `/fluxo-b` (preview direto) ou nenhum (host próprio). */
+export function prefixoDaUrl(pathname: string): string {
+  if (sobPrefixo(pathname, PREFIXO_PUBLICO)) return PREFIXO_PUBLICO;
+  if (sobPrefixo(pathname, FLUXO_B_PREFIX)) return FLUXO_B_PREFIX;
+  return "";
+}
+
+/** `rota` sem prefixo ("/", "/criando") → caminho público com o prefixo. */
+export function montarCaminho(prefixo: string, rota: string, hash = ""): string {
+  if (rota === "/") return `${prefixo || "/"}${hash}`;
+  return `${prefixo}${rota}${hash}`;
+}
 
 export type EstadoMock = { ativo: boolean; ignorado: boolean };
 
@@ -21,16 +89,6 @@ export function resolverMock(env: { mock?: string; vercelEnv?: string }): Estado
   const pedido = env.mock === "1";
   const producao = env.vercelEnv === "production";
   return { ativo: pedido && !producao, ignorado: pedido && producao };
-}
-
-/**
- * No host principal (useady.com.br), o Fluxo B (páginas e API) responde
- * 404 em produção. Em preview/desenvolvimento continua acessível por
- * `/fluxo-b`; no host próprio do Fluxo B esta regra não é consultada.
- */
-export function bloqueadoNoHostPrincipal(pathname: string, vercelEnv: string | undefined): boolean {
-  if (vercelEnv !== "production") return false;
-  return PREFIXOS_BLOQUEADOS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 /** Signup do trial no app: produção só em Production; homologação em

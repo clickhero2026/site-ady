@@ -1,19 +1,16 @@
-import { FLUXO_B_PREFIX, FLUXO_B_TELAS, type FluxoBTela } from "@/config/fluxoB";
+import { FLUXO_B_TELAS, type FluxoBTela } from "@/config/fluxoB";
+import { montarCaminho, prefixoDaUrl } from "./regras";
 
 /**
- * Caminho público de uma tela do Fluxo B, só no navegador. No host
- * próprio (teste.useady.com.br) o proxy tira o prefixo, então os
- * caminhos são `/criando`...; no preview da Vercel (ou em
- * localhost) o acesso é por `/fluxo-b/...`. A página atual diz qual dos
- * dois vale: se ela está sob `/fluxo-b`, tudo está.
+ * Caminho público de uma tela do Fluxo B, só no navegador, com o prefixo
+ * da URL em que a pessoa entrou:
+ * - useady.com.br/testegratis/... → `/testegratis/criando`;
+ * - preview direto /fluxo-b/... → `/fluxo-b/criando`;
+ * - host próprio (teste.useady.com.br) → `/criando`.
  */
 export function caminho(tela: FluxoBTela, hash = ""): string {
-  const comPrefixo =
-    typeof window !== "undefined" &&
-    (window.location.pathname === FLUXO_B_PREFIX || window.location.pathname.startsWith(`${FLUXO_B_PREFIX}/`));
-  const rota = FLUXO_B_TELAS[tela];
-  if (!comPrefixo) return `${rota}${hash}`;
-  return `${rota === "/" ? FLUXO_B_PREFIX : `${FLUXO_B_PREFIX}${rota}`}${hash}`;
+  const prefixo = typeof window === "undefined" ? "" : prefixoDaUrl(window.location.pathname);
+  return montarCaminho(prefixo, FLUXO_B_TELAS[tela], hash);
 }
 
 /** Navegação full-page (o GTM registra o page_view de cada tela, igual à

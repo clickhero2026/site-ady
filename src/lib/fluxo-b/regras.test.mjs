@@ -2,7 +2,7 @@
 // remove os tipos do .ts sozinho).
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { bloqueadoNoHostPrincipal, resolverMock, SIGNUP_URL_HMG, SIGNUP_URL_PRODUCAO, urlDoSignup } from "./regras.ts";
+import { decidirHostPrincipal, resolverMock, SIGNUP_URL_HMG, SIGNUP_URL_PRODUCAO, urlDoSignup } from "./regras.ts";
 
 test("mock ligado fora de produção", () => {
   assert.deepEqual(resolverMock({ mock: "1", vercelEnv: "preview" }), { ativo: true, ignorado: false });
@@ -21,17 +21,26 @@ test("sem a flag, nada de mock nem aviso", () => {
   }
 });
 
-test("/fluxo-b no host principal: 404 só em produção", () => {
-  for (const p of ["/fluxo-b", "/fluxo-b/criando", "/fluxo-b/senha", "/api/fluxo-b/signup"]) {
-    assert.equal(bloqueadoNoHostPrincipal(p, "production"), true, p);
-    assert.equal(bloqueadoNoHostPrincipal(p, "preview"), false, p);
-    assert.equal(bloqueadoNoHostPrincipal(p, undefined), false, p);
+test("domínio principal e preview: /testegratis[/...] → /fluxo-b[/...] em todo ambiente", () => {
+  for (const env of ["production", "preview", undefined]) {
+    assert.deepEqual(decidirHostPrincipal("/testegratis", env), { tipo: "reescrever", destino: "/fluxo-b" }, env);
+    assert.deepEqual(decidirHostPrincipal("/testegratis/", env), { tipo: "reescrever", destino: "/fluxo-b" }, env);
+    assert.deepEqual(decidirHostPrincipal("/testegratis/criando", env), { tipo: "reescrever", destino: "/fluxo-b/criando" }, env);
+    assert.deepEqual(decidirHostPrincipal("/testegratis/app-mock", env), { tipo: "reescrever", destino: "/fluxo-b/app-mock" }, env);
   }
 });
 
-test("bloqueio não pega outras rotas do site", () => {
-  for (const p of ["/", "/obrigado", "/fluxo-bx", "/api/lead", "/api/teste7d/inscricao"]) {
-    assert.equal(bloqueadoNoHostPrincipal(p, "production"), false, p);
+test("/fluxo-b direto: 404 em produção; fora dela segue com noindex", () => {
+  for (const p of ["/fluxo-b", "/fluxo-b/criando"]) {
+    assert.deepEqual(decidirHostPrincipal(p, "production"), { tipo: "bloquear" }, p);
+    assert.deepEqual(decidirHostPrincipal(p, "preview"), { tipo: "noindex" }, p);
+    assert.deepEqual(decidirHostPrincipal(p, undefined), { tipo: "noindex" }, p);
+  }
+});
+
+test("o resto do domínio principal fica intocado (inclui / e a API)", () => {
+  for (const p of ["/", "/obrigado", "/roadmap", "/workshop", "/testegratisx", "/teste", "/fluxo-bx", "/api/fluxo-b/signup", "/api/lead", "/api/teste7d/inscricao"]) {
+    for (const env of ["production", "preview"]) assert.equal(decidirHostPrincipal(p, env), null, `${p} ${env}`);
   }
 });
 

@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { LP_INTERNAL_PREFIX, normalizeLpVariant, TESTE7D, TOKEN_HEADER } from "@/config/teste7d";
 import { FLUXO_B_PREFIX, FLUXO_B_TELAS } from "@/config/fluxoB";
 import { isFluxoBHost } from "@/lib/fluxo-b/host";
-import { bloqueadoNoHostPrincipal } from "@/lib/fluxo-b/regras";
+import { decidirHostPrincipal } from "@/lib/fluxo-b/regras";
 
 /**
  * Roteamento por host. Mesmo projeto e mesmo build servem dois sites:
@@ -115,9 +115,18 @@ export function proxy(request: NextRequest) {
     return rewrite(request, NAO_EXISTE);
   }
 
-  // Fluxo B no domínio principal: 404 em produção (fica no host próprio e
-  // nos previews). Ver lib/fluxo-b/regras.ts.
-  if (bloqueadoNoHostPrincipal(pathname, process.env.VERCEL_ENV)) return rewrite(request, NAO_EXISTE);
+  // Fluxo B no domínio principal e nos previews (ver lib/fluxo-b/regras.ts):
+  // /testegratis[/...] → /fluxo-b[/...] (o navegador continua vendo
+  // /testegratis); /fluxo-b direto → 404 em produção. Sempre noindex.
+  const fluxoB = decidirHostPrincipal(pathname, process.env.VERCEL_ENV);
+  if (fluxoB) {
+    const response =
+      fluxoB.tipo === "reescrever" ? rewrite(request, fluxoB.destino)
+      : fluxoB.tipo === "bloquear" ? rewrite(request, NAO_EXISTE)
+      : NextResponse.next();
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return response;
+  }
 
   return NextResponse.next();
 }

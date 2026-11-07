@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { criarLimitador, LIMITE_EMAIL, LIMITE_IP, origemPermitidaNaRota } from "./protecao.ts";
+import { hostsDaApi } from "./regras.ts";
 
 test("limite por IP: 5 em 10 min, a 6ª é recusada, libera depois da janela", () => {
   const l = criarLimitador(LIMITE_IP);
@@ -34,11 +35,13 @@ test("memória limitada: não passa de maxChaves", () => {
   assert.ok(l.tamanho() <= 3);
 });
 
-const base = { hostsFluxoB: ["teste.useady.com.br"], hostsPreview: ["site-ady-abc.vercel.app", undefined] };
+const base = { hostsPermitidos: hostsDaApi("teste.useady.com.br"), hostsPreview: ["site-ady-abc.vercel.app", undefined] };
 
-test("origem: host próprio em qualquer ambiente", () => {
+test("origem: domínio principal (/testegratis), www e host próprio em qualquer ambiente", () => {
   for (const vercelEnv of ["production", "preview", undefined]) {
-    assert.equal(origemPermitidaNaRota({ ...base, vercelEnv, origin: "https://teste.useady.com.br", host: "teste.useady.com.br" }), true);
+    for (const h of ["useady.com.br", "www.useady.com.br", "teste.useady.com.br"]) {
+      assert.equal(origemPermitidaNaRota({ ...base, vercelEnv, origin: `https://${h}`, host: h }), true, `${h} ${vercelEnv}`);
+    }
   }
 });
 
@@ -55,7 +58,7 @@ test("origem: recusa sem Origin, origem cruzada, host fora da lista, credenciais
     { origin: "https://evil.com", host: "teste.useady.com.br" },
     { origin: "https://teste.useady.com.br", host: "evil.com" },
     { origin: "https://evil.com", host: "evil.com" },
-    { origin: "https://useady.com.br", host: "useady.com.br" },
+    { origin: "https://lp.useady.com.br", host: "lp.useady.com.br" },
     { origin: "https://teste.useady.com.br.evil.com", host: "teste.useady.com.br.evil.com" },
     { origin: "https://user:x@teste.useady.com.br", host: "teste.useady.com.br" },
     { origin: "null", host: "teste.useady.com.br" },

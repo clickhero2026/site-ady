@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { FLUXO_B_HOST, SIGNUP_TIMEOUT_MS } from "@/config/fluxoB";
 import { criarLimitador, LIMITE_EMAIL, LIMITE_IP, origemPermitidaNaRota } from "@/lib/fluxo-b/protecao";
-import { destinoPermitido, origensDeRedirect, urlDoSignup } from "@/lib/fluxo-b/regras";
+import { destinoPermitido, hostsDaApi, origensDeRedirect, urlDoSignup } from "@/lib/fluxo-b/regras";
 import { normalizarSignup, parseSignupResponse, SignupContratoError, type SignupResult } from "@/lib/fluxo-b/signup";
 
 /**
@@ -14,7 +14,8 @@ import { normalizarSignup, parseSignupResponse, SignupContratoError, type Signup
  *
  * Proteção (a API do app não tem):
  * - só POST (o Next responde 405 pros outros métodos), com `Origin` do
- *   mesmo host e host permitido (host próprio, preview, localhost);
+ *   mesmo host e host permitido: useady.com.br (/testegratis), www, o host
+ *   próprio e, fora de produção, previews e localhost (`hostsDaApi`);
  * - honeypot `empresa_site` (o mesmo do formulário da LP atual):
  *   preenchido → finge sucesso sem chamar o app;
  * - limite por IP (5 / 10 min) e por e-mail (1 / min) → 429. Em memória,
@@ -41,12 +42,11 @@ function ipDa(request: Request): string {
 }
 
 export async function POST(request: Request) {
-  const extras = process.env.FLUXO_B_EXTRA_HOSTS?.split(",").map((h) => h.trim()).filter(Boolean) ?? [];
   const permitida = origemPermitidaNaRota({
     origin: request.headers.get("origin"),
     host: request.headers.get("host"),
     vercelEnv: process.env.VERCEL_ENV,
-    hostsFluxoB: [FLUXO_B_HOST, ...extras],
+    hostsPermitidos: hostsDaApi(FLUXO_B_HOST, process.env.FLUXO_B_EXTRA_HOSTS),
     hostsPreview: [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL],
   });
   if (!permitida) return resposta({ ok: false, code: "INVALID" }, { status: 403 });

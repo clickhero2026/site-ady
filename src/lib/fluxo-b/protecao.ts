@@ -58,7 +58,8 @@ export const LIMITE_EMAIL = { max: 1, janelaMs: 60 * 1000 } as const;
 /**
  * A requisição veio de uma página nossa? Exige `Origin` (o navegador
  * sempre manda em POST) com o MESMO host do `Host`, e esse host na lista:
- * - host próprio do Fluxo B (+ extras);
+ * - `hostsPermitidos` (ver `hostsDaApi`: domínio principal + hosts do
+ *   Fluxo B), em qualquer ambiente;
  * - fora de produção: o host do deploy de preview (VERCEL_URL /
  *   VERCEL_BRANCH_URL) e localhost/127.0.0.1.
  * Sem `Origin` (curl, servidor) → recusa.
@@ -67,7 +68,7 @@ export function origemPermitidaNaRota(req: {
   origin: string | null;
   host: string | null;
   vercelEnv?: string;
-  hostsFluxoB: readonly string[];
+  hostsPermitidos: readonly string[];
   hostsPreview?: readonly (string | undefined)[];
 }): boolean {
   if (!req.origin || !req.host) return false;
@@ -82,7 +83,7 @@ export function origemPermitidaNaRota(req: {
   if (origem.host.toLowerCase() !== host) return false;
 
   const hostname = host.split(":")[0];
-  if (req.hostsFluxoB.map((h) => h.toLowerCase()).includes(hostname)) return true;
+  if (req.hostsPermitidos.map((h) => h.toLowerCase()).includes(hostname)) return true;
   if (req.vercelEnv === "production") return false;
 
   const previews = (req.hostsPreview ?? []).filter(Boolean).map((h) => (h as string).toLowerCase());
