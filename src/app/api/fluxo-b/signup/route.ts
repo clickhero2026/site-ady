@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { FLUXO_B_HOST, SIGNUP_TIMEOUT_MS } from "@/config/fluxoB";
 import { criarLimitador, LIMITE_EMAIL, LIMITE_IP, origemPermitidaNaRota } from "@/lib/fluxo-b/protecao";
 import { destinoPermitido, hostsDaApi, origensDeRedirect, urlDoSignup } from "@/lib/fluxo-b/regras";
-import { normalizarSignup, parseSignupResponse, SignupContratoError, type SignupResult } from "@/lib/fluxo-b/signup";
+import { chavesDoCorpo, normalizarSignup, parseSignupResponse, SignupContratoError, type SignupResult } from "@/lib/fluxo-b/signup";
 
 /**
  * Fluxo B — cria a conta de teste no app do ady. Repassa pro endpoint
@@ -104,6 +104,9 @@ export async function POST(request: Request) {
     throw err;
   }
   if (!r.ok && (r.code === "NETWORK" || r.code === "RATE_LIMIT")) limiteEmail.liberar(chaveEmail);
+
+  // Diagnóstico: 2xx sem link. Só os nomes das chaves — nunca valores/tokens.
+  if (r.ok && !r.redirectUrl) console.warn(`[fluxo-b-signup] 2xx sem link; chaves: ${chavesDoCorpo(json)}`);
 
   // O link de login (com token) só segue se for de uma origem permitida.
   if (r.ok && r.redirectUrl) {

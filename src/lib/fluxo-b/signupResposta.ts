@@ -26,10 +26,22 @@ export class SignupContratoError extends Error {
  *   na hmg: 400).
  *
  * O código do corpo vem antes do status. Sem código conhecido:
- * 2xx → sucesso (sem `redirect_url` → `redirectUrl: null`); 400/422 →
+ * 2xx → sucesso, com o link em `redirect_url` ou, se ausente, em
+ * `redirectUrl` (hotfix: o app pode mandar em camelCase); sem nenhum dos
+ * dois → `redirectUrl: null`; 400/422 →
  * INVALID; 429 → RATE_LIMIT; 5xx → NETWORK; o resto → SignupContratoError
  * (falha clara em desenvolvimento, erro amigável em produção).
  */
+const textoNaoVazio = (v: unknown): string | null => (typeof v === "string" && v.trim() ? v.trim() : null);
+
+/** Só os NOMES das chaves do corpo, pra diagnóstico em log (nunca valores). */
+export function chavesDoCorpo(json: unknown): string {
+  if (Array.isArray(json)) return "(array)";
+  if (!json || typeof json !== "object") return json === null || json === undefined ? "(vazio)" : `(${typeof json})`;
+  const chaves = Object.keys(json);
+  return chaves.length ? chaves.join(", ") : "(nenhuma)";
+}
+
 export function parseSignupResponse(status: number, json: unknown): SignupResult {
   const corpo = (json && typeof json === "object" ? json : {}) as Record<string, unknown>;
   const error = corpo.error && typeof corpo.error === "object" ? (corpo.error as Record<string, unknown>) : null;
@@ -39,8 +51,7 @@ export function parseSignupResponse(status: number, json: unknown): SignupResult
   if (codigo === "VALIDATION_ERROR") return { ok: false, code: "INVALID" };
 
   if (status >= 200 && status < 300) {
-    const url = corpo.redirect_url;
-    return { ok: true, redirectUrl: typeof url === "string" && url.trim() ? url.trim() : null };
+    return { ok: true, redirectUrl: textoNaoVazio(corpo.redirect_url) ?? textoNaoVazio(corpo.redirectUrl) };
   }
   if (status === 400 || status === 422) return { ok: false, code: "INVALID" };
   if (status === 429) return { ok: false, code: "RATE_LIMIT" };
