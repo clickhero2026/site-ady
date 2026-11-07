@@ -1,18 +1,36 @@
 // Rodar: node --test src/lib/fluxo-b/*.test.mjs
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { APP_FRONTEND_ORIGIN, destinoPermitido, LINK_VALIDADE_UTIL_MS, linkExpirado, origensDeRedirect, SIGNUP_URL_HMG, SIGNUP_URL_PRODUCAO } from "./regras.ts";
+import { APP_FRONTEND_ORIGIN, APP_FRONTEND_ORIGIN_HMG, destinoPermitido, LINK_VALIDADE_UTIL_MS, linkExpirado, origensDeRedirect, SIGNUP_URL_HMG, SIGNUP_URL_PRODUCAO } from "./regras.ts";
 
 const HMG = new URL(SIGNUP_URL_HMG).origin;
 const PROD = new URL(SIGNUP_URL_PRODUCAO).origin;
 const PERMITIDA = "https://api-permitida.com";
 
-test("origens padrão: Production = API de produção + frontend do app; fora dela = só hmg", () => {
+const WEB_HMG = "https://clickhero-fury-web-hmg.u7pe19.easypanel.host";
+
+test("origens padrão: Production = API de produção + frontend do app (inalterado)", () => {
   assert.deepEqual(origensDeRedirect({ vercelEnv: "production" }), [PROD, "https://app.useady.com.br"]);
   assert.equal(APP_FRONTEND_ORIGIN, "https://app.useady.com.br");
-  assert.deepEqual(origensDeRedirect({ vercelEnv: "preview" }), [HMG]);
-  assert.deepEqual(origensDeRedirect({}), [HMG]);
-  assert.ok(!origensDeRedirect({ vercelEnv: "production" }).includes(HMG)); // hmg nunca em produção
+});
+
+test("origens padrão fora de produção (Preview e local) = API hmg + frontend hmg", () => {
+  assert.equal(APP_FRONTEND_ORIGIN_HMG, WEB_HMG);
+  for (const vercelEnv of ["preview", "development", undefined]) {
+    assert.deepEqual(origensDeRedirect({ vercelEnv }), [HMG, WEB_HMG], String(vercelEnv));
+  }
+});
+
+test("hmg (API e frontend) nunca entra no padrão de produção", () => {
+  const prod = origensDeRedirect({ vercelEnv: "production" });
+  assert.ok(!prod.includes(HMG));
+  assert.ok(!prod.includes(WEB_HMG));
+});
+
+test("link do frontend hmg com #token passa intacto fora de produção", () => {
+  const link = `${WEB_HMG}/trial/acesso#token=abc`;
+  assert.equal(destinoPermitido(link, origensDeRedirect({ vercelEnv: "preview" })), link);
+  assert.equal(destinoPermitido(link, origensDeRedirect({ vercelEnv: "production" })), null);
 });
 
 test("FLUXO_B_REDIRECT_ORIGINS continua sobrescrevendo o padrão de produção", () => {
