@@ -1,16 +1,32 @@
 // Rodar: node --test src/lib/fluxo-b/*.test.mjs
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { destinoPermitido, LINK_VALIDADE_UTIL_MS, linkExpirado, origensDeRedirect, SIGNUP_URL_HMG, SIGNUP_URL_PRODUCAO } from "./regras.ts";
+import { APP_FRONTEND_ORIGIN, destinoPermitido, LINK_VALIDADE_UTIL_MS, linkExpirado, origensDeRedirect, SIGNUP_URL_HMG, SIGNUP_URL_PRODUCAO } from "./regras.ts";
 
 const HMG = new URL(SIGNUP_URL_HMG).origin;
 const PROD = new URL(SIGNUP_URL_PRODUCAO).origin;
 const PERMITIDA = "https://api-permitida.com";
 
-test("origens padrão: hmg fora de Production, produção só em Production", () => {
+test("origens padrão: Production = API de produção + frontend do app; fora dela = só hmg", () => {
+  assert.deepEqual(origensDeRedirect({ vercelEnv: "production" }), [PROD, "https://app.useady.com.br"]);
+  assert.equal(APP_FRONTEND_ORIGIN, "https://app.useady.com.br");
   assert.deepEqual(origensDeRedirect({ vercelEnv: "preview" }), [HMG]);
   assert.deepEqual(origensDeRedirect({}), [HMG]);
-  assert.deepEqual(origensDeRedirect({ vercelEnv: "production" }), [PROD]);
+  assert.ok(!origensDeRedirect({ vercelEnv: "production" }).includes(HMG)); // hmg nunca em produção
+});
+
+test("FLUXO_B_REDIRECT_ORIGINS continua sobrescrevendo o padrão de produção", () => {
+  assert.deepEqual(origensDeRedirect({ lista: "https://so-esta.test", vercelEnv: "production" }), ["https://so-esta.test"]);
+});
+
+test("fragmento #token chega intacto em destinoPermitido", () => {
+  const origens = origensDeRedirect({ vercelEnv: "production" });
+  const link = "https://app.useady.com.br/trial/acesso#token=abc";
+  assert.equal(destinoPermitido(link, origens), link);
+  const longo = "https://app.useady.com.br/trial/acesso?x=1#token=eyJ.a-b_c%2Bd%3D&next=/dashboard";
+  assert.equal(destinoPermitido(longo, origens), longo);
+  assert.equal(destinoPermitido("https://app.useady.com.br.evil.com/trial/acesso#token=abc", origens), null);
+  assert.equal(destinoPermitido("http://app.useady.com.br/trial/acesso#token=abc", origens), null);
 });
 
 test("FLUXO_B_REDIRECT_ORIGINS: lista por vírgula, normaliza e descarta inseguras", () => {
