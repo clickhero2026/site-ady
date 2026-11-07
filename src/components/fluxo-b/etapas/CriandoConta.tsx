@@ -2,11 +2,13 @@
 
 import { Check } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { APP_LOGIN_URL, DURACAO_TESTE, PROGRESSO, SIGNUP_TIMEOUT_MS, type EstadoMock } from "@/config/fluxoB";
+import { DURACAO_TESTE, PROGRESSO, SIGNUP_TIMEOUT_MS, TEXTO_EMAIL_EXISTENTE, type ConfigCliente } from "@/config/fluxoB";
 import { trackContaCriada, trackErroCriacao } from "@/lib/fluxo-b/analytics";
 import { irPara, caminho } from "@/lib/fluxo-b/rotas";
 import { primeiroNome, sessao, type LeadFluxoB } from "@/lib/fluxo-b/sessao";
 import type { SignupCode, SignupResult } from "@/lib/fluxo-b/signup";
+import { parseSignupResponse } from "@/lib/fluxo-b/signupResposta";
+import { AcoesContaExistente } from "./ContaExistente";
 import { useSessaoFluxoB } from "@/lib/fluxo-b/useSessao";
 import { FluxoBShell } from "./FluxoBShell";
 import e from "./etapas.module.css";
@@ -16,16 +18,31 @@ type Fase = { tipo: "criando" } | { tipo: "sucesso" } | { tipo: "erro"; code: Si
 
 const ESPERA_SUCESSO_MS = 1500;
 
-/** Modo mock: `?mock=exists|invalid|network` (na URL desta tela ou na da
- * LP) simula cada erro; sem `?mock`, sucesso com destino de teste. */
-async function signupMock(): Promise<SignupResult> {
-  const modo = new URL(window.location.href).searchParams.get("mock") ?? sessao.lerMock();
-  await new Promise((r) => setTimeout(r, 1200));
-  if (modo === "exists") return { ok: false, code: "EMAIL_EXISTS" };
-  if (modo === "invalid") return { ok: false, code: "INVALID" };
-  if (modo === "network") return { ok: false, code: "NETWORK" };
-  return { ok: true, redirectUrl: `${window.location.origin}${caminho("appMock")}` };
+/** `?mock=` desta tela ou o guardado na chegada à LP. */
+function modoMock(): string | null {
+  return new URL(window.location.href).searchParams.get("mock") ?? sessao.lerMock();
 }
+
+/**
+ * Modo mock (só fora de produção): simula a RESPOSTA da API e passa pelo
+ * mesmo `parseSignupResponse` do servidor.
+ * - `ok` (ou sem `?mock`): conta nova com `loginUrl` → /fluxo-b/app-mock
+ * - `exists`: `error.code = EMAIL_JA_CADASTRADO`
+ * - `invalid`: `VALIDATION_ERROR`; `network`: falha de rede
+ * - `semlink`: 202 sem link (estado atual da hmg)
+ * - `expirado`: link recebido há 56 min (testa a expiração)
+ */
+async function signupMock(): Promise<SignupResult> {
+  const modo = modoMock();
+  await new Promise((r) => setTimeout(r, 1200));
+  if (modo === "network") return { ok: false, code: "NETWORK" };
+  if (modo === "exists") return parseSignupResponse(409, { success: false, error: { code: "EMAIL_JA_CADASTRADO" } });
+  if (modo === "invalid") return parseSignupResponse(400, { success: false, error: { code: "VALIDATION_ERROR" } });
+  if (modo === "semlink") return parseSignupResponse(202, { message: "Se for possível, enviaremos um link de acesso." });
+  return parseSignupResponse(201, { loginUrl: `${window.location.origin}${caminho("appMock")}?t=mock` });
+}
+
+const MOCK_EXPIRADO_MS = 56 * 60 * 1000;
 
 async function signup(lead: LeadFluxoB, mock: boolean): Promise<SignupResult> {
   if (mock) return signupMock();
@@ -54,14 +71,16 @@ async function signup(lead: LeadFluxoB, mock: boolean): Promise<SignupResult> {
  * segue direto pro ramo, sem novo POST). "Conta criada" só aparece
  * depois do POST confirmar.
  */
-export function CriandoConta({ mock }: { mock: EstadoMock }) {
+export function CriandoConta({ cfg }: { cfg: ConfigCliente }) {
+  const mock = cfg.mock;
   const { lead, conta } = useSessaoFluxoB();
   const [fase, setFase] = useState<Fase>({ tipo: "criando" });
   const iniciado = useRef(false);
 
   const aplicar = useCallback((r: SignupResult) => {
     if (r.ok) {
-      sessao.gravarConta(r.redirectUrl);
+      const atraso = mock.ativo && modoMock() === "expirado" ? MOCK_EXPIRADO_MS : 0;
+      sessao.gravarConta(r.redirectUrl, Date.now() - atraso);
       trackContaCriada();
       setFase({ tipo: "sucesso" });
       window.setTimeout(() => irPara("ramo", { replace: true }), ESPERA_SUCESSO_MS);
@@ -69,7 +88,7 @@ export function CriandoConta({ mock }: { mock: EstadoMock }) {
       trackErroCriacao(r.code);
       setFase({ tipo: "erro", code: r.code });
     }
-  }, []);
+  }, [mock.ativo]);
 
   useEffect(() => {
     if (lead === undefined || iniciado.current) return;
@@ -100,7 +119,8 @@ export function CriandoConta({ mock }: { mock: EstadoMock }) {
           <p className={styles.boasVindas}>
             <strong>Que bom ter você aqui{nome ? `, ${nome}` : ""}!</strong>
           </p>
-          <p>Seu teste grátis de {DURACAO_TESTE} começa agora.</p>
+          {/* Em erro (ex.: e-mail já cadastrado) não promete conta nova. */}
+          {fase.tipo !== "erro" && <p>Seu teste grátis de {DURACAO_TESTE} começa agora.</p>}
         </>
       }
     >
@@ -133,19 +153,9 @@ function ErroCriacao({ code, onTentar }: { code: SignupCode; onTentar: () => voi
   if (code === "EMAIL_EXISTS") {
     return (
       <div role="alert" className={e.erro}>
-        <h1 className={e.titulo}>Esse e-mail já tem conta no ady.</h1>
-        <p className={e.apoio}>Entre com o seu e-mail para continuar de onde parou.</p>
-        <div className={e.acoes}>
-          {/* TODO(contrato): URL de login do app (NEXT_PUBLIC_ADY_APP_LOGIN_URL). */}
-          {APP_LOGIN_URL ? (
-            <a href={APP_LOGIN_URL} className={`lp-cta lp-cta--wide ${e.botao}`}>
-              Entrar
-            </a>
-          ) : null}
-          <a href={caminho("lp", "#cadastro")} className={e.secundario}>
-            Usar outro e-mail
-          </a>
-        </div>
+        <h1 className={e.titulo}>{TEXTO_EMAIL_EXISTENTE.titulo}</h1>
+        <p className={e.apoio}>{TEXTO_EMAIL_EXISTENTE.apoio}</p>
+        <AcoesContaExistente />
       </div>
     );
   }

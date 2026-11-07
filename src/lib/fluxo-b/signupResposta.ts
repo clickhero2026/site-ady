@@ -16,41 +16,38 @@ export class SignupContratoError extends Error {
 }
 
 /**
- * Resposta do app → resultado. Mapeamento a partir das respostas reais
- * da rota de homologação (06/11/2026):
+ * Resposta do app → resultado. Contrato combinado com o dev do app
+ * (06/11/2026), parte ainda não visível na hmg:
  *
- * - 202 `{ "message": "Se for possível, enviaremos um link de acesso." }`
- *   — sem token, sem URL, sem Set-Cookie/Location. A MESMA resposta vem
- *   para e-mail novo e para e-mail já cadastrado (anti-enumeração): o app
- *   manda um link de acesso por fora, e não dá pra saber aqui se a conta
- *   foi criada agora ou já existia.
- * - 400 `{ success: false, error: { code: "VALIDATION_ERROR", message,
- *   details: { errors: [{ path, message, code }] } } }` → INVALID.
+ * - Conta nova: 2xx com `loginUrl` — URL da API que valida o token e
+ *   redireciona pro app; vale 1h. TODO(contrato): confirmar o nome do
+ *   campo quando a hmg passar a devolver o link (hoje vem só
+ *   `{ message }`). `redirectUrl` também é aceito.
+ * - E-mail já cadastrado: `error.code === "EMAIL_JA_CADASTRADO"`. Decide
+ *   pelo CÓDIGO, não pelo status. TODO(contrato): status HTTP a confirmar.
+ * - Body inválido: `error.code === "VALIDATION_ERROR"` (observado: 400).
  *
- * TODO(contrato):
- * - Login automático: a resposta não traz URL nem token. `redirectUrl`
- *   (ou `loginUrl`) só é lido se o app passar a mandar; sem ele o fluxo
- *   termina sem entrar no app.
- * - EMAIL_EXISTS: não observado (e-mail repetido → 202). O 409 segue
- *   mapeado só se o app passar a usá-lo.
- * - Por onde o link de acesso é enviado (e-mail? WhatsApp?) e quanto
- *   tempo vale.
- *
- * 5xx e 429 (limite: `x-ratelimit-*`) → NETWORK ("tente de novo").
- * Qualquer outro status → SignupContratoError (quem chama decide: falha
- * clara em desenvolvimento, erro amigável em produção).
+ * O código do corpo vem antes do status. Sem código conhecido:
+ * 2xx → sucesso (sem link → `redirectUrl: null`, o fluxo termina em "conta
+ * pronta, mas não conseguimos abrir o ady agora"); 400/422 → INVALID;
+ * 409 → EMAIL_EXISTS; 429/5xx → NETWORK; o resto → SignupContratoError
+ * (falha clara em desenvolvimento, erro amigável em produção).
  */
 export function parseSignupResponse(status: number, json: unknown): SignupResult {
   const corpo = (json && typeof json === "object" ? json : {}) as Record<string, unknown>;
+  const erro = corpo.error && typeof corpo.error === "object" ? (corpo.error as Record<string, unknown>) : null;
+  const codigo = typeof erro?.code === "string" ? erro.code : undefined;
+
+  if (codigo === "EMAIL_JA_CADASTRADO") return { ok: false, code: "EMAIL_EXISTS" };
+  if (codigo === "VALIDATION_ERROR") return { ok: false, code: "INVALID" };
 
   if (status >= 200 && status < 300) {
-    const url = corpo.redirectUrl ?? corpo.loginUrl;
+    const url = corpo.loginUrl ?? corpo.redirectUrl;
     return { ok: true, redirectUrl: typeof url === "string" && url.trim() ? url.trim() : null };
   }
   if (status === 400 || status === 422) return { ok: false, code: "INVALID" };
   if (status === 409) return { ok: false, code: "EMAIL_EXISTS" };
   if (status === 429 || status >= 500) return { ok: false, code: "NETWORK" };
 
-  const codigo = corpo.error && typeof corpo.error === "object" ? (corpo.error as Record<string, unknown>).code : undefined;
-  throw new SignupContratoError(`status inesperado ${status}${typeof codigo === "string" ? ` (error.code=${codigo})` : ""}`);
+  throw new SignupContratoError(`status inesperado ${status}${codigo ? ` (error.code=${codigo})` : ""}`);
 }

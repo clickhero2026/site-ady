@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { SIGNUP_TIMEOUT_MS } from "@/config/fluxoB";
-import { urlDoSignup } from "@/lib/fluxo-b/regras";
+import { destinoPermitido, origensDeRedirect, urlDoSignup } from "@/lib/fluxo-b/regras";
 import { normalizarSignup, parseSignupResponse, SignupContratoError, type SignupResult } from "@/lib/fluxo-b/signup";
 
 /**
@@ -52,7 +52,20 @@ export async function POST(request: Request) {
 
   const json = await res.json().catch(() => null);
   try {
-    return resultado(parseSignupResponse(res.status, json));
+    const r = parseSignupResponse(res.status, json);
+    // O link de login (com token) só segue se for de uma origem permitida.
+    if (r.ok && r.redirectUrl) {
+      const origens = origensDeRedirect({ lista: process.env.FLUXO_B_REDIRECT_ORIGINS, vercelEnv: process.env.VERCEL_ENV });
+      if (!destinoPermitido(r.redirectUrl, origens)) {
+        let origem = "(inválida)";
+        try {
+          origem = new URL(r.redirectUrl).origin; // só a origem; o token nunca vai pro log
+        } catch {}
+        console.error(`[fluxo-b-signup] loginUrl fora de FLUXO_B_REDIRECT_ORIGINS: ${origem}`);
+        return resultado({ ok: true, redirectUrl: null });
+      }
+    }
+    return resultado(r);
   } catch (err) {
     if (err instanceof SignupContratoError) {
       // Só status e nomes de chave (ver SignupContratoError) — sem valores.

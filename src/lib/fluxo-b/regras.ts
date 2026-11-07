@@ -42,3 +42,56 @@ export function urlDoSignup(env: { trialSignupUrl?: string; vercelEnv?: string }
   if (env.trialSignupUrl?.trim()) return env.trialSignupUrl.trim();
   return env.vercelEnv === "production" ? SIGNUP_URL_PRODUCAO : SIGNUP_URL_HMG;
 }
+
+/* ---- Link de login (contrato do app, 06/11/2026) ---------------------- */
+
+/** O link de login do app vale 1h. Tratamos como vencido aos 55 min, com
+ * margem para relógio e rede. */
+export const LINK_VALIDADE_UTIL_MS = 55 * 60 * 1000;
+
+/** `recebidoEm` = quando o link chegou (ms). Sem horário → vencido. */
+export function linkExpirado(recebidoEm: number | null | undefined, agora: number): boolean {
+  if (typeof recebidoEm !== "number" || !Number.isFinite(recebidoEm)) return true;
+  return agora - recebidoEm > LINK_VALIDADE_UTIL_MS;
+}
+
+/**
+ * Origens permitidas para o redirecionamento final (o link de login é da
+ * API, que valida o token e manda pro app). `FLUXO_B_REDIRECT_ORIGINS`
+ * (vírgula) sobrescreve; padrão = origem da rota de signup do ambiente
+ * (hmg fora de Production). Só entra origem https sem usuário/senha;
+ * entrada inválida é descartada (lista vazia = nada permitido).
+ */
+export function origensDeRedirect(env: { lista?: string; vercelEnv?: string }): string[] {
+  const padrao = env.vercelEnv === "production" ? SIGNUP_URL_PRODUCAO : SIGNUP_URL_HMG;
+  const bruto = env.lista?.trim() ? env.lista.split(",") : [padrao];
+  const origens = new Set<string>();
+  for (const item of bruto) {
+    try {
+      const u = new URL(item.trim());
+      if (u.protocol === "https:" && !u.username && !u.password) origens.add(u.origin);
+    } catch {
+      // entrada inválida: ignorada
+    }
+  }
+  return [...origens];
+}
+
+/**
+ * Destino final validado, ou null. Exige URL absoluta, https, sem
+ * usuário/senha e origem EXATA da lista. `origemMock` (só com o mock
+ * ligado, fora de produção) libera a própria origem do site — inclusive
+ * http local — pra página de teste /fluxo-b/app-mock.
+ */
+export function destinoPermitido(url: string, origens: readonly string[], opcoes: { origemMock?: string } = {}): string | null {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return null;
+  }
+  if (u.username || u.password) return null;
+  if (opcoes.origemMock && u.origin === opcoes.origemMock) return u.href;
+  if (u.protocol !== "https:") return null;
+  return origens.includes(u.origin) ? u.href : null;
+}

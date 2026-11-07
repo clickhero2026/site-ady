@@ -15,7 +15,7 @@ export const CHAVES = {
 export type LeadFluxoB = { name: string; email: string; phone: string };
 /** Conta criada no app (POST confirmado). `redirectUrl` é apagado assim
  * que for usado; `criada` fica, pra não refazer o POST. */
-export type ContaFluxoB = { criada: true; redirectUrl: string | null };
+export type ContaFluxoB = { criada: true; redirectUrl: string | null; recebidoEm: number | null };
 
 function ler<T>(chave: string): T | null {
   try {
@@ -40,13 +40,16 @@ export const sessao = {
   gravarLead: (lead: LeadFluxoB) => gravar(CHAVES.lead, lead),
 
   lerConta: () => ler<ContaFluxoB>(CHAVES.conta),
-  gravarConta: (redirectUrl: string | null) => gravar(CHAVES.conta, { criada: true, redirectUrl } satisfies ContaFluxoB),
-  /** Pega o redirectUrl e apaga da sessão (uso único). */
-  consumirRedirect(): string | null {
+  /** `recebidoEm`: quando o link de login chegou (vale 1h — ver
+   * linkExpirado). */
+  gravarConta: (redirectUrl: string | null, recebidoEm: number = Date.now()) =>
+    gravar(CHAVES.conta, { criada: true, redirectUrl, recebidoEm: redirectUrl ? recebidoEm : null } satisfies ContaFluxoB),
+  /** Pega o link e o horário de chegada e apaga da sessão (uso único). */
+  consumirRedirect(): { url: string; recebidoEm: number | null } | null {
     const conta = ler<ContaFluxoB>(CHAVES.conta);
-    if (!conta) return null;
-    gravar(CHAVES.conta, { criada: true, redirectUrl: null } satisfies ContaFluxoB);
-    return conta.redirectUrl;
+    if (!conta?.redirectUrl) return null;
+    gravar(CHAVES.conta, { criada: true, redirectUrl: null, recebidoEm: null } satisfies ContaFluxoB);
+    return { url: conta.redirectUrl, recebidoEm: conta.recebidoEm ?? null };
   },
 
   lerRamos: () => ler<Ramo[]>(CHAVES.ramos) ?? [],

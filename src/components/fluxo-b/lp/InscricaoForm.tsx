@@ -3,7 +3,8 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent } from "react";
 import type { LpVariant } from "@/config/teste7d";
 import { TESTE7D } from "@/config/teste7d";
-import { APP_LOGIN_URL } from "@/config/fluxoB";
+import { TEXTO_EMAIL_EXISTENTE } from "@/config/fluxoB";
+import { AcoesContaExistente } from "../etapas/ContaExistente";
 import { trackLeadFluxoB } from "@/lib/fluxo-b/analytics";
 import { toE164Br } from "@/lib/fluxo-b/phone";
 import { caminho } from "@/lib/fluxo-b/rotas";
@@ -23,8 +24,6 @@ const ROTULOS: Record<Campo, string> = {
   email: "Seu e-mail",
   consentimento_lgpd: "Consentimento",
 };
-
-const EMAIL_JA_CADASTRADO = "Esse e-mail já foi cadastrado. Use o mesmo WhatsApp do cadastro.";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -59,8 +58,8 @@ function validar(dados: { nome: string; whatsapp: string; email: string; consent
  * sessionStorage (nunca na URL) e a navegação vai pra "conta criada" do
  * Fluxo B em vez da ativação em 10 passos. O link de erro "ativação da
  * E-mail já cadastrado com outro WhatsApp (409): sem link pro
- * /ativar-conta (é do fluxo atual) — mensagem própria e, se houver
- * NEXT_PUBLIC_ADY_APP_LOGIN_URL, botão "Entrar".
+ * /ativar-conta (é do fluxo atual) — mesma mensagem e botões da tela
+ * "criando" ("Redefinir minha senha" / "Entrar", cada um só com a env).
  *
  * Formulário da etapa 1 (nome, WhatsApp, e-mail, consentimento). Depois do
  * OK da API: evento Lead no GTM (com o event_id da API) e navegação
@@ -167,7 +166,7 @@ export function InscricaoForm({
         const mensagem: string = json.error ?? "Não deu para enviar agora. Tente de novo em instantes.";
         if (typeof json.ativarUrl === "string") {
           setEmailJaCadastrado(true);
-          setErroGeral(EMAIL_JA_CADASTRADO);
+          setErroGeral(`${TEXTO_EMAIL_EXISTENTE.titulo} ${TEXTO_EMAIL_EXISTENTE.apoio}`);
           enviando.current = false;
           setEstado("livre");
           return;
@@ -349,10 +348,10 @@ export function InscricaoForm({
             {erroGeral}
           </ErroCampo>
         )}
-        {emailJaCadastrado && APP_LOGIN_URL && (
-          <a href={APP_LOGIN_URL} className={`lp-cta lp-cta--wide ${styles.entrar}`}>
-            Entrar
-          </a>
+        {emailJaCadastrado && (
+          <div className={styles.entrar}>
+            <AcoesContaExistente />
+          </div>
         )}
       </div>
     </form>

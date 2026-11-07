@@ -1,22 +1,30 @@
+import type { ConfigCliente } from "@/config/fluxoB";
 import { trackEntrouNoApp } from "./analytics";
-import { destinoSeguro } from "./redirect";
+import { destinoPermitido, linkExpirado } from "./regras";
 import { sessao } from "./sessao";
 
+export type ResultadoEntrada = "ok" | "expirado" | "sem-destino";
+
 /**
- * Fim do Fluxo B: pega o `redirectUrl` do signup (uso único), valida a
- * origem e sai pro app com `window.location.assign`. Devolve false se não
- * houver destino válido (expirado/ausente/origem errada) — a tela mostra
- * o erro. TODO(contrato): se o login automático expirar rápido, é o app
- * que precisa resolver (não renovamos aqui).
+ * Fim do Fluxo B: pega o link de login do signup (uso único) e sai com
+ * `window.location.assign`. O link é da API (valida o token e manda pro
+ * app) e vale 1h:
+ * - passou de 55 min desde que chegou → "expirado" (não redireciona);
+ * - ausente ou fora de FLUXO_B_REDIRECT_ORIGINS → "sem-destino".
+ * Nunca loga o link (tem token).
  */
-export function entrarNoApp(mock: boolean): boolean {
-  const destino = destinoSeguro(sessao.consumirRedirect(), mock);
+export function entrarNoApp(cfg: ConfigCliente): ResultadoEntrada {
+  const conta = sessao.consumirRedirect();
+  if (!conta) return "sem-destino";
+  if (linkExpirado(conta.recebidoEm, Date.now())) return "expirado";
+
+  const destino = destinoPermitido(conta.url, cfg.origensRedirect, cfg.mock.ativo ? { origemMock: window.location.origin } : {});
   if (!destino) {
     if (process.env.NODE_ENV !== "production") {
-      console.error("[fluxo-b] redirectUrl ausente ou fora de NEXT_PUBLIC_ADY_APP_ORIGIN.");
+      console.error("[fluxo-b] link de login fora de FLUXO_B_REDIRECT_ORIGINS (ou inseguro).");
     }
-    return false;
+    return "sem-destino";
   }
   trackEntrouNoApp(() => window.location.assign(destino));
-  return true;
+  return "ok";
 }

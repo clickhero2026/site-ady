@@ -13,6 +13,23 @@ test("e-mail repetido também volta 202 (anti-enumeração) → mesmo resultado"
   assert.deepEqual(parseSignupResponse(202, { message: "Se for possível, enviaremos um link de acesso." }), { ok: true, redirectUrl: null });
 });
 
+test("conta nova com loginUrl (contrato) → ok com o link", () => {
+  const r = parseSignupResponse(201, { loginUrl: "https://api.test/auth/link?t=abc" });
+  assert.deepEqual(r, { ok: true, redirectUrl: "https://api.test/auth/link?t=abc" });
+});
+
+test("EMAIL_JA_CADASTRADO → EMAIL_EXISTS em qualquer status (código vem antes)", () => {
+  const corpo = { success: false, error: { code: "EMAIL_JA_CADASTRADO", message: "x" } };
+  for (const status of [409, 400, 422, 200, 202, 403]) {
+    assert.deepEqual(parseSignupResponse(status, corpo), { ok: false, code: "EMAIL_EXISTS" }, String(status));
+  }
+});
+
+test("VALIDATION_ERROR → INVALID mesmo com status diferente de 400", () => {
+  const corpo = { success: false, error: { code: "VALIDATION_ERROR" } };
+  assert.deepEqual(parseSignupResponse(409, corpo), { ok: false, code: "INVALID" });
+});
+
 test("se o app passar a mandar redirectUrl/loginUrl, é usado", () => {
   assert.deepEqual(parseSignupResponse(200, { redirectUrl: "https://app.test/x" }), { ok: true, redirectUrl: "https://app.test/x" });
   assert.deepEqual(parseSignupResponse(201, { loginUrl: "https://app.test/y" }), { ok: true, redirectUrl: "https://app.test/y" });

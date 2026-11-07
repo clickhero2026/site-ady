@@ -3,6 +3,9 @@
 .shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  /* Celular: o cabeçalho fica do tamanho do conteúdo; a sobra vai pro lado
+     do conteúdo (sem isso, tela com pouco conteúdo esticava o cabeçalho). */
+  grid-template-rows: auto 1fr;
   min-height: 100dvh;
 }
 
@@ -75,6 +78,7 @@
 @media (min-width: 64rem) {
   .shell {
     grid-template-columns: clamp(22.5rem, 35%, 32.5rem) minmax(0, 1fr);
+    grid-template-rows: auto;
   }
 
   .painel {

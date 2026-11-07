@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CriarSenha } from "@/components/fluxo-b/etapas/CriarSenha";
-import { FLUXO_B_PREFIX, FLUXO_B_TELAS, mockDoServidor, SENHA_ATIVA } from "@/config/fluxoB";
+import { FLUXO_B_PREFIX, FLUXO_B_TELAS, configDoServidor, SENHA_ATIVA } from "@/config/fluxoB";
 import { isFluxoBHost } from "@/lib/fluxo-b/host";
 
 /**
@@ -14,5 +14,5 @@ export default async function FluxoBSenhaPage() {
     const host = (await headers()).get("host");
     redirect(isFluxoBHost(host) ? FLUXO_B_TELAS.ramo : `${FLUXO_B_PREFIX}${FLUXO_B_TELAS.ramo}`);
   }
-  return <CriarSenha mock={mockDoServidor()} />;
+  return <CriarSenha cfg={configDoServidor()} />;
 }

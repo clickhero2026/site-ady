@@ -2,13 +2,14 @@
 
 import { Check, UserRound } from "lucide-react";
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { PROGRESSO, RAMOS, SENHA_ATIVA, type EstadoMock, type Ramo } from "@/config/fluxoB";
+import { PROGRESSO, RAMOS, SENHA_ATIVA, type ConfigCliente, type Ramo } from "@/config/fluxoB";
 import { trackRamoConcluido } from "@/lib/fluxo-b/analytics";
 import { entrarNoApp } from "@/lib/fluxo-b/entrarNoApp";
 import { irPara } from "@/lib/fluxo-b/rotas";
 import { primeiroNome, sessao } from "@/lib/fluxo-b/sessao";
 import { useSessaoFluxoB } from "@/lib/fluxo-b/useSessao";
 import { FalhaAoEntrar } from "./FalhaAoEntrar";
+import { LinkExpirado } from "./LinkExpirado";
 import { FluxoBShell } from "./FluxoBShell";
 import e from "./etapas.module.css";
 import styles from "./RamoNegocio.module.css";
@@ -21,11 +22,11 @@ import styles from "./RamoNegocio.module.css";
  * vai só pro dataLayer. Depois: senha (se a flag estiver ligada) ou
  * entrada direta no app.
  */
-export function RamoNegocio({ mock }: { mock: EstadoMock }) {
+export function RamoNegocio({ cfg }: { cfg: ConfigCliente }) {
   const { lead, conta } = useSessaoFluxoB();
   const id = useId();
   const [marcados, setMarcados] = useState<Ramo[]>([]);
-  const [estado, setEstado] = useState<"livre" | "enviando" | "falhou">("livre");
+  const [estado, setEstado] = useState<"livre" | "enviando" | "falhou" | "expirado">("livre");
   const enviando = useRef(false);
 
   useEffect(() => {
@@ -51,9 +52,10 @@ export function RamoNegocio({ mock }: { mock: EstadoMock }) {
         irPara("senha");
         return;
       }
-      if (!entrarNoApp(mock.ativo)) {
+      const r = entrarNoApp(cfg);
+      if (r !== "ok") {
         enviando.current = false;
-        setEstado("falhou");
+        setEstado(r === "expirado" ? "expirado" : "falhou");
       }
     });
   }
@@ -75,7 +77,9 @@ export function RamoNegocio({ mock }: { mock: EstadoMock }) {
         </>
       }
     >
-      {estado === "falhou" ? (
+      {estado === "expirado" ? (
+        <LinkExpirado />
+      ) : estado === "falhou" ? (
         <FalhaAoEntrar />
       ) : (
         pronto && (

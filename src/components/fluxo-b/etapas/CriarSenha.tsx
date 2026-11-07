@@ -2,7 +2,7 @@
 
 import { Check, Eye, EyeOff, LockKeyhole } from "lucide-react";
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { PROGRESSO, type EstadoMock } from "@/config/fluxoB";
+import { PROGRESSO, type ConfigCliente } from "@/config/fluxoB";
 import { trackSenhaCriada } from "@/lib/fluxo-b/analytics";
 import { entrarNoApp } from "@/lib/fluxo-b/entrarNoApp";
 import { setPassword } from "@/lib/fluxo-b/password";
@@ -10,6 +10,7 @@ import { irPara } from "@/lib/fluxo-b/rotas";
 import { REGRAS_SENHA, senhaValida } from "@/lib/fluxo-b/senhaRegras";
 import { useSessaoFluxoB } from "@/lib/fluxo-b/useSessao";
 import { FalhaAoEntrar } from "./FalhaAoEntrar";
+import { LinkExpirado } from "./LinkExpirado";
 import { FluxoBShell } from "./FluxoBShell";
 import e from "./etapas.module.css";
 import styles from "./CriarSenha.module.css";
@@ -23,12 +24,12 @@ const FORCA = ["Fraca", "Fraca", "Média", "Boa", "Forte"] as const;
  * A senha vive só no estado deste componente: nunca em log, storage ou
  * dataLayer, e é apagada do estado logo depois do envio.
  */
-export function CriarSenha({ mock }: { mock: EstadoMock }) {
+export function CriarSenha({ cfg }: { cfg: ConfigCliente }) {
   const { lead, conta } = useSessaoFluxoB();
   const id = useId();
   const [senha, setSenha] = useState("");
   const [visivel, setVisivel] = useState(false);
-  const [estado, setEstado] = useState<"livre" | "enviando" | "falhou-envio" | "falhou-entrar">("livre");
+  const [estado, setEstado] = useState<"livre" | "enviando" | "falhou-envio" | "falhou-entrar" | "expirado">("livre");
   const [tentou, setTentou] = useState(false);
   const enviando = useRef(false);
 
@@ -49,10 +50,11 @@ export function CriarSenha({ mock }: { mock: EstadoMock }) {
 
     const password = senha;
     try {
-      await setPassword({ password, email: lead.email }, { mock: mock.ativo });
+      await setPassword({ password, email: lead.email }, { mock: cfg.mock.ativo });
       setSenha("");
       trackSenhaCriada(() => {
-        if (!entrarNoApp(mock.ativo)) setEstado("falhou-entrar");
+        const r = entrarNoApp(cfg);
+        if (r !== "ok") setEstado(r === "expirado" ? "expirado" : "falhou-entrar");
       });
     } catch {
       setSenha("");
@@ -76,7 +78,9 @@ export function CriarSenha({ mock }: { mock: EstadoMock }) {
         </>
       }
     >
-      {estado === "falhou-entrar" ? (
+      {estado === "expirado" ? (
+        <LinkExpirado />
+      ) : estado === "falhou-entrar" ? (
         <FalhaAoEntrar />
       ) : (
         pronto && (

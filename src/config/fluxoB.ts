@@ -11,7 +11,7 @@
  * domínio próprio) vão em `FLUXO_B_EXTRA_HOSTS`, separados por vírgula. */
 export const FLUXO_B_HOST = "teste.useady.com.br";
 
-import { AVISO_MOCK_IGNORADO, resolverMock, type EstadoMock } from "@/lib/fluxo-b/regras";
+import { AVISO_MOCK_IGNORADO, origensDeRedirect, resolverMock, type EstadoMock } from "@/lib/fluxo-b/regras";
 
 /** Prefixo interno das rotas em `src/app/fluxo-b/`. No host próprio o
  * proxy tira o prefixo (`/criando` → `/fluxo-b/criando`); no preview da
@@ -80,12 +80,38 @@ export function mockDoServidor(): EstadoMock {
   return estado;
 }
 
-/** Origem do app do ady. O redirecionamento final só vai pra cá. */
-export const APP_ORIGIN = process.env.NEXT_PUBLIC_ADY_APP_ORIGIN ?? "";
+/**
+ * O que as telas (cliente) precisam saber do servidor. O navegador não
+ * enxerga VERCEL_ENV nem FLUXO_B_REDIRECT_ORIGINS: as páginas chamam
+ * isto e passam por prop. Páginas estáticas → valor do build (trocar a
+ * env pede novo deploy).
+ */
+export type ConfigCliente = { mock: EstadoMock; origensRedirect: string[] };
+
+export function configDoServidor(): ConfigCliente {
+  return {
+    mock: mockDoServidor(),
+    origensRedirect: origensDeRedirect({
+      lista: process.env.FLUXO_B_REDIRECT_ORIGINS,
+      vercelEnv: process.env.VERCEL_ENV,
+    }),
+  };
+}
 
 /** Tela de login do app (botão "Entrar" quando o e-mail já tem conta).
  * TODO(contrato): URL de login do app — o desenvolvedor do app define. */
 export const APP_LOGIN_URL = process.env.NEXT_PUBLIC_ADY_APP_LOGIN_URL ?? "";
+
+/** Tela de redefinição de senha do app (e-mail já cadastrado).
+ * TODO(contrato): URL de redefinição — o desenvolvedor do app define.
+ * Sem a env, o botão "Redefinir minha senha" some. */
+export const APP_RESET_URL = process.env.NEXT_PUBLIC_ADY_APP_RESET_URL ?? "";
+
+/** E-mail já cadastrado (tela "criando" e erro do formulário). */
+export const TEXTO_EMAIL_EXISTENTE = {
+  titulo: "Esse e-mail já tem conta no ady.",
+  apoio: "Se você esqueceu a senha, é só criar uma nova.",
+} as const;
 
 /** Tempo-limite do signup, no navegador e no route handler. */
 export const SIGNUP_TIMEOUT_MS = 15_000;
