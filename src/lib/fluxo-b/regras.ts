@@ -117,17 +117,20 @@ export function linkExpirado(recebidoEm: number | null | undefined, agora: numbe
  * Origens permitidas para o redirecionamento final (o link de login é da
  * API, que valida o token e manda pro app). `FLUXO_B_REDIRECT_ORIGINS`
  * (vírgula) sobrescreve; padrão em Production = origem da API de produção
- * + https://app.useady.com.br; fora dela = origem da rota hmg. Só entra origem https sem usuário/senha;
+ * + https://app.useady.com.br; fora dela = API hmg + frontend hmg. Só entra origem https sem usuário/senha;
  * entrada inválida é descartada (lista vazia = nada permitido).
  */
 /** Frontend do app: o `redirect_url` de produção aponta pra cá
  * (`/trial/acesso#token=...`). */
 export const APP_FRONTEND_ORIGIN = "https://app.useady.com.br";
+/** Frontend do app em homologação (destino do `redirect_url` da hmg). */
+export const APP_FRONTEND_ORIGIN_HMG = "https://clickhero-fury-web-hmg.u7pe19.easypanel.host";
 
 export function origensDeRedirect(env: { lista?: string; vercelEnv?: string }): string[] {
-  // Produção: origem da API e do frontend do app. Fora dela: só a hmg (a
-  // rota de homologação nunca entra na lista de produção).
-  const padrao = env.vercelEnv === "production" ? [SIGNUP_URL_PRODUCAO, APP_FRONTEND_ORIGIN] : [SIGNUP_URL_HMG];
+  // Produção: origem da API e do frontend do app. Fora dela (Preview e
+  // local): API e frontend de homologação — que nunca entram em produção.
+  const padrao =
+    env.vercelEnv === "production" ? [SIGNUP_URL_PRODUCAO, APP_FRONTEND_ORIGIN] : [SIGNUP_URL_HMG, APP_FRONTEND_ORIGIN_HMG];
   const bruto = env.lista?.trim() ? env.lista.split(",") : padrao;
   const origens = new Set<string>();
   for (const item of bruto) {
