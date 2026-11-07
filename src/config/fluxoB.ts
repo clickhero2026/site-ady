@@ -1,6 +1,7 @@
 /**
  * Config central do Fluxo B do teste grátis: LP clonada → "conta criada"
- * (POST no app) → ramo do negócio → [senha] → entrada direta no app.
+ * (POST no app) → entrada direta no app. Senha e ramo ficam no modal de
+ * primeiro acesso do app (fora deste site).
  *
  * Isolado do fluxo atual (lp.useady.com.br → ativação → Calendly): nada
  * aqui é lido por ele, e nada dele é alterado por aqui.
@@ -23,8 +24,6 @@ export type { EstadoMock } from "@/lib/fluxo-b/regras";
 export const FLUXO_B_TELAS = {
   lp: "/",
   criando: "/criando",
-  ramo: "/ramo",
-  senha: "/senha",
   /** Só em modo mock: simula a chegada no app. */
   appMock: "/app-mock",
 } as const;
@@ -40,28 +39,7 @@ export type FluxoBTela = keyof typeof FLUXO_B_TELAS;
 export const DURACAO_TESTE = "7 dias";
 
 /** Valores da barra de progresso (sem número de passo na tela). */
-export const PROGRESSO = { lp: 20, criando: 40, ramo: 70, senha: 90, app: 100 } as const;
-
-/**
- * Ramos do negócio. A ativação atual (10 passos) não tem pergunta de ramo,
- * então vale a lista padrão do briefing do Fluxo B. Chave estável (vai pro
- * dataLayer) → texto da tela.
- */
-export const RAMOS = {
-  alimentacao: "Alimentação",
-  beleza: "Beleza e estética",
-  saude: "Saúde e bem-estar",
-  comercio: "Comércio",
-  servicos: "Serviços",
-  educacao: "Educação",
-  outro: "Outro",
-} as const;
-
-export type Ramo = keyof typeof RAMOS;
-
-/** Tela de senha: desligada por padrão até o app aceitar gravar a senha.
- * NEXT_PUBLIC → entra no build; trocar exige novo deploy. */
-export const SENHA_ATIVA = process.env.NEXT_PUBLIC_FLUXO_B_SENHA === "1";
+export const PROGRESSO = { lp: 20, criando: 50, app: 100 } as const;
 
 /**
  * Modo de teste sem backend (NEXT_PUBLIC_FLUXO_B_MOCK=1): simula o signup
@@ -107,10 +85,11 @@ export const APP_LOGIN_URL = process.env.NEXT_PUBLIC_ADY_APP_LOGIN_URL ?? "";
  * Sem a env, o botão "Redefinir minha senha" some. */
 export const APP_RESET_URL = process.env.NEXT_PUBLIC_ADY_APP_RESET_URL ?? "";
 
-/** E-mail já cadastrado (tela "criando" e erro do formulário). */
+/** E-mail já cadastrado. `apoio` só na tela "criando" (lá a API
+ * confirmou e mandou o e-mail); o formulário usa só o título. */
 export const TEXTO_EMAIL_EXISTENTE = {
   titulo: "Esse e-mail já tem conta no ady.",
-  apoio: "Se você esqueceu a senha, é só criar uma nova.",
+  apoio: "Enviamos um e-mail com as instruções para você entrar.",
 } as const;
 
 /** Tempo-limite do signup, no navegador e no route handler. */

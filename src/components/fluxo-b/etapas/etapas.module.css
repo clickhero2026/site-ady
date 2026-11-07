@@ -30,10 +30,13 @@
   padding: 0.5rem 1rem;
   border: 2px solid var(--lp-petrol);
   border-radius: 999px;
+  background: transparent;
   color: var(--lp-petrol);
+  font: inherit;
   font-weight: 700;
   text-decoration: none;
   text-align: center;
+  cursor: pointer;
 }
 
 .secundario:hover {

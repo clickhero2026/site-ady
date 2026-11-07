@@ -58,8 +58,11 @@ function validar(dados: { nome: string; whatsapp: string; email: string; consent
  * sessionStorage (nunca na URL) e a navegação vai pra "conta criada" do
  * Fluxo B em vez da ativação em 10 passos. O link de erro "ativação da
  * E-mail já cadastrado com outro WhatsApp (409): sem link pro
- * /ativar-conta (é do fluxo atual) — mesma mensagem e botões da tela
- * "criando" ("Redefinir minha senha" / "Entrar", cada um só com a env).
+ * /ativar-conta (é do fluxo atual) — "Esse e-mail já tem conta no ady."
+ * e os botões "Redefinir minha senha" / "Entrar" (cada um só com a env).
+ * Sem a frase "Enviamos um e-mail…": aqui o app não foi chamado, então
+ * nenhum e-mail saiu. O honeypot vai junto no lead pra nossa rota de
+ * signup (que finge sucesso sem chamar o app).
  *
  * Formulário da etapa 1 (nome, WhatsApp, e-mail, consentimento). Depois do
  * OK da API: evento Lead no GTM (com o event_id da API) e navegação
@@ -166,7 +169,7 @@ export function InscricaoForm({
         const mensagem: string = json.error ?? "Não deu para enviar agora. Tente de novo em instantes.";
         if (typeof json.ativarUrl === "string") {
           setEmailJaCadastrado(true);
-          setErroGeral(`${TEXTO_EMAIL_EXISTENTE.titulo} ${TEXTO_EMAIL_EXISTENTE.apoio}`);
+          setErroGeral(TEXTO_EMAIL_EXISTENTE.titulo);
           enviando.current = false;
           setEstado("livre");
           return;
@@ -189,6 +192,7 @@ export function InscricaoForm({
         name: dados.nome.trim(),
         email: dados.email.trim().toLowerCase(),
         phone: toE164Br(dados.whatsapp) ?? dados.whatsapp,
+        empresa_site: String(form.get("empresa_site") ?? ""),
       });
       const destino = caminho("criando");
       let foi = false;
@@ -338,7 +342,7 @@ export function InscricaoForm({
         </span>
       </button>
 
-      <p className={styles.nota}>Sem cartão de crédito. Seus 7 dias começam assim que sua conta é criada.</p>
+      <p className={styles.nota}>Sem cartão de crédito. Seus 7 dias começam assim que você entra no ady.</p>
 
       <div role="status" aria-live="polite" className={styles.status}>
         {resumo && <p className="visually-hidden">{resumo}</p>}

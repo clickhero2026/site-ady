@@ -3,7 +3,7 @@ import styles from "./LpFaq.module.css";
 
 const PERGUNTAS = [
   { p: "Precisa de cartão de crédito?", r: "Não." },
-  { p: "Quando começam os 7 dias?", r: "Assim que sua conta é criada, logo depois do cadastro." },
+  { p: "Quando começam os 7 dias?", r: "Assim que você entra no ady, logo depois do cadastro." },
   { p: "Preciso entender de marketing?", r: "Não. O ady é feito para quem não entende." },
 ];
 

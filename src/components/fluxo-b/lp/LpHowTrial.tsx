@@ -4,7 +4,7 @@ import styles from "./LpHowTrial.module.css";
 
 const ETAPAS = [
   { Icone: UserPlus, texto: "Você cria sua conta grátis, sem cartão" },
-  { Icone: Settings2, texto: "Você conta sobre o seu negócio e escolhe suas metas" },
+  { Icone: Settings2, texto: "Você entra e conta o ramo do seu negócio" },
   { Icone: Sparkles, texto: "Por 7 dias, o ady cria e publica os posts do seu negócio" },
 ];
 
@@ -26,7 +26,7 @@ export function LpHowTrial() {
             </li>
           ))}
         </ol>
-        <p className={styles.nota}>Seus 7 dias começam assim que sua conta é criada.</p>
+        <p className={styles.nota}>Seus 7 dias começam assim que você entra no ady.</p>
         <CtaBlock />
       </div>
     </section>

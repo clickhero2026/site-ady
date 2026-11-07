@@ -30,7 +30,7 @@ export function LpHero({ variant }: { variant: LpVariant }) {
               <a id="hero-cta" href="#cadastro" className={`lp-cta ${styles.botao}`}>
                 QUERO TESTAR GRÁTIS
               </a>
-              <p className={styles.nota}>Sem cartão de crédito. Seus 7 dias começam assim que sua conta é criada.</p>
+              <p className={styles.nota}>Sem cartão de crédito. Seus 7 dias começam assim que você entra no ady.</p>
             </div>
           </div>
 

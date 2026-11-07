@@ -1,5 +1,3 @@
-import type { Ramo } from "@/config/fluxoB";
-
 /**
  * Estado do Fluxo B entre as telas, só em `sessionStorage` (morre com a
  * aba; nunca vai na URL). A senha NUNCA passa por aqui.
@@ -8,14 +6,17 @@ import type { Ramo } from "@/config/fluxoB";
 export const CHAVES = {
   lead: "ady:fb:lead",
   conta: "ady:fb:conta",
-  ramos: "ady:fb:ramos",
   mock: "ady:fb:mock",
 } as const;
 
-export type LeadFluxoB = { name: string; email: string; phone: string };
-/** Conta criada no app (POST confirmado). `redirectUrl` é apagado assim
- * que for usado; `criada` fica, pra não refazer o POST. */
-export type ContaFluxoB = { criada: true; redirectUrl: string | null; recebidoEm: number | null };
+/** `empresa_site`: honeypot do formulário (mesmo da LP atual). Humano
+ * deixa vazio; vai pra nossa rota, que finge sucesso se vier preenchido. */
+export type LeadFluxoB = { name: string; email: string; phone: string; empresa_site?: string };
+/** Conta criada no app (POST confirmado).
+ * - `redirectUrl`: link de login (uso único, 1h); apagado quando usado.
+ * - `recebidoEm`: quando o link chegou (regra dos 55 min).
+ * - `usado`: o link já foi aberto — recarregar/voltar não redireciona de novo. */
+export type ContaFluxoB = { criada: true; redirectUrl: string | null; recebidoEm: number | null; usado: boolean };
 
 function ler<T>(chave: string): T | null {
   try {
@@ -40,20 +41,15 @@ export const sessao = {
   gravarLead: (lead: LeadFluxoB) => gravar(CHAVES.lead, lead),
 
   lerConta: () => ler<ContaFluxoB>(CHAVES.conta),
-  /** `recebidoEm`: quando o link de login chegou (vale 1h — ver
-   * linkExpirado). */
   gravarConta: (redirectUrl: string | null, recebidoEm: number = Date.now()) =>
-    gravar(CHAVES.conta, { criada: true, redirectUrl, recebidoEm: redirectUrl ? recebidoEm : null } satisfies ContaFluxoB),
-  /** Pega o link e o horário de chegada e apaga da sessão (uso único). */
-  consumirRedirect(): { url: string; recebidoEm: number | null } | null {
-    const conta = ler<ContaFluxoB>(CHAVES.conta);
-    if (!conta?.redirectUrl) return null;
-    gravar(CHAVES.conta, { criada: true, redirectUrl: null, recebidoEm: null } satisfies ContaFluxoB);
-    return { url: conta.redirectUrl, recebidoEm: conta.recebidoEm ?? null };
-  },
-
-  lerRamos: () => ler<Ramo[]>(CHAVES.ramos) ?? [],
-  gravarRamos: (ramos: Ramo[]) => gravar(CHAVES.ramos, ramos),
+    gravar(CHAVES.conta, {
+      criada: true,
+      redirectUrl,
+      recebidoEm: redirectUrl ? recebidoEm : null,
+      usado: false,
+    } satisfies ContaFluxoB),
+  /** Link aberto: apaga o link (uso único) e marca `usado`. */
+  marcarUsado: () => gravar(CHAVES.conta, { criada: true, redirectUrl: null, recebidoEm: null, usado: true } satisfies ContaFluxoB),
 
   lerMock: () => ler<string>(CHAVES.mock),
   gravarMock: (valor: string) => gravar(CHAVES.mock, valor),

@@ -2,19 +2,28 @@
 
 import { Check } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DURACAO_TESTE, PROGRESSO, SIGNUP_TIMEOUT_MS, TEXTO_EMAIL_EXISTENTE, type ConfigCliente } from "@/config/fluxoB";
+import { APP_LOGIN_URL, DURACAO_TESTE, PROGRESSO, SIGNUP_TIMEOUT_MS, TEXTO_EMAIL_EXISTENTE, type ConfigCliente } from "@/config/fluxoB";
 import { trackContaCriada, trackErroCriacao } from "@/lib/fluxo-b/analytics";
-import { irPara, caminho } from "@/lib/fluxo-b/rotas";
-import { primeiroNome, sessao, type LeadFluxoB } from "@/lib/fluxo-b/sessao";
+import { entrarNoApp } from "@/lib/fluxo-b/entrarNoApp";
+import { linkExpirado } from "@/lib/fluxo-b/regras";
+import { caminho, irPara } from "@/lib/fluxo-b/rotas";
+import { primeiroNome, sessao, type ContaFluxoB, type LeadFluxoB } from "@/lib/fluxo-b/sessao";
 import type { SignupCode, SignupResult } from "@/lib/fluxo-b/signup";
 import { parseSignupResponse } from "@/lib/fluxo-b/signupResposta";
-import { AcoesContaExistente } from "./ContaExistente";
 import { useSessaoFluxoB } from "@/lib/fluxo-b/useSessao";
+import { AcoesContaExistente } from "./ContaExistente";
 import { FluxoBShell } from "./FluxoBShell";
+import { LinkExpirado } from "./LinkExpirado";
 import e from "./etapas.module.css";
 import styles from "./CriandoConta.module.css";
 
-type Fase = { tipo: "criando" } | { tipo: "sucesso" } | { tipo: "erro"; code: SignupCode };
+type Fase =
+  | { tipo: "criando" }
+  | { tipo: "sucesso" } // conta criada, saindo pro app em ~1,5s
+  | { tipo: "sem-link" } // conta criada, sem link utilizável: acesso vai por e-mail
+  | { tipo: "ja-aberto" } // link já usado (recarga/voltar)
+  | { tipo: "expirado" }
+  | { tipo: "erro"; code: SignupCode };
 
 const ESPERA_SUCESSO_MS = 1500;
 
@@ -26,20 +35,21 @@ function modoMock(): string | null {
 /**
  * Modo mock (só fora de produção): simula a RESPOSTA da API e passa pelo
  * mesmo `parseSignupResponse` do servidor.
- * - `ok` (ou sem `?mock`): conta nova com `loginUrl` → /fluxo-b/app-mock
- * - `exists`: `error.code = EMAIL_JA_CADASTRADO`
- * - `invalid`: `VALIDATION_ERROR`; `network`: falha de rede
+ * - `ok` (ou sem `?mock`): `{ redirect_url }` → /fluxo-b/app-mock
+ * - `exists`: `{ erro: "EMAIL_JA_CADASTRADO" }`
+ * - `invalid`: `VALIDATION_ERROR`; `network`: falha de rede; `limite`: 429
  * - `semlink`: 202 sem link (estado atual da hmg)
- * - `expirado`: link recebido há 56 min (testa a expiração)
+ * - `expirado`: link recebido há 56 min
  */
 async function signupMock(): Promise<SignupResult> {
   const modo = modoMock();
   await new Promise((r) => setTimeout(r, 1200));
   if (modo === "network") return { ok: false, code: "NETWORK" };
-  if (modo === "exists") return parseSignupResponse(409, { success: false, error: { code: "EMAIL_JA_CADASTRADO" } });
+  if (modo === "exists") return parseSignupResponse(409, { erro: "EMAIL_JA_CADASTRADO" });
   if (modo === "invalid") return parseSignupResponse(400, { success: false, error: { code: "VALIDATION_ERROR" } });
+  if (modo === "limite") return parseSignupResponse(429, {});
   if (modo === "semlink") return parseSignupResponse(202, { message: "Se for possível, enviaremos um link de acesso." });
-  return parseSignupResponse(201, { loginUrl: `${window.location.origin}${caminho("appMock")}?t=mock` });
+  return parseSignupResponse(201, { redirect_url: `${window.location.origin}${caminho("appMock")}?t=mock` });
 }
 
 const MOCK_EXPIRADO_MS = 56 * 60 * 1000;
@@ -50,7 +60,7 @@ async function signup(lead: LeadFluxoB, mock: boolean): Promise<SignupResult> {
     const res = await fetch("/api/fluxo-b/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: lead.name, email: lead.email, phone: lead.phone }),
+      body: JSON.stringify({ name: lead.name, email: lead.email, phone: lead.phone, empresa_site: lead.empresa_site ?? "" }),
       // Um pouco além do tempo-limite do servidor, pra ele responder primeiro.
       signal: AbortSignal.timeout(SIGNUP_TIMEOUT_MS + 2000),
     });
@@ -58,6 +68,7 @@ async function signup(lead: LeadFluxoB, mock: boolean): Promise<SignupResult> {
     if (json?.debug) console.error(json.debug); // só vem em desenvolvimento
     if (json && json.ok === true) return { ok: true, redirectUrl: typeof json.redirectUrl === "string" ? json.redirectUrl : null };
     if (json && json.ok === false && typeof json.code === "string") return { ok: false, code: json.code };
+    if (res.status === 429) return { ok: false, code: "RATE_LIMIT" };
     return { ok: false, code: res.ok ? "UNKNOWN" : "NETWORK" };
   } catch {
     return { ok: false, code: "NETWORK" };
@@ -65,30 +76,55 @@ async function signup(lead: LeadFluxoB, mock: boolean): Promise<SignupResult> {
 }
 
 /**
- * Tela 2 do Fluxo B — "Sua conta foi criada!". É aqui que a conta nasce
- * no app: o POST sai ao montar, uma vez só (ref contra o duplo efeito do
- * modo estrito; flag na sessão contra recarga — com a conta já criada,
- * segue direto pro ramo, sem novo POST). "Conta criada" só aparece
- * depois do POST confirmar.
+ * Tela "criando" do Fluxo B — é aqui que a conta nasce no app e de onde o
+ * usuário sai direto pro app (senha e ramo ficam no modal de primeiro
+ * acesso do app).
+ *
+ * O POST sai ao montar, uma vez só (ref contra o duplo efeito do modo
+ * estrito; conta na sessão contra recarga). "Conta criada" só aparece
+ * depois do POST confirmar; ~1,5s depois sai pelo `redirect_url`. O link
+ * é de uso único: depois de usado, recarregar ou voltar mostra "Seu
+ * acesso já foi aberto." em vez de redirecionar de novo.
  */
 export function CriandoConta({ cfg }: { cfg: ConfigCliente }) {
-  const mock = cfg.mock;
   const { lead, conta } = useSessaoFluxoB();
   const [fase, setFase] = useState<Fase>({ tipo: "criando" });
   const iniciado = useRef(false);
+  const mock = cfg.mock;
 
-  const aplicar = useCallback((r: SignupResult) => {
-    if (r.ok) {
+  /** Conta já criada (agora ou numa visita anterior): decide a saída. */
+  const seguir = useCallback(
+    (c: ContaFluxoB) => {
+      if (c.usado) return setFase({ tipo: "ja-aberto" });
+      if (!c.redirectUrl) return setFase({ tipo: "sem-link" });
+      if (linkExpirado(c.recebidoEm, Date.now())) return setFase({ tipo: "expirado" });
+      setFase({ tipo: "sucesso" });
+      window.setTimeout(() => {
+        const atual = sessao.lerConta() ?? c;
+        const r = entrarNoApp(cfg, atual);
+        if (r === "usado") setFase({ tipo: "ja-aberto" });
+        else if (r === "expirado") setFase({ tipo: "expirado" });
+        else if (r === "sem-destino") setFase({ tipo: "sem-link" });
+      }, ESPERA_SUCESSO_MS);
+    },
+    [cfg],
+  );
+
+  const aplicar = useCallback(
+    (r: SignupResult) => {
+      if (!r.ok) {
+        trackErroCriacao(r.code);
+        setFase({ tipo: "erro", code: r.code });
+        return;
+      }
       const atraso = mock.ativo && modoMock() === "expirado" ? MOCK_EXPIRADO_MS : 0;
       sessao.gravarConta(r.redirectUrl, Date.now() - atraso);
       trackContaCriada();
-      setFase({ tipo: "sucesso" });
-      window.setTimeout(() => irPara("ramo", { replace: true }), ESPERA_SUCESSO_MS);
-    } else {
-      trackErroCriacao(r.code);
-      setFase({ tipo: "erro", code: r.code });
-    }
-  }, [mock.ativo]);
+      const salva = sessao.lerConta();
+      seguir(salva ?? { criada: true, redirectUrl: r.redirectUrl, recebidoEm: Date.now() - atraso, usado: false });
+    },
+    [mock.ativo, seguir],
+  );
 
   useEffect(() => {
     if (lead === undefined || iniciado.current) return;
@@ -97,12 +133,23 @@ export function CriandoConta({ cfg }: { cfg: ConfigCliente }) {
       irPara("lp", { hash: "#cadastro", replace: true });
       return;
     }
+    // Conta já existe nesta aba (recarga/voltar): sem novo POST.
     if (conta?.criada) {
-      irPara("ramo", { replace: true });
+      void Promise.resolve(conta).then(seguir);
       return;
     }
     void signup(lead, mock.ativo).then(aplicar);
-  }, [lead, conta, aplicar, mock.ativo]);
+  }, [lead, conta, aplicar, seguir, mock.ativo]);
+
+  // Voltar do app com a página restaurada do cache (bfcache): o estado
+  // antigo ("Sua conta foi criada!") não vale mais — o link já foi usado.
+  useEffect(() => {
+    const aoMostrar = (ev: PageTransitionEvent) => {
+      if (ev.persisted && sessao.lerConta()?.usado) setFase({ tipo: "ja-aberto" });
+    };
+    window.addEventListener("pageshow", aoMostrar);
+    return () => window.removeEventListener("pageshow", aoMostrar);
+  }, []);
 
   const nome = primeiroNome(lead?.name);
   const tentarDeNovo = () => {
@@ -110,22 +157,42 @@ export function CriandoConta({ cfg }: { cfg: ConfigCliente }) {
     setFase({ tipo: "criando" });
     void signup(lead, mock.ativo).then(aplicar);
   };
+  const contaExiste = fase.tipo !== "criando" && fase.tipo !== "erro";
 
   return (
     <FluxoBShell
-      progresso={PROGRESSO.criando}
+      progresso={contaExiste ? PROGRESSO.app : PROGRESSO.criando}
       painel={
         <>
           <p className={styles.boasVindas}>
             <strong>Que bom ter você aqui{nome ? `, ${nome}` : ""}!</strong>
           </p>
           {/* Em erro (ex.: e-mail já cadastrado) não promete conta nova. */}
-          {fase.tipo !== "erro" && <p>Seu teste grátis de {DURACAO_TESTE} começa agora.</p>}
+          {fase.tipo !== "erro" && <p>Seus {DURACAO_TESTE} de teste grátis começam assim que você entra no ady.</p>}
         </>
       }
     >
       {fase.tipo === "erro" ? (
         <ErroCriacao code={fase.code} onTentar={tentarDeNovo} />
+      ) : fase.tipo === "expirado" ? (
+        <LinkExpirado />
+      ) : fase.tipo === "ja-aberto" ? (
+        <div role="status" aria-live="polite" className={styles.aviso}>
+          <h1 className={e.titulo}>Seu acesso já foi aberto.</h1>
+          <AcoesContaExistente principal="entrar" />
+        </div>
+      ) : fase.tipo === "sem-link" ? (
+        <div role="status" aria-live="polite" className={styles.aviso}>
+          <h1 className={e.titulo}>Sua conta está pronta.</h1>
+          <p className={e.apoio}>Enviamos um e-mail com o seu acesso.</p>
+          {APP_LOGIN_URL && (
+            <div className={e.acoes}>
+              <a href={APP_LOGIN_URL} className={`lp-cta lp-cta--wide ${e.botao}`}>
+                Entrar
+              </a>
+            </div>
+          )}
+        </div>
       ) : (
         <div className={styles.centro}>
           <div className={styles.selo} data-sucesso={fase.tipo === "sucesso" || undefined} aria-hidden="true">
@@ -134,15 +201,17 @@ export function CriandoConta({ cfg }: { cfg: ConfigCliente }) {
 
           <div role="status" aria-live="polite" className={styles.textos}>
             <h1 className={e.titulo}>{fase.tipo === "sucesso" ? "Sua conta foi criada!" : "Criando sua conta…"}</h1>
-            {fase.tipo === "sucesso" && <p className={e.apoio}>Agora falta pouco pra deixar tudo do seu jeito.</p>}
+            {fase.tipo === "sucesso" && <p className={e.apoio}>Estamos abrindo o ady para você.</p>}
           </div>
 
-          <div className={styles.preparando}>
-            <p>Preparando seu painel</p>
-            <span className={styles.trilho} aria-hidden="true">
-              <span className={styles.corre} />
-            </span>
-          </div>
+          {fase.tipo === "sucesso" && (
+            <div className={styles.preparando}>
+              <p>Entrando no ady</p>
+              <span className={styles.trilho} aria-hidden="true">
+                <span className={styles.corre} />
+              </span>
+            </div>
+          )}
         </div>
       )}
     </FluxoBShell>
@@ -155,7 +224,7 @@ function ErroCriacao({ code, onTentar }: { code: SignupCode; onTentar: () => voi
       <div role="alert" className={e.erro}>
         <h1 className={e.titulo}>{TEXTO_EMAIL_EXISTENTE.titulo}</h1>
         <p className={e.apoio}>{TEXTO_EMAIL_EXISTENTE.apoio}</p>
-        <AcoesContaExistente />
+        <AcoesContaExistente principal="redefinir" />
       </div>
     );
   }
@@ -169,6 +238,19 @@ function ErroCriacao({ code, onTentar }: { code: SignupCode; onTentar: () => voi
           <a href={caminho("lp", "#cadastro")} className={`lp-cta lp-cta--wide ${e.botao}`}>
             Voltar ao formulário
           </a>
+        </div>
+      </div>
+    );
+  }
+
+  if (code === "RATE_LIMIT") {
+    return (
+      <div role="alert" className={e.erro}>
+        <h1 className={e.titulo}>Muitas tentativas. Tente de novo em alguns minutos.</h1>
+        <div className={e.acoes}>
+          <button type="button" onClick={onTentar} className={e.secundario}>
+            Tentar de novo
+          </button>
         </div>
       </div>
     );

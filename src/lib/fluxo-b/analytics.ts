@@ -1,5 +1,4 @@
 import { sendGTMEvent } from "@next/third-parties/google";
-import type { Ramo } from "@/config/fluxoB";
 import type { SignupCode } from "./signup";
 
 /**
@@ -34,10 +33,5 @@ export function trackLeadFluxoB(eventId: string, lpVariant: string | null, onDon
 export const trackContaCriada = () => push({ event: "fluxo_b_conta_criada" });
 
 export const trackErroCriacao = (code: SignupCode) => push({ event: "fluxo_b_erro_criacao", code });
-
-export const trackRamoConcluido = (segmentos: Ramo[], onDone?: () => void) =>
-  push({ event: "fluxo_b_ramo_concluido", segmentos }, onDone);
-
-export const trackSenhaCriada = (onDone?: () => void) => push({ event: "fluxo_b_senha_criada" }, onDone);
 
 export const trackEntrouNoApp = (onDone: () => void) => push({ event: "fluxo_b_entrou_no_app" }, onDone);
