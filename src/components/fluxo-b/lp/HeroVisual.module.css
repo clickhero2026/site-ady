@@ -1,0 +1,330 @@
+.cena {
+  /* Proporção real de celular (iPhone de tela cheia ≈ 9 : 19,5). Tudo no
+     aparelho é medido a partir da largura, então ele escala inteiro. */
+  --phone-ratio: 9 / 19.5;
+  --phone-w: min(15rem, 66vw);
+  --phone-borda: calc(var(--phone-w) * 0.03);
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem 0 2rem;
+  max-width: 26rem;
+  margin-inline: auto;
+}
+
+/* Celular e tablet: o aparelho vem depois do botão; altura limitada, com
+   a base sumindo aos poucos, pra não empurrar o conteúdo seguinte. A
+   máscara recorta tudo na caixa da cena, por isso as notificações ficam
+   dentro dela (ver .publicado e .whats abaixo). */
+@media (max-width: 63.99rem) {
+  .cena {
+    max-height: 27rem;
+    padding-top: 1rem;
+    overflow: clip;
+    mask-image: linear-gradient(180deg, #000 85%, transparent 100%);
+  }
+}
+
+.brilho {
+  position: absolute;
+  inset: 8% 4%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(30 136 168 / 0.28), transparent);
+  filter: blur(8px);
+}
+
+/* ---- Celular ---- */
+.celular {
+  position: relative;
+  width: var(--phone-w);
+  aspect-ratio: var(--phone-ratio);
+  padding: var(--phone-borda);
+  border-radius: calc(var(--phone-w) * 0.12);
+  background: #0c0d0a;
+  box-shadow:
+    0 0 0 1.5px #3a4044,
+    0 40px 80px -30px rgb(11 58 72 / 0.55);
+  transform: rotate(-2deg);
+}
+
+/* Ilha dinâmica. */
+.ilha {
+  position: absolute;
+  top: calc(var(--phone-borda) + var(--phone-w) * 0.03);
+  left: 50%;
+  z-index: 2;
+  width: calc(var(--phone-w) * 0.3);
+  height: calc(var(--phone-w) * 0.085);
+  border-radius: 999px;
+  background: #0c0d0a;
+  transform: translateX(-50%);
+}
+
+/* A tela: fonte-base proporcional à largura; o resto em em. */
+.tela {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--phone-w) * 0.09);
+  background: #ffffff;
+  color: #0c0d0a;
+  font-size: calc(var(--phone-w) * 0.05);
+  line-height: 1.3;
+}
+
+.tela svg {
+  flex: none;
+  width: 1.6em;
+  height: 1.6em;
+}
+
+.status {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(var(--phone-w) * 0.15);
+  padding: 0 8% 0 10%;
+  font-size: 1.05em;
+  font-weight: 600;
+}
+
+.statusIcones {
+  display: inline-flex;
+  gap: 0.3em;
+}
+
+.tela .statusIcones svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+.igTopo {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.3em 0.75em 0.6em;
+}
+
+.avatar {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 50%;
+  background: var(--lp-petrol);
+  box-shadow:
+    0 0 0 0.15em #ffffff,
+    0 0 0 0.3em var(--lp-spark);
+}
+
+.avatarPonto {
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--lp-spark);
+}
+
+.igNome {
+  font-weight: 700;
+}
+
+.igMais {
+  margin-left: auto;
+}
+
+.post {
+  flex: none;
+  width: 100%;
+  height: auto;
+}
+
+.igAcoes {
+  display: flex;
+  flex: none;
+  gap: 0.9em;
+  padding: 0.6em 0.75em 0.35em;
+}
+
+.igSalvar {
+  margin-left: auto;
+}
+
+.igCurtidas {
+  padding: 0 0.75em;
+  font-weight: 700;
+}
+
+.igLegenda {
+  padding: 0.15em 0.75em 0;
+}
+
+.igQuando {
+  padding: 0.3em 0.75em 0;
+  font-size: 0.85em;
+  color: #5f6f74;
+}
+
+/* Começo do próximo post (cabeçalho + imagem cortada pela barra de
+   baixo), só pra a tela não acabar em branco. */
+.igProximo {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 1em 0.75em 0;
+}
+
+.igProximoAvatar {
+  flex: none;
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 50%;
+  background: #dde6e9;
+}
+
+.igProximaImagem {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0.6em;
+  background: linear-gradient(160deg, #e3f1f5, #d4e4ea);
+}
+
+.igFantasma {
+  width: 45%;
+  height: 0.7em;
+  border-radius: 999px;
+  background: #e9eef0;
+}
+
+/* Barra de navegação do Instagram + indicador de início do aparelho. */
+.igNav {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: auto;
+  padding: 0.7em 0.5em 1.6em;
+  border-top: 1px solid #e3e8ea;
+  background: #ffffff;
+}
+
+.igNav::after {
+  content: "";
+  position: absolute;
+  bottom: 0.5em;
+  left: 50%;
+  width: 35%;
+  height: 0.28em;
+  border-radius: 999px;
+  background: #0c0d0a;
+  transform: translateX(-50%);
+}
+
+.igNavPerfil {
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: 50%;
+  background: var(--lp-petrol);
+}
+
+/* ---- Selo "Post publicado" ---- */
+.publicado {
+  position: absolute;
+  top: 2.75rem;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--lp-petrol);
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: var(--lp-shadow);
+}
+
+/* ---- Mensagem de WhatsApp chegando ---- */
+/* Celular: sobre a parte de baixo da imagem do post, pra curtidas e
+   legenda continuarem à vista antes do corte. Desktop: abaixo da legenda. */
+.whats {
+  position: absolute;
+  top: calc(1rem + var(--phone-w) * 0.7);
+  left: 0;
+  max-width: 16.5rem;
+  padding: 0.75rem 0.9rem 0.9rem;
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: var(--lp-shadow-lg);
+  transform: rotate(1.5deg);
+}
+
+.whatsTopo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #3b474b;
+}
+
+.whatsIcone {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #1f8f4e; /* verde de mensagem — só neste mockup */
+  color: #ffffff;
+}
+
+.whatsBalao {
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.25rem 1rem 1rem 1rem;
+  background: #dcf7c5;
+  color: #0c0d0a;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .whats {
+    animation: chegar 0.7s 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  }
+}
+
+@keyframes chegar {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.92) rotate(1.5deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(1.5deg);
+  }
+}
+
+@media (min-width: 64rem) {
+  .cena {
+    --phone-w: 17rem;
+    padding: 2rem 0;
+  }
+
+  .whats {
+    top: calc(2rem + var(--phone-w) * 1.42);
+    left: -2.5rem;
+  }
+
+  .publicado {
+    top: 3.75rem;
+    right: -1.5rem;
+  }
+}

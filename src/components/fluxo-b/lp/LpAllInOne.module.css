@@ -1,0 +1,188 @@
+.grade {
+  display: grid;
+  gap: 1.25rem;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 40rem) {
+  .grade {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .grade {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.cartao {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  border-radius: var(--lp-radius-lg);
+  background: #ffffff;
+  color: var(--lp-text);
+  box-shadow: 0 24px 48px -24px rgb(0 0 0 / 0.45);
+}
+
+.tela {
+  display: grid;
+  /* Linha/coluna com tamanho definido pela moldura (aspect-ratio), pra o
+     max-height: 100% do print resolver em vez de ser ignorado. */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  padding: 1rem;
+  background: var(--lp-bg-alt);
+  border-bottom: 1px solid var(--lp-line);
+}
+
+/* Tamanho intrínseco limitado à moldura: a sombra abraça o print, sem
+   faixa cinza sobrando em volta dos prints mais largos. */
+.print {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0.75rem;
+  box-shadow: var(--lp-shadow);
+}
+
+.frase {
+  padding: 1.25rem 1.5rem 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* ---- Mockups em HTML (onde falta print real) ---- */
+.mock {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: center;
+  width: 100%;
+}
+
+.mockCanais {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.chip {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--lp-line);
+  color: var(--lp-petrol);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.mockSeta {
+  color: var(--lp-petrol);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mockBalao {
+  max-width: 15rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.25rem 1rem 1rem 1rem;
+  background: #dcf7c5;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.35;
+  box-shadow: var(--lp-shadow);
+}
+
+.mockQuadro {
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+  gap: 0.5rem;
+}
+
+.coluna {
+  display: grid;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  border: 1px solid var(--lp-line);
+}
+
+.colunaNome {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--lp-petrol);
+}
+
+.ficha {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  border-radius: 0.5rem;
+  background: var(--lp-bg-alt);
+}
+
+.fichaAvatar {
+  flex: none;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: #9fc6d3;
+}
+
+.fichaLinha {
+  flex: 1;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: #cfdfe5;
+}
+
+.mockMarca {
+  gap: 0.75rem;
+}
+
+.marcaLogo {
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border: 2px dashed #9fb9c2;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--lp-text-soft);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.marcaCores {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.marcaCores span {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--lp-line);
+}
+
+.marcaTom {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--lp-line);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}

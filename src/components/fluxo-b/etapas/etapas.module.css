@@ -1,0 +1,102 @@
+/* Peças comuns das telas do Fluxo B (título, apoio, botão, erro). */
+
+.titulo {
+  font-size: clamp(1.75rem, 1.5rem + 1vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.apoio {
+  color: var(--lp-text-soft);
+}
+
+.acoes {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.botao {
+  min-height: 3.5rem;
+}
+
+.secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--lp-petrol);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--lp-petrol);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+.secundario:hover {
+  background: var(--lp-petrol-soft);
+}
+
+.link {
+  color: var(--lp-petrol);
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+}
+
+.status {
+  min-height: 1px;
+}
+
+.erro {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid #b3261e;
+  border-radius: 0.75rem;
+  background: #fdf1f0;
+  color: var(--lp-text);
+}
+
+.erro strong {
+  font-size: 1.125rem;
+}
+
+/* Spinner do botão (mesmo desenho do formulário da LP). */
+.spinner {
+  width: 1.1em;
+  height: 1.1em;
+  border: 3px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ícone redondo do painel esquerdo (pessoa, cadeado). */
+.painelIcone {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.14);
+  border: 2px solid rgb(255 255 255 / 0.35);
+}
+
+@media (min-width: 64rem) {
+  .painelIcone {
+    width: 5rem;
+    height: 5rem;
+  }
+}

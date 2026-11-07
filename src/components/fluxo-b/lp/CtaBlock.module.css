@@ -1,0 +1,11 @@
+.bloco {
+  display: grid;
+  justify-items: center;
+  margin-top: 3.5rem;
+  text-align: center;
+}
+
+.bloco a {
+  width: 100%;
+  max-width: 30rem;
+}
