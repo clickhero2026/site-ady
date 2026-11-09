@@ -12,7 +12,7 @@
  * domínio próprio) vão em `FLUXO_B_EXTRA_HOSTS`, separados por vírgula. */
 export const FLUXO_B_HOST = "teste.useady.com.br";
 
-import { AVISO_MOCK_IGNORADO, origensDeRedirect, resolverMock, type EstadoMock } from "@/lib/fluxo-b/regras";
+import { AVISO_MOCK_IGNORADO, resolverMock, type EstadoMock } from "@/lib/fluxo-b/regras";
 
 /** Prefixo interno das rotas em `src/app/fluxo-b/`. No host próprio o
  * proxy tira o prefixo (`/criando` → `/fluxo-b/criando`); no preview da
@@ -60,20 +60,13 @@ export function mockDoServidor(): EstadoMock {
 
 /**
  * O que as telas (cliente) precisam saber do servidor. O navegador não
- * enxerga VERCEL_ENV nem FLUXO_B_REDIRECT_ORIGINS: as páginas chamam
- * isto e passam por prop. Páginas estáticas → valor do build (trocar a
- * env pede novo deploy).
+ * enxerga VERCEL_ENV: as páginas chamam isto e passam por prop. Páginas
+ * estáticas → valor do build (trocar a env pede novo deploy).
  */
-export type ConfigCliente = { mock: EstadoMock; origensRedirect: string[] };
+export type ConfigCliente = { mock: EstadoMock };
 
 export function configDoServidor(): ConfigCliente {
-  return {
-    mock: mockDoServidor(),
-    origensRedirect: origensDeRedirect({
-      lista: process.env.FLUXO_B_REDIRECT_ORIGINS,
-      vercelEnv: process.env.VERCEL_ENV,
-    }),
-  };
+  return { mock: mockDoServidor() };
 }
 
 /** Tela de login do app (botão "Entrar" quando o e-mail já tem conta).

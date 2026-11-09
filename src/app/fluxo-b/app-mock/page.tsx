@@ -11,8 +11,8 @@ export default function FluxoBAppMockPage() {
     <FluxoBShell progresso={PROGRESSO.app} painel={<p className="destaque">Modo de teste</p>}>
       <h1 className={e.titulo}>Aqui você entraria no app do ady.</h1>
       <p className={e.apoio}>
-        Página de teste do Fluxo B (modo mock). Em produção, o redirecionamento vai para o link de login da API (origem
-        em FLUXO_B_REDIRECT_ORIGINS), que leva ao app.
+        Página de teste do Fluxo B (modo mock). Em produção, o redirecionamento vai para o link de login da API, que
+        leva ao app.
       </p>
     </FluxoBShell>
   );

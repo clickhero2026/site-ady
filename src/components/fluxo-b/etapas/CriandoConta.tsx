@@ -101,13 +101,13 @@ export function CriandoConta({ cfg }: { cfg: ConfigCliente }) {
       setFase({ tipo: "sucesso" });
       window.setTimeout(() => {
         const atual = sessao.lerConta() ?? c;
-        const r = entrarNoApp(cfg, atual);
+        const r = entrarNoApp(atual);
         if (r === "usado") setFase({ tipo: "ja-aberto" });
         else if (r === "expirado") setFase({ tipo: "expirado" });
         else if (r === "sem-destino") setFase({ tipo: "sem-link" });
       }, ESPERA_SUCESSO_MS);
     },
-    [cfg],
+    [],
   );
 
   const aplicar = useCallback(

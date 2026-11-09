@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { FLUXO_B_HOST, SIGNUP_TIMEOUT_MS } from "@/config/fluxoB";
 import { criarLimitador, LIMITE_EMAIL, LIMITE_IP, origemPermitidaNaRota } from "@/lib/fluxo-b/protecao";
-import { destinoPermitido, hostsDaApi, origensDeRedirect, urlDoSignup } from "@/lib/fluxo-b/regras";
+import { hostsDaApi, urlDoSignup } from "@/lib/fluxo-b/regras";
 import { chavesDoCorpo, normalizarSignup, parseSignupResponse, SignupContratoError, type SignupResult } from "@/lib/fluxo-b/signup";
 
 /**
@@ -108,17 +108,5 @@ export async function POST(request: Request) {
   // Diagnóstico: 2xx sem link. Só os nomes das chaves — nunca valores/tokens.
   if (r.ok && !r.redirectUrl) console.warn(`[fluxo-b-signup] 2xx sem link; chaves: ${chavesDoCorpo(json)}`);
 
-  // O link de login (com token) só segue se for de uma origem permitida.
-  if (r.ok && r.redirectUrl) {
-    const origens = origensDeRedirect({ lista: process.env.FLUXO_B_REDIRECT_ORIGINS, vercelEnv: process.env.VERCEL_ENV });
-    if (!destinoPermitido(r.redirectUrl, origens)) {
-      let origem = "(inválida)";
-      try {
-        origem = new URL(r.redirectUrl).origin; // só a origem; o token nunca vai pro log
-      } catch {}
-      console.error(`[fluxo-b-signup] redirect_url fora de FLUXO_B_REDIRECT_ORIGINS: ${origem}`);
-      return resposta({ ok: true, redirectUrl: null });
-    }
-  }
   return resposta(r);
 }
