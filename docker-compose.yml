@@ -1,0 +1,26 @@
+# Só desenvolvimento: Postgres local, mesma versão maior da produção
+# (Postgres 18 no Easypanel). Subir com `docker compose up -d`; no
+# .env.local:
+#   DATABASE_DRIVER=pg
+#   DATABASE_URL=postgres://postgres:postgres@localhost:54330/ady_site
+# (sem DATABASE_CA_CERT: local conecta sem TLS — ver src/lib/dbConfig.ts).
+#
+# Na primeira subida (volume vazio) o Postgres roda sozinho os .sql de
+# db/migrations, em ordem alfabética. Pra recomeçar do zero:
+# `docker compose down -v`.
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ady_site
+    ports:
+      - "127.0.0.1:54330:5432"
+    volumes:
+      # A partir do 18, a imagem guarda os dados em /var/lib/postgresql/18/docker.
+      - ady-site-pg:/var/lib/postgresql
+      - ./db/migrations:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  ady-site-pg:

@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# site ady
 
-## Getting Started
+Site institucional, LPs do teste grátis e workshop da ady (Next.js, na Vercel).
 
-First, run the development server:
+## Rodar local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # preencher o que for usar
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Banco de dados
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Dois bancos, cada um com a sua variável:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variável | Tabela | Driver |
+|---|---|---|
+| `DATABASE_URL` | `teste7d_inscricoes` (teste grátis) | `DATABASE_DRIVER`: `neon` (padrão) ou `pg` |
+| `WORKSHOP_DATABASE_URL` | `workshop_leads` (campanha desativada) | sempre Neon (`src/lib/workshopDb.ts`) |
 
-## Learn More
+`DATABASE_URL` passa por `src/lib/db.ts`, que expõe a mesma interface do
+driver do Neon (`` sql`...` `` e `sql.query`) sobre os dois drivers. A
+configuração fica em `src/lib/dbConfig.ts`:
 
-To learn more about Next.js, take a look at the following resources:
+- **`pg`** (Postgres 18 próprio no Easypanel): TCP com pool pequeno pra
+  serverless (`max` 3, ociosa fecha em 5 s, timeout de conexão 5 s, timeout
+  de consulta 10 s), `attachDatabasePool` da Vercel. O TLS é obrigatório na
+  Vercel e verificado contra `DATABASE_CA_CERT` (PEM do certificado do
+  servidor). `sslmode` e afins na URL são ignorados. Sem o CA, o build na
+  Vercel falha (`next.config.ts`).
+- **`neon`**: driver HTTP do Neon, como antes. Serve de rollback: voltar
+  `DATABASE_DRIVER` pra `neon`, trocar o `DATABASE_URL` e redeployar.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Postgres local
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+docker compose up -d   # Postgres 18 em localhost:54330; roda db/migrations na 1ª subida
+```
 
-## Deploy on Vercel
+No `.env.local`: `DATABASE_DRIVER=pg` e
+`DATABASE_URL=postgres://postgres:postgres@localhost:54330/ady_site` (sem
+CA: local conecta sem TLS).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Em produção, as migrations de `db/migrations` são aplicadas à mão, uma vez,
+na ordem dos nomes.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Verificações
+
+```bash
+npm run lint
+npx tsc --noEmit
+node --test src/lib/*.test.mjs src/lib/fluxo-b/*.test.mjs
+npm run build
+```

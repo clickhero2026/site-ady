@@ -12,7 +12,7 @@ import { hashRequestIp, setInscricaoCookie } from "@/lib/teste7dSession";
  * Etapa 1 do teste grátis de 7 dias (landing page): nome, e-mail,
  * WhatsApp e consentimento, mais o rastreio (UTMs, lp, fbclid).
  *
- * O Neon decide sucesso/erro — é ele que gera o id do cookie da etapa 2.
+ * O banco decide sucesso/erro — é ele que gera o id do cookie da etapa 2.
  * O Bitrix (só com `TESTE7D_BITRIX_ATIVO=true`) roda depois da resposta
  * (`after`) e nunca vira erro pro usuário (ver bitrix-teste7d.ts).
  *

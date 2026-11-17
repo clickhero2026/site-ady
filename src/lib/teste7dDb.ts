@@ -1,9 +1,10 @@
-import { neon, neonConfig } from "@neondatabase/serverless";
 import { TESTE7D } from "@/config/teste7d";
+import { clienteSql } from "./db";
 import type { AtivacaoData, InscricaoData } from "./teste7dSchema";
 
 /**
- * Acesso à tabela `teste7d_inscricoes` (Neon) — só no servidor. Schema em
+ * Acesso à tabela `teste7d_inscricoes` — só no servidor. Driver (Neon ou
+ * `pg`) escolhido por `DATABASE_DRIVER`, ver db.ts. Schema em
  * `db/migrations/20261027_teste7d_inscricoes.sql`.
  *
  * Diferente do workshop, aqui o banco é obrigatório: é ele que gera o id
@@ -82,20 +83,10 @@ export class DatabaseNotConfiguredError extends Error {
   }
 }
 
-/**
- * Só desenvolvimento: aponta o driver pra um proxy HTTP do Neon local
- * (ex. http://127.0.0.1:4444/sql, imagem local-neon-http-proxy na frente
- * de um Postgres local) pra testar o fluxo sem tocar no banco de verdade.
- * Nunca configurar na Vercel.
- */
-if (process.env.NEON_LOCAL_SQL_ENDPOINT) {
-  neonConfig.fetchEndpoint = process.env.NEON_LOCAL_SQL_ENDPOINT;
-}
-
 function db() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new DatabaseNotConfiguredError();
-  return neon(connectionString);
+  return clienteSql(connectionString);
 }
 
 /** Linha da inscrição, ou null se o id não existe. */
